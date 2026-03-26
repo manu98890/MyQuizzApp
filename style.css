@@ -268,7 +268,7 @@ table {
 th {
     background: #1a73e8 !important;
     color: white !important;
-    padding: 15px 15px !important; /* ටිකක් ලොකු කළා */
+    padding: 25px 15px !important; /* ටිකක් ලොකු කළා */
     font-size: 16px !important;
     font-weight: 700 !important;
     text-align: center;
@@ -347,12 +347,12 @@ tr:hover td {
     }
     
     th {
-        padding: 15px 8px !important;
+        padding: 12px 8px !important;
         font-size: 13px !important;
     }
     
     td {
-        padding: 15px 8px !important;
+        padding: 25px 8px !important;
         font-size: 13px !important;
     }
 
