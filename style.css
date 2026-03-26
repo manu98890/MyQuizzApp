@@ -1,523 +1,103 @@
-/* පොදු සැකසුම් */
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f2f5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh; /* height වෙනුවට min-height දාමු එතකොට scroll වෙද්දී ලේසියි */
-    margin: 0;
+/* --- 1. පොදු සැකසුම් (Reset & Variables) --- */
+:root {
+    --primary: #1a73e8;
+    --success: #28a745;
+    --danger: #dc3545;
+    --bg: #f8f9fa;
+    --sidebar-width: 250px;
 }
 
-/* Login සහ Quiz Containers දෙකටම පොදු පෙනුම */
-.login-container, .quiz-container {
-    background: white;
-    padding: 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    width: 90%;
-    max-width: 450px; /* Quiz එකට පොඩ්ඩක් ඉඩ ඕනේ නිසා වැඩි කළා */
-    text-align: center;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg); color: #333; line-height: 1.6; }
+
+/* --- 2. Layout (Sidebar & Main Content) --- */
+.dashboard-layout { display: flex; min-height: 100vh; }
+
+.sidebar {
+    width: var(--sidebar-width); background: #ffffff; height: 100vh; position: fixed;
+    padding: 25px 15px; border-right: 1px solid #eee; z-index: 1000; transition: 0.3s;
 }
 
-h2, h3 { color: #1a73e8; margin-bottom: 20px; }
+.sidebar h3 { color: var(--primary); text-align: center; margin-bottom: 25px; font-weight: 800; }
 
-input {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-sizing: border-box;
+.sidebar a {
+    display: block; padding: 12px 15px; color: #555; text-decoration: none;
+    border-radius: 10px; margin-bottom: 5px; font-weight: 600; transition: 0.3s;
 }
 
-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #1a73e8;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 10px;
-    transition: 0.3s;
-}
+.sidebar a:hover, .sidebar a.active { background: var(--primary); color: white !important; }
 
-button:hover { background-color: #1557b0; }
+.main-content { flex: 1; margin-left: var(--sidebar-width); padding: 30px; min-height: 100vh; transition: 0.3s; }
 
-/* Quiz එකට විශේෂ වූ Styles */
-#quiz-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    font-weight: bold;
-    color: #555;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
+/* --- 3. Quiz Grid & GK Colors --- */
+.quiz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+
+.quiz-card {
+    background: white; border-radius: 18px; padding: 30px 20px; text-align: center;
+    transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;
 }
+.quiz-card:hover { transform: translateY(-8px); border-color: var(--primary); }
+
+/* GK Pattern (මෙතනින් 1-50 ඔක්කොම පාට වෙනවා) */
+.quiz-card:nth-child(5n+1) { border-top: 6px solid #f1c40f; }
+.quiz-card:nth-child(5n+2) { border-top: 6px solid #e67e22; }
+.quiz-card:nth-child(5n+3) { border-top: 6px solid #e74c3c; }
+.quiz-card:nth-child(5n+4) { border-top: 6px solid #9b59b6; }
+.quiz-card:nth-child(5n+5) { border-top: 6px solid #3498db; }
+
+/* --- 4. 📝 Quiz UI (Correct/Wrong Colors) --- */
+.quiz-container { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); max-width: 600px; margin: 0 auto; }
 
 .option-btn {
-    background-color: #f8f9fa;
-    color: #333;
-    border: 1px solid #ddd;
-    
-    /* මෙන්න මේ පේළි 3 තමයි වැදගත් */
-    margin: 10px 0;      /* බටන් එකක් උඩ තව බටන් එකක් ගෑවෙන්නේ නැති වෙන්න */
-    padding: 15px;       /* බටන් එක ඇතුළේ ඉඩ වැඩි කරන්න (ඔබන්න ලේසියි) */
-    width: 100%;         /* Mobile එකේ සම්පූර්ණ පළලටම බටන් එක ගන්න */
-    
-    text-align: left;
-    font-weight: normal;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-.option-btn:hover {
-    background-color: #e8f0fe;
-    border-color: #1a73e8;
+    width: 100%; padding: 14px 18px; margin: 8px 0; border-radius: 12px;
+    border: 1px solid #ddd; background: #f8f9fa; text-align: left;
+    cursor: pointer; font-size: 15px; transition: 0.2s;
 }
 
-#question-text {
-    margin: 20px 0;
-    line-height: 1.5;
-    text-align: left;
-}
+/* 🛑 පාටවල් හරියටම පේන්න මේ ටික වැදගත් */
+.option-btn.correct { background-color: var(--success) !important; color: white !important; border-color: #1e7e34 !important; font-weight: bold; }
+.option-btn.wrong { background-color: var(--danger) !important; color: white !important; border-color: #bd2130 !important; font-weight: bold; }
 
-/* Leaderboard Table Styles */
-#leaderboard-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
+/* Nav Dots */
+#question-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-bottom: 20px; }
+.nav-dot { width: 30px; height: 30px; border-radius: 6px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 11px; cursor: pointer; }
+.nav-dot.correct-nav { background-color: var(--success) !important; color: white; }
+.nav-dot.wrong-nav { background-color: var(--danger) !important; color: white; }
 
-#leaderboard-table th {
-    background-color: #1a73e8;
-    color: white;
-    padding: 12px;
-    text-align: center;
-}
-
-#leaderboard-table td {
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    text-align: center;
-}
-
-/* Mobile Responsive Table Wrapper */
-.table-responsive {
-    width: 100%;
-    overflow-x: auto;
-    border-radius: 12px;
-    border: 1px solid #eee;
-}
-
-/* Top 3 Rankings Colors */
-.rank-1 { background-color: #fff9c4 !important; font-weight: bold; } /* Gold Light */
-.rank-2 { background-color: #f5f5f5 !important; } /* Silver Light */
-.rank-3 { background-color: #efebe9 !important; } /* Bronze Light */
-
-.medal { font-size: 20px; margin-right: 5px; }
-
-/* Score Badge */
-.score-badge {
-    background: #1a73e8;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-weight: bold;
-}
-
-/* Navigation Buttons */
-.nav-dot {
-    width: 30px; height: 30px; border-radius: 5px;
-    background: #eee; cursor: pointer; display: flex;
-    align-items: center; justify-content: center; font-size: 12px;
-}
-.nav-dot.active { border: 2px solid #1a73e8; font-weight: bold; }
-.nav-dot.answered { background: #34a853; color: white; }
-
-/* උත්තරේ වැරදි/හරි පාට */
-.correct { background-color: #2ecc71 !important; color: white !important; }
-.wrong { background-color: #e74c3c !important; color: white !important; }
-.option-btn:disabled { cursor: not-allowed; opacity: 1; }
-.nav-dot {
-    width: 32px; height: 32px; border-radius: 4px;
-    background: #e9ecef; cursor: pointer; display: flex;
-    align-items: center; justify-content: center; font-size: 13px;
-    transition: 0.2s;
-}
-.nav-dot.active { border: 2px solid #007bff; transform: scale(1.1); }
-.nav-dot.correct-nav { background: #28a745; color: white; } /* හරි නම් කොළ */
-.nav-dot.wrong-nav { background: #dc3545; color: white; }   /* වැරදි නම් රතු */
-
-.correct { background-color: #28a745 !important; color: white !important; }
-.wrong { background-color: #dc3545 !important; color: white !important; }
-/* Dashboard Layout එක */
-.dashboard-layout {
-    display: flex;
-    width: 100%;
-    min-height: 100vh;
-}
-
-/* Sidebar එක අමතක කරන්න එපා - මේක 250px පළලයි */
-.sidebar {
-    width: 250px;
-    background: #1a73e8;
-    color: white;
-    padding: 20px;
-    position: fixed;
-    height: 100vh;
-}
-.sidebar-link {
-    display: block;
-    padding: 12px 15px;
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    margin-bottom: 5px;
-    transition: 0.3s;
-}
-
-.sidebar-link:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-/* ප්‍රධාන Content කොටස - Sidebar එකට යට නොවෙන්න margin-left: 250px දාලා තියෙන්නේ */
-.main-content {
-    flex: 1;
-    padding: 60px 40px;
-    background-color: #f8f9fa;
-    margin-left: 250px; 
-    min-height: 100vh;
-    box-sizing: border-box;
-}
-
-/* මාතෘකාව */
-.quiz-selection-title {
-    font-size: 30px;
-    font-weight: 800;
-    color: #202124;
-    margin-bottom: 40px;
-    margin-top: 0;
-    border-left: 8px solid #1a73e8;
-    padding-left: 20px;
-}
-
-/* Quiz Grid (Categories පිළිවෙළට තියන තැන) */
-.quiz-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 30px;
-}
-
-/* Quiz Card පෙනුම */
-.quiz-card {
-    background: white;
-    border-radius: 20px;
-    padding: 45px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 8px 15px rgba(0,0,0,0.05);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.quiz-card:hover {
-    transform: translateY(-12px);
-    box-shadow: 0 15px 35px rgba(26, 115, 232, 0.2);
-    border-color: #1a73e8;
-}
-
-.quiz-card .icon {
-    font-size: 50px;
-    margin-bottom: 15px;
-}
-
-.quiz-card h4 {
-    margin: 15px 0 10px 0;
-    font-size: 20px;
-    color: #333;
-}
-
-.quiz-card p {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 20px;
-}
-
-.start-link {
-    font-weight: bold;
-    color: #1a73e8;
-}
-
-/* පෑඩින් සහ මාර්ජින් නියමිත ගාණට හදමු */
-.quiz-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Card එකේ පළල වැඩි කළා */
-    gap: 25px;
-    padding: 10px 0;
-}
-
-/* Card එක ඇතුළේ Icon එකේ පාට වෙනස් වෙන්න හදමු */
-.quiz-card .icon {
-    font-size: 55px;
-    margin-bottom: 15px;
-    transition: transform 0.3s ease;
-}
-
-.quiz-card:hover .icon {
-    transform: scale(1.2) rotate(5deg); /* Hover කරද්දී පොඩි ගැම්මක් */
-}
-
-/* --- GK 1 සිට GK 50 දක්වා වර්ණ පද්ධතිය --- */
-
-/* Group 1: 1-10 */
-.cat-gk1  { border-bottom: 6px solid #f1c40f; }
-.cat-gk2  { border-bottom: 6px solid #e67e22; }
-.cat-gk3  { border-bottom: 6px solid #e74c3c; }
-.cat-gk4  { border-bottom: 6px solid #9b59b6; }
-.cat-gk5  { border-bottom: 6px solid #3498db; }
-.cat-gk6  { border-bottom: 6px solid #1abc9c; }
-.cat-gk7  { border-bottom: 6px solid #2ecc71; }
-.cat-gk8  { border-bottom: 6px solid #34495e; }
-.cat-gk9  { border-bottom: 6px solid #95a5a6; }
-.cat-gk10 { border-bottom: 6px solid #d35400; }
-
-/* Group 2: 11-20 */
-.cat-gk11 { border-bottom: 6px solid #c0392b; }
-.cat-gk12 { border-bottom: 6px solid #8e44ad; }
-.cat-gk13 { border-bottom: 6px solid #2980b9; }
-.cat-gk14 { border-bottom: 6px solid #16a085; }
-.cat-gk15 { border-bottom: 6px solid #27ae60; }
-.cat-gk16 { border-bottom: 6px solid #2c3e50; }
-.cat-gk17 { border-bottom: 6px solid #7f8c8d; }
-.cat-gk18 { border-bottom: 6px solid #ff9f43; }
-.cat-gk19 { border-bottom: 6px solid #ee5253; }
-.cat-gk20 { border-bottom: 6px solid #0abde3; }
-
-/* Group 3: 21-30 */
-.cat-gk21 { border-bottom: 6px solid #10ac84; }
-.cat-gk22 { border-bottom: 6px solid #5f27cd; }
-.cat-gk23 { border-bottom: 6px solid #222f3e; }
-.cat-gk24 { border-bottom: 6px solid #f368e0; }
-.cat-gk25 { border-bottom: 6px solid #ff9ff3; }
-.cat-gk26 { border-bottom: 6px solid #feca57; }
-.cat-gk27 { border-bottom: 6px solid #ff6b6b; }
-.cat-gk28 { border-bottom: 6px solid #48dbfb; }
-.cat-gk29 { border-bottom: 6px solid #1dd1a1; }
-.cat-gk30 { border-bottom: 6px solid #54a0ff; }
-
-/* Group 4: 31-40 */
-.cat-gk31 { border-bottom: 6px solid #576574; }
-.cat-gk32 { border-bottom: 6px solid #2e86de; }
-.cat-gk33 { border-bottom: 6px solid #ff9966; }
-.cat-gk34 { border-bottom: 6px solid #bc8f8f; }
-.cat-gk35 { border-bottom: 6px solid #4682b4; }
-.cat-gk36 { border-bottom: 6px solid #d2691e; }
-.cat-gk37 { border-bottom: 6px solid #6b8e23; }
-.cat-gk38 { border-bottom: 6px solid #ff4500; }
-.cat-gk39 { border-bottom: 6px solid #2f4f4f; }
-.cat-gk40 { border-bottom: 6px solid #8b0000; }
-
-/* Group 5: 41-50 */
-.cat-gk41 { border-bottom: 6px solid #4b0082; }
-.cat-gk42 { border-bottom: 6px solid #008080; }
-.cat-gk43 { border-bottom: 6px solid #556b2f; }
-.cat-gk44 { border-bottom: 6px solid #cd5c5c; }
-.cat-gk45 { border-bottom: 6px solid #4169e1; }
-.cat-gk46 { border-bottom: 6px solid #8b4513; }
-.cat-gk47 { border-bottom: 6px solid #9932cc; }
-.cat-gk48 { border-bottom: 6px solid #00ced1; }
-.cat-gk49 { border-bottom: 6px solid #ff8c00; }
-.cat-gk50 { border-bottom: 6px solid #1a73e8; }
-
-/* Card එක ඇතුළේ තියෙන පටන් ගන්න ලින්ක් එකේ පෙනුම */
-.start-link {
-    background: #f8f9fa;
-    padding: 8px 15px;
-    border-radius: 50px;
-    font-size: 14px;
-    border: 1px solid #eee;
-    margin-top: 10px;
-}
-
-.quiz-card:hover .start-link {
-    background: #1a73e8;
-    color: white;
-    border-color: #1a73e8;
-}
-/* Modal Styles */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background: white;
-    padding: 30px;
-    border-radius: 20px;
-    max-width: 500px;
-    width: 90%;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-.rules-list {
-    text-align: left;
-    margin: 20px 0;
-    line-height: 1.8;
-}
-
-.warning-rule {
-    color: #d93025;
-    background: #fce8e6;
-    padding: 10px;
-    border-radius: 8px;
-}
-
-.start-btn {
-    background-color: #1a73e8;
-    color: white;
-    padding: 15px 30px;
-    border: none;
-    border-radius: 50px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.start-btn:hover {
-    background-color: #1557b0;
-    transform: scale(1.05);
-}
-/* Mobile Responsive Adjustments */
+/* --- 5. 📱 Mobile Responsive (Daraz Look) --- */
 @media (max-width: 768px) {
-    /* 1. Sidebar එක උඩට ගන්නවා (නැත්නම් hide කරන්න පුළුවන්) */
+    /* Sidebar එක උඩින් scroll වෙන Menu එකක් කරමු */
     .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
+        width: 100%; height: auto; position: sticky; top: 0; display: flex;
+        overflow-x: auto; padding: 10px; border-right: none; border-bottom: 1px solid #eee; background: white;
     }
+    .sidebar h3 { display: none; }
+    .sidebar a { white-space: nowrap; margin-right: 8px; padding: 8px 15px; font-size: 12px; background: #f8f9fa; border: 1px solid #eee; }
+    .main-content { margin-left: 0; padding: 15px; }
 
-    /* 2. Content එකේ margin එක අයින් කරනවා */
-    .main-content {
-        margin-left: 0 !important;
-        padding: 20px;
+    /* 📋 Table to Card Logic - මෙතනින් තමයි Table එක Phone එකට ගැලපෙන්නේ */
+    .table-responsive table, thead, tbody, th, td, tr { display: block; }
+    thead tr { position: absolute; top: -9999px; left: -9999px; }
+    
+    tr { 
+        background: white; border-radius: 12px; margin-bottom: 12px; 
+        padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #eee;
     }
-
-    /* 3. Quiz Cards වල padding පොඩ්ඩක් අඩු කරනවා ඉඩ ඉතිරි වෙන්න */
-    .quiz-card {
-        padding: 25px 15px;
+    
+    td { 
+        border: none; border-bottom: 1px solid #f8f9fa; position: relative;
+        padding-left: 45% !important; text-align: right !important; min-height: 35px;
+        display: flex; align-items: center; justify-content: flex-end; font-size: 13px;
     }
-
-    /* 4. Navigation Dots (ප්‍රශ්න අංක) පේළියට ගොඩක් එද්දී scroll වෙන්න හදමු */
-    #question-nav {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 5px;
+    
+    /* Column label එක වම් පැත්තෙන් පෙන්වන්න */
+    td:before { 
+        position: absolute; left: 10px; width: 40%; font-weight: bold; 
+        color: var(--primary); content: attr(data-label); text-align: left;
     }
-
-    /* 5. Modal එක ඇතුළේ අකුරු size එක පොඩ්ඩක් අඩු කරනවා */
-    .modal-content {
-        width: 95%;
-        padding: 20px;
-    }
-}
-/* --- History Page Table Styles --- */
-.table-responsive {
-    margin: 20px 0;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    
+    td:last-child { border-bottom: none; }
 }
 
-#history-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-}
-
-#history-table th {
-    background-color: #1a73e8;
-    color: white;
-    padding: 15px;
-    font-size: 15px;
-    text-transform: uppercase;
-}
-
-#history-table td {
-    padding: 15px;
-    text-align: center;
-    border-bottom: 1px solid #f1f1f1;
-    color: #444;
-    font-size: 14px;
-}
-
-/* පේළියක් උඩට මවුස් එක ගෙනිච්චම පාට වෙනස් වෙන්න */
-#history-table tr:hover {
-    background-color: #f8faff;
-}
-
-/* --- Score Badge (අර නිල් රවුම පොඩි කරලා ලස්සන කරමු) --- */
-.score-badge {
-    background: #1a73e8;
-    color: white;
-    padding: 5px 12px;
-    border-radius: 20px; /* Pill shape එකක් දුන්නා */
-    font-weight: bold;
-    display: inline-block;
-    min-width: 60px;
-}
-
-/* කාණ්ඩය (Category) කැපී පේන්න */
-.cat-tag {
-    font-weight: bold;
-    color: #555;
-    background: #eee;
-    padding: 3px 8px;
-    border-radius: 5px;
-}
-#history-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    text-align: center;
-}
-
-#history-table th {
-    background-color: #1a73e8;
-    color: white;
-    padding: 12px;
-}
-
-.score-badge {
-    background: #1a73e8;
-    color: white;
-    padding: 4px 12px;
-    border-radius: 15px;
-    font-weight: bold;
-    font-size: 13px;
-}
-
-.cat-tag {
-    background: #f0f0f0;
-    padding: 3px 8px;
-    border-radius: 5px;
-    font-size: 12px;
-    color: #555;
-}
+/* Modal Overlay */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; align-items: center; justify-content: center; }
