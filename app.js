@@ -3122,26 +3122,26 @@ function loadLeaderboard() {
                 const mins = Math.floor(d.timeUsed / 60);
                 const secs = d.timeUsed % 60;
                 
-                // Rank එක අනුව Medal එක තෝරනවා
-                let medal = "";
-                let rankClass = "";
-                if(rank === 1) { medal = "🥇"; rankClass = "rank-1"; }
-                else if(rank === 2) { medal = "🥈"; rankClass = "rank-2"; }
-                else if(rank === 3) { medal = "🥉"; rankClass = "rank-3"; }
-                else { medal = rank; }
+              
 
-                lbBody.innerHTML += `
-                    <tr class="${rankClass}">
-                        <td>${medal}</td>
-                        <td style="text-align: left; min-width: 150px;">
-                            <span style="font-weight: bold; color: #333;">${d.name}</span><br>
-                            <small style="color: #666;">📧 ${d.email || 'No Email'}</small><br>
-                            <small style="color: #1a73e8;">📍 පළාත: ${d.province}</small>
-                        </td>
-                        <td><span class="score-badge">${d.score} / 50</span></td>
-                        <td>${mins}:${secs < 10 ? '0' : ''}${secs} min</td>
-                    </tr>
-                `;
+             // මේක Wrapper එකක් ඇතුළට දාපන්
+lbBody.innerHTML += `
+    <div class="leaderboard-user-card ${rank <= 3 ? 'top-rank-bg' : ''}">
+        <div class="user-rank-box">
+            <span class="rank-medal">${rank == 1 ? '🥇' : rank == 2 ? '🥈' : rank == 3 ? '🥉' : ''}</span>
+            <span>${rank}</span>
+        </div>
+        <div class="user-details-box">
+            <span class="user-name-text">${d.name || 'Undefined'}</span>
+            <span class="user-email-text">📧 ${d.email || 'No Email'}</span>
+            <span class="user-province-text">📍 පළාත: ${d.province || 'Undefined'}</span>
+        </div>
+        <div class="user-score-box">
+            <div class="score-pill-screenshot">${d.score} / 50</div>
+            <div class="time-taken-text">${mins}:${secs < 10 ? '0' : ''}${secs} min</div>
+        </div>
+    </div>
+`;
                 rank++;
             });
         });
