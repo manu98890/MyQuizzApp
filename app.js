@@ -3131,17 +3131,18 @@ function loadLeaderboard() {
                 else { medal = rank; }
 
                 lbBody.innerHTML += `
-                    <tr class="${rankClass}">
-                        <td>${medal}</td>
-                        <td style="text-align: left; min-width: 150px;">
-                            <span style="font-weight: bold; color: #333;">${d.name}</span><br>
-                            <small style="color: #666;">📧 ${d.email || 'No Email'}</small><br>
-                            <small style="color: #1a73e8;">📍 පළාත: ${d.province}</small>
-                        </td>
-                        <td><span class="score-badge">${d.score} / 50</span></td>
-                        <td>${mins}:${secs < 10 ? '0' : ''}${secs} min</td>
-                    </tr>
-                `;
+                    // rankClass එක rank අනුව rank-1, rank-2, rank-3 ලෙස දාන්න
+lbBody.innerHTML += `
+    <div class="leaderboard-card-premium ${rankClass}">
+        <div class="rank-circle-premium">${rankIcon}</div>
+        <div class="user-details-premium">
+            <span class="user-name-premium">${d.name}</span>
+            <span class="user-meta-premium">📍 ${d.province} | ⏱️ ${mins}:${secs} min</span>
+        </div>
+        <div class="score-badge-premium">${d.score} / 50</div>
+    </div>
+`;
+                
                 rank++;
             });
         });
@@ -3222,6 +3223,18 @@ function loadUserHistory() {
                         historyBody.innerHTML = '<tr><td colspan="4">තවම විභාග දත්ත ලබාගෙන නැත.</td></tr>';
                         return;
                     }
+                    historyBody.innerHTML += `
+    <div class="history-card-premium">
+        <div class="history-top-premium">
+            <span class="history-date-premium">📅 ${date}</span>
+            <span class="history-cat-badge">${d.category.toUpperCase()}</span>
+        </div>
+        <div class="history-bottom-premium">
+            <div class="history-score-premium">${d.score} / 50</div>
+            <div class="history-time-premium">⏱️ කාලය: ${mins}:${secs} min</div>
+        </div>
+    </div>
+`;
 
                     snap.forEach(doc => {
                         const d = doc.data();
