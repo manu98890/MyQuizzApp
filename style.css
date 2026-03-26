@@ -280,39 +280,67 @@ td { padding: 18px; border-bottom: 1px solid #f1f3f4; }
     }
 }
 
-/* --- 🛑 9. උඹ ඉල්ලපු අලුත්ම Fixes (මෙතනයි වැඩේ තියෙන්නේ) --- */
+/* --- 🛑 9. Updated Fixes (Answers & Navigation) --- */
 
-/* 🔘 පිළිතුරු බොත්තම් එක යට එක ලස්සනට එන්න සහ ඉඩ වැඩි කරන්න */
+/* 🔘 පිළිතුරු බොත්තම් වල පෙනුම සහ අකුරු පේන්න හැදීම */
 .option-btn {
-    width: 100% !important; /* සම්පූර්ණ පළල ගන්න */
-    padding: 15px 20px !important;
-    margin-bottom: 12px !important; /* බටන් අතර පරතරය */
+    width: 100% !important;
+    padding: 16px 20px !important;
+    margin-bottom: 12px !important;
     border-radius: 12px !important;
-    border: 2px solid #eee !important;
+    border: 2px solid #ddd !important;
     text-align: left !important;
-    background-color: #f8f9fa;
+    background-color: #f8f9fa !important; /* බොත්තමේ පසුබිම් පාට */
+    color: #2c3e50 !important;           /* අකුරු වල පාට අනිවාර්යයෙන්ම කළු/තද නිල් වෙන්න */
     cursor: pointer;
     font-size: 16px;
+    font-weight: 600 !important;        /* අකුරු ටිකක් තදට පේන්න */
     transition: 0.2s;
-    display: block !important; /* එක ගොඩේ පේන එක නවත්වන්න */
+    display: block !important;
 }
 
-/* ✅ හරි උත්තරය වැටුණම (කොළ පාට) */
+/* Hover කරද්දී පාට පොඩ්ඩක් වෙනස් කරමු */
+.option-btn:hover:not(:disabled) {
+    background-color: #eef2f7 !important;
+    border-color: var(--primary-blue) !important;
+}
+
+/* ✅ හරි/වැරදි පාටවල් (අකුරු සුදු පාට වෙන්නම ඕනේ) */
 .option-btn.correct {
     background-color: #28a745 !important;
     color: white !important;
     border-color: #1e7e34 !important;
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
 }
 
-/* ❌ වැරදි උත්තරය වැටුණම (රතු පාට) */
 .option-btn.wrong {
     background-color: #dc3545 !important;
     color: white !important;
     border-color: #bd2130 !important;
-    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
 }
 
-/* Nav dots වලටත් පාට වැටෙන්න මේ ටික ඕනේ */
-.nav-dot.correct-nav { background-color: #28a745 !important; color: white !important; border: none; }
-.nav-dot.wrong-nav { background-color: #dc3545 !important; color: white !important; border: none; }
+/* 📍 Navigation Dots (උඩ තියෙන අංක) */
+.nav-dot {
+    width: 35px !important;
+    height: 35px !important;
+    border-radius: 8px !important;
+    background-color: #eee !important;
+    color: #333 !important;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* 🔵 Active Dot එක (දැන් තියෙන ප්‍රශ්නය) පැහැදිලිව පේන්න */
+.nav-dot.active {
+    background-color: var(--primary-blue) !important; /* Active එක නිල් පාට වෙන්න */
+    color: white !important;
+    border: 2px solid #1557b0 !important;
+    transform: scale(1.2);
+    box-shadow: 0 4px 10px rgba(26, 115, 232, 0.4);
+}
+
+.nav-dot.correct-nav { background-color: #28a745 !important; color: white !important; }
+.nav-dot.wrong-nav { background-color: #dc3545 !important; color: white !important; }
