@@ -1,4 +1,4 @@
-/* --- 1. CSS Variables (ලෙහෙසියෙන් පාටවල් වෙනස් කරන්න) --- */
+/* --- 1. CSS Variables --- */
 :root {
     --primary-blue: #1a73e8;
     --sidebar-bg: #ffffff;
@@ -10,74 +10,22 @@
 
 /* --- 2. Base Setup --- */
 * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-
-body {
-    background-color: var(--main-bg);
-    margin: 0;
-    color: var(--text-dark);
-}
+body { background-color: var(--main-bg); margin: 0; color: var(--text-dark); }
 
 /* --- 3. Sidebar (Desktop) --- */
 .dashboard-layout { display: flex; }
-
-.sidebar {
-    width: 260px;
-    background: var(--sidebar-bg);
-    padding: 30px 20px;
-    position: fixed;
-    height: 100vh;
-    border-right: 1px solid rgba(0,0,0,0.05);
-    z-index: 1000;
-}
-
-.sidebar h3 { 
-    color: var(--primary-blue); 
-    font-size: 24px; 
-    margin-bottom: 30px; 
-    text-align: center;
-    font-weight: 800;
-}
-
-.sidebar a, .sidebar-link {
-    display: flex;
-    align-items: center;
-    padding: 14px 18px;
-    color: #5f6368;
-    text-decoration: none;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.sidebar a:hover, .sidebar a.active {
-    background: var(--primary-blue);
-    color: white;
-    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
-}
+.sidebar { width: 260px; background: var(--sidebar-bg); padding: 30px 20px; position: fixed; height: 100vh; border-right: 1px solid rgba(0,0,0,0.05); z-index: 1000; }
+.sidebar h3 { color: var(--primary-blue); font-size: 24px; margin-bottom: 30px; text-align: center; font-weight: 800; }
+.sidebar a { display: flex; align-items: center; padding: 14px 18px; color: #5f6368; text-decoration: none; border-radius: 12px; margin-bottom: 10px; font-weight: 600; transition: all 0.3s ease; }
+.sidebar a:hover, .sidebar a.active { background: var(--primary-blue); color: white; box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3); }
 
 /* --- 4. Main Content Area --- */
-.main-content {
-    flex: 1;
-    margin-left: 260px;
-    padding: 40px;
-    min-height: 100vh;
-}
+.main-content { flex: 1; margin-left: 260px; padding: 40px; min-height: 100vh; }
 
 /* --- 5. Modern Quiz Grid --- */
-.quiz-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 25px;
-}
-
-.quiz-card {
-    background: white; border-radius: 20px; padding: 30px 20px; text-align: center;
-    position: relative; overflow: hidden; transition: all 0.4s;
-    box-shadow: var(--card-shadow); border: 1px solid rgba(255, 255, 255, 0.8);
-}
+.quiz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
+.quiz-card { background: white; border-radius: 20px; padding: 30px 20px; text-align: center; position: relative; overflow: hidden; transition: all 0.4s; box-shadow: var(--card-shadow); border: 1px solid rgba(255, 255, 255, 0.8); }
 .quiz-card:hover { transform: translateY(-10px); box-shadow: var(--hover-shadow); }
-
 
 /* Group 1: 1 - 10 */
 .cat-gk1 { border-top: 6px solid #ff9f43; }
@@ -140,104 +88,31 @@ body {
 .cat-gk50 { border-top: 6px solid #a55eea; }
 
 /* --- 6. Profile & Containers --- */
-.profile-card, .quiz-container, .login-container {
-    background: white; border-radius: 24px; padding: 40px;
-    box-shadow: var(--card-shadow); max-width: 800px; margin: 0 auto;
-}
-
-input, select {
-    background: #f8f9fa; border: 2px solid #f1f3f4; padding: 14px;
-    border-radius: 12px; width: 100%; margin-bottom: 15px;
-}
-
-button {
-    background: var(--primary-blue); color: white; border: none; padding: 15px 25px;
-    border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s;
-}
+.profile-card, .quiz-container, .login-container { background: white; border-radius: 24px; padding: 40px; box-shadow: var(--card-shadow); max-width: 800px; margin: 0 auto; }
+input, select { background: #f8f9fa; border: 2px solid #f1f3f4; padding: 14px; border-radius: 12px; width: 100%; margin-bottom: 15px; }
+button { background: var(--primary-blue); color: white; border: none; padding: 15px 25px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
 
 /* --- 📱 8. Mobile Optimization (Side Bar Fix) --- */
 @media (max-width: 768px) {
-    .dashboard-layout {
-        flex-direction: column;
-    }
-
-    .sidebar {
-        width: 100% !important;
-        height: auto !important;
-        position: sticky !important;
-        top: 0;
-        left: 0;
-        padding: 10px !important;
-        display: flex !important;
-        flex-direction: row !important;
-        overflow-x: auto !important;
-        white-space: nowrap;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        border-right: none !important;
-        border-bottom: 1px solid #eee;
-    }
-
+    .dashboard-layout { flex-direction: column; }
+    .sidebar { width: 100% !important; height: auto !important; position: sticky !important; top: 0; left: 0; padding: 10px !important; display: flex !important; flex-direction: row !important; overflow-x: auto !important; white-space: nowrap; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-right: none !important; border-bottom: 1px solid #eee; }
     .sidebar h3 { display: none; }
-
-    .sidebar a {
-        padding: 10px 15px !important;
-        margin-right: 5px !important;
-        margin-bottom: 0 !important;
-        font-size: 13px !important;
-        flex-shrink: 0;
-    }
-
-    .main-content {
-        margin-left: 0 !important;
-        padding: 15px !important;
-        width: 100%;
-    }
-
+    .sidebar a { padding: 10px 15px !important; margin-right: 5px !important; margin-bottom: 0 !important; font-size: 13px !important; flex-shrink: 0; }
+    .main-content { margin-left: 0 !important; padding: 15px !important; width: 100%; }
     .quiz-grid { grid-template-columns: 1fr; }
     .profile-card, .quiz-container { padding: 20px; border-radius: 18px; }
 }
 
 /* --- 🛑 9. Updated Fixes (Answers & Navigation) --- */
-.option-btn {
-    width: 100% !important; padding: 16px 20px !important; margin-bottom: 12px !important;
-    border-radius: 12px !important; border: 2px solid #ddd !important;
-    text-align: left !important; background-color: #ffffff !important;
-    color: #2c3e50 !important; cursor: pointer; font-size: 16px;
-    font-weight: 600 !important; transition: 0.2s; display: block !important;
-}
-
+.option-btn { width: 100% !important; padding: 16px 20px !important; margin-bottom: 12px !important; border-radius: 12px !important; border: 2px solid #ddd !important; text-align: left !important; background-color: #ffffff !important; color: #2c3e50 !important; cursor: pointer; font-size: 16px; font-weight: 600 !important; transition: 0.2s; display: block !important; }
 .option-btn.correct { background-color: #28a745 !important; color: white !important; }
 .option-btn.wrong { background-color: #dc3545 !important; color: white !important; }
-
 .nav-dot { width: 35px !important; height: 35px !important; border-radius: 8px !important; background-color: #eee !important; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .nav-dot.active { background-color: var(--primary-blue) !important; color: white !important; }
 
 /* --- ⏱️ 10. Timer & Score Visibility --- */
-.quiz-header-info {
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center;
-    background: #ffffff;
-    padding: 15px 25px; 
-    border-radius: 15px; 
-    margin-bottom: 25px;
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-}
-
-#timer, #score-count { 
-    font-size: 18px !important; 
-    font-weight: 800 !important; 
-    color: #1a73e8 !important; 
-    background: #f1f7ff; 
-    padding: 8px 18px; 
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border: 1px solid rgba(26, 115, 232, 0.1);
-}
-
+.quiz-header-info { display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 15px 25px; border-radius: 15px; margin-bottom: 25px; border: 1px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+#timer, #score-count { font-size: 18px !important; font-weight: 800 !important; color: #1a73e8 !important; background: #f1f7ff; padding: 8px 18px; border-radius: 50px; display: flex; align-items: center; gap: 10px; border: 1px solid rgba(26, 115, 232, 0.1); }
 #timer::before { content: "⏳"; font-size: 20px; }
 #score-count::before { content: "🏆"; font-size: 20px; }
 
@@ -245,50 +120,110 @@ button {
 .nav-dot.correct-nav { background-color: #28a745 !important; color: white !important; border: none !important; }
 .nav-dot.wrong-nav { background-color: #dc3545 !important; color: white !important; border: none !important; }
 
-/* --- 🏆 11. PREMIUM CARDS (ලීඩර්බෝඩ් සහ හිස්ට්‍රි සඳහා - 🛑 අලුතින් එක් කළා) --- */
+/* --- 🏆 13. SCREENSHOT විදියටම LEADERBOARD එක (🛑 මෙතනයි වැඩේ තියෙන්නේ) --- */
 
-/* Leaderboard සහ History ලැයිස්තුව */
-.premium-list { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-
-/* 🥇 Leaderboard Card */
-.leaderboard-card-premium {
-    background: white; border-radius: 18px; padding: 15px 20px;
-    display: flex; align-items: center; justify-content: space-between;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; transition: 0.3s;
-}
-.leaderboard-card-premium:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
-
-.rank-circle-premium {
-    width: 40px; height: 40px; background: #f8f9fa; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; color: var(--primary-blue); font-size: 18px;
+/* මුළු Leaderboard එක තියෙන තැන */
+.leaderboard-wrapper {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    margin-top: 20px;
 }
 
-/* මුල් තිදෙනාට විශේෂ වර්ණ */
-.rank-1 .rank-circle-premium { background: #ffd700; color: #fff; }
-.rank-2 .rank-circle-premium { background: #c0c0c0; color: #fff; }
-.rank-3 .rank-circle-premium { background: #cd7f32; color: #fff; }
-
-.user-details-premium { flex: 1; padding: 0 15px; }
-.user-name-premium { font-weight: 700; color: #333; font-size: 16px; display: block; }
-.user-meta-premium { font-size: 12px; color: #888; }
-
-.score-badge-premium {
-    background: var(--primary-blue); color: white; padding: 6px 15px;
-    border-radius: 12px; font-weight: 800; font-size: 14px;
+/* අර නිල් පාට Header එක */
+.leaderboard-header-row {
+    background: #1a73e8;
+    color: white;
+    display: grid;
+    grid-template-columns: 0.8fr 2fr 1.2fr; /* Rank, විස්තරය, ලකුණු */
+    padding: 15px;
+    font-weight: 800;
+    text-align: center;
 }
 
-/* 📊 Exam History Card */
-.history-card-premium {
-    background: white; border-radius: 18px; padding: 20px;
-    border-left: 6px solid var(--primary-blue); box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    display: flex; flex-direction: column; gap: 10px;
+/* එක පේළියක් (User Row) */
+.leaderboard-user-card {
+    display: grid;
+    grid-template-columns: 0.8fr 2fr 1.2fr;
+    align-items: center;
+    padding: 20px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    background: white;
 }
 
-.history-top-premium { display: flex; justify-content: space-between; align-items: center; }
-.history-date-premium { font-weight: 800; color: #444; font-size: 14px; }
-.history-cat-badge { background: #eef3ff; color: var(--primary-blue); padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; }
+/* Rank අංකය සහ Icon එක */
+.user-rank-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+.rank-medal { font-size: 24px; margin-bottom: -5px; }
 
-.history-bottom-premium { display: flex; justify-content: space-between; align-items: flex-end; }
-.history-score-premium { font-size: 24px; font-weight: 900; color: var(--primary-blue); }
-.history-time-premium { font-size: 13px; color: #666; font-weight: 600; }
+/* මැද තියෙන විස්තර ටික (Name, Email, Province) */
+.user-details-box {
+    padding-left: 10px;
+}
+.user-name-text {
+    font-size: 18px;
+    font-weight: 800;
+    color: #333;
+    display: block;
+    margin-bottom: 4px;
+}
+.user-email-text {
+    font-size: 13px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.user-province-text {
+    font-size: 13px;
+    color: #1a73e8;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 4px;
+}
+
+/* දකුණු පැත්තේ තියෙන ලකුණු Badge එක */
+.user-score-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.score-pill-screenshot {
+    background: #1a73e8;
+    color: white;
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 15px;
+    box-shadow: 0 4px 8px rgba(26, 115, 232, 0.2);
+}
+.time-taken-text {
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+/* Rank 1, 2, 3 වලට දාපු Highlights */
+.top-rank-bg { background-color: #fffdf0; }
+
+/* 📊 History එකත් මේ විදියටම Cards කරන්න */
+.history-card-v2 {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border: 1px solid #eee;
+}
