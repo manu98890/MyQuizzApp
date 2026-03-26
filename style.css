@@ -10,282 +10,71 @@
 
 /* --- 2. Base Setup --- */
 * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-
-body {
-    background-color: var(--main-bg);
-    margin: 0;
-    color: var(--text-dark);
-}
+body { background-color: var(--main-bg); margin: 0; color: var(--text-dark); }
 
 /* --- 3. Sidebar (Desktop) --- */
 .dashboard-layout { display: flex; }
-
 .sidebar {
-    width: 260px;
-    background: var(--sidebar-bg);
-    padding: 30px 20px;
-    position: fixed;
-    height: 100vh;
-    border-right: 1px solid rgba(0,0,0,0.05);
-    z-index: 1000;
+    width: 260px; background: var(--sidebar-bg); padding: 30px 20px;
+    position: fixed; height: 100vh; border-right: 1px solid rgba(0,0,0,0.05); z-index: 1000;
 }
-
-.sidebar h3 { 
-    color: var(--primary-blue); 
-    font-size: 24px; 
-    margin-bottom: 30px; 
-    text-align: center;
-    font-weight: 800;
-}
-
-.sidebar a, .sidebar-link {
-    display: flex;
-    align-items: center;
-    padding: 14px 18px;
-    color: #5f6368;
-    text-decoration: none;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.sidebar a:hover, .sidebar a.active {
-    background: var(--primary-blue);
-    color: white;
-    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
-}
+.sidebar h3 { color: var(--primary-blue); font-size: 24px; margin-bottom: 30px; text-align: center; font-weight: 800; }
+.sidebar a { display: flex; align-items: center; padding: 14px 18px; color: #5f6368; text-decoration: none; border-radius: 12px; margin-bottom: 10px; font-weight: 600; transition: all 0.3s ease; }
+.sidebar a:hover, .sidebar a.active { background: var(--primary-blue); color: white; box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3); }
 
 /* --- 4. Main Content Area --- */
-.main-content {
-    flex: 1;
-    margin-left: 260px;
-    padding: 40px;
-    min-height: 100vh;
-}
+.main-content { flex: 1; margin-left: 260px; padding: 40px; min-height: 100vh; }
 
 /* --- 5. Modern Quiz Grid --- */
-.quiz-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 25px;
-}
-
-.quiz-card {
-    background: white; border-radius: 20px; padding: 30px 20px; text-align: center;
-    position: relative; overflow: hidden; transition: all 0.4s;
-    box-shadow: var(--card-shadow); border: 1px solid rgba(255, 255, 255, 0.8);
-}
+.quiz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
+.quiz-card { background: white; border-radius: 20px; padding: 30px 20px; text-align: center; transition: 0.4s; box-shadow: var(--card-shadow); border: 1px solid rgba(255, 255, 255, 0.8); }
 .quiz-card:hover { transform: translateY(-10px); box-shadow: var(--hover-shadow); }
 
-
-/* Group 1: 1 - 10 */
-.cat-gk1 { border-top: 6px solid #ff9f43; }
-.cat-gk2 { border-top: 6px solid #ee5253; }
-.cat-gk3 { border-top: 6px solid #0abde3; }
-.cat-gk4 { border-top: 6px solid #10ac84; }
-.cat-gk5 { border-top: 6px solid #5f27cd; }
-.cat-gk6 { border-top: 6px solid #2ecc71; }
-.cat-gk7 { border-top: 6px solid #3498db; }
-.cat-gk8 { border-top: 6px solid #9b59b6; }
-.cat-gk9 { border-top: 6px solid #e67e22; }
-.cat-gk10 { border-top: 6px solid #1abc9c; }
-
-/* Group 2: 11 - 20 */
-.cat-gk11 { border-top: 6px solid #d35400; }
-.cat-gk12 { border-top: 6px solid #c0392b; }
-.cat-gk13 { border-top: 6px solid #8e44ad; }
-.cat-gk14 { border-top: 6px solid #2980b9; }
-.cat-gk15 { border-top: 6px solid #16a085; }
-.cat-gk16 { border-top: 6px solid #27ae60; }
-.cat-gk17 { border-top: 6px solid #f39c12; }
-.cat-gk18 { border-top: 6px solid #e74c3c; }
-.cat-gk19 { border-top: 6px solid #95a5a6; }
-.cat-gk20 { border-top: 6px solid #34495e; }
-
-/* Group 3: 21 - 30 */
-.cat-gk21 { border-top: 6px solid #ff6b6b; }
-.cat-gk22 { border-top: 6px solid #48dbfb; }
-.cat-gk23 { border-top: 6px solid #1dd1a1; }
-.cat-gk24 { border-top: 6px solid #feca57; }
-.cat-gk25 { border-top: 6px solid #5f27cd; }
-.cat-gk26 { border-top: 6px solid #54a0ff; }
-.cat-gk27 { border-top: 6px solid #00d2d3; }
-.cat-gk28 { border-top: 6px solid #ff9ff3; }
-.cat-gk29 { border-top: 6px solid #576574; }
-.cat-gk30 { border-top: 6px solid #222f3e; }
-
-/* Group 4: 31 - 40 */
-.cat-gk31 { border-top: 6px solid #45aaf2; }
-.cat-gk32 { border-top: 6px solid #4b7bec; }
-.cat-gk33 { border-top: 6px solid #a55eea; }
-.cat-gk34 { border-top: 6px solid #20bf6b; }
-.cat-gk35 { border-top: 6px solid #eb3b5a; }
-.cat-gk36 { border-top: 6px solid #fa8231; }
-.cat-gk37 { border-top: 6px solid #f7b731; }
-.cat-gk38 { border-top: 6px solid #26de81; }
-.cat-gk39 { border-top: 6px solid #0fb9b1; }
-.cat-gk40 { border-top: 6px solid #8854d0; }
-
-/* Group 5: 41 - 50 */
-.cat-gk41 { border-top: 6px solid #fc5c65; }
-.cat-gk42 { border-top: 6px solid #fd9644; }
-.cat-gk43 { border-top: 6px solid #fed330; }
-.cat-gk44 { border-top: 6px solid #26de81; }
-.cat-gk45 { border-top: 6px solid #2bcbba; }
-.cat-gk46 { border-top: 6px solid #eb3b5a; }
-.cat-gk47 { border-top: 6px solid #fa8231; }
-.cat-gk48 { border-top: 6px solid #45aaf2; }
-.cat-gk49 { border-top: 6px solid #4b7bec; }
-.cat-gk50 { border-top: 6px solid #a55eea; }
-/* ...අනෙක්වාටත් මෙහෙම දාන්න පුළුවන්... */
-
-/* --- 6. Profile & Containers --- */
-.profile-card, .quiz-container, .login-container {
-    background: white; border-radius: 24px; padding: 40px;
-    box-shadow: var(--card-shadow); max-width: 800px; margin: 0 auto;
-}
-
-input, select {
-    background: #f8f9fa; border: 2px solid #f1f3f4; padding: 14px;
-    border-radius: 12px; width: 100%; margin-bottom: 15px;
-}
-
-button {
-    background: var(--primary-blue); color: white; border: none; padding: 15px 25px;
-    border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s;
-}
-
-/* --- 📱 8. Mobile Optimization (Side Bar Fix - පට්ටම වැදගත්) --- */
+/* --- 📱 8. Mobile Optimization (Side Bar Fix) --- */
 @media (max-width: 768px) {
-    .dashboard-layout {
-        flex-direction: column; /* Sidebar එක සහ Content එක එක යට එක එන්න */
-    }
-
-    .sidebar {
-        width: 100% !important;
-        height: auto !important;
-        position: sticky !important; /* Sidebar එක උඩ පේළියට ගන්නවා */
-        top: 0;
-        left: 0;
-        padding: 10px !important;
-        display: flex !important;
-        flex-direction: row !important; /* ලින්ක් ටික හරහට ගන්නවා */
-        overflow-x: auto !important; /* දෙපැත්තට scroll කරන්න පුළුවන් */
-        white-space: nowrap;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        border-right: none !important;
-        border-bottom: 1px solid #eee;
-    }
-
-    .sidebar h3 { display: none; } /* Mobile එකේදී Logo එක හංගමු */
-
-    .sidebar a {
-        padding: 10px 15px !important;
-        margin-right: 5px !important;
-        margin-bottom: 0 !important;
-        font-size: 13px !important;
-        flex-shrink: 0; /* ලින්ක් පොඩි වෙන්න දෙන්නේ නෑ */
-    }
-
-    .main-content {
-        margin-left: 0 !important; /* Sidebar එකට තිබුණු ඉඩ අයින් කරනවා */
-        padding: 15px !important;
-        width: 100%;
-    }
-
+    .dashboard-layout { flex-direction: column; }
+    .sidebar { width: 100% !important; height: auto !important; position: sticky !important; top: 0; left: 0; padding: 10px !important; display: flex !important; flex-direction: row !important; overflow-x: auto !important; white-space: nowrap; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-right: none !important; border-bottom: 1px solid #eee; }
+    .sidebar h3 { display: none; }
+    .sidebar a { padding: 10px 15px !important; margin-right: 5px !important; margin-bottom: 0 !important; font-size: 13px !important; flex-shrink: 0; }
+    .main-content { margin-left: 0 !important; padding: 15px !important; width: 100%; }
     .quiz-grid { grid-template-columns: 1fr; }
-    .profile-card, .quiz-container { padding: 20px; border-radius: 18px; }
 }
 
 /* --- 🛑 9. Updated Fixes (Answers & Navigation) --- */
-.option-btn {
-    width: 100% !important; padding: 16px 20px !important; margin-bottom: 12px !important;
-    border-radius: 12px !important; border: 2px solid #ddd !important;
-    text-align: left !important; background-color: #ffffff !important;
-    color: #2c3e50 !important; cursor: pointer; font-size: 16px;
-    font-weight: 600 !important; transition: 0.2s; display: block !important;
-}
-
+.option-btn { width: 100% !important; padding: 16px 20px !important; margin-bottom: 12px !important; border-radius: 12px !important; border: 2px solid #ddd !important; text-align: left !important; background-color: #ffffff !important; color: #2c3e50 !important; font-size: 16px; font-weight: 600 !important; transition: 0.2s; display: block !important; }
 .option-btn.correct { background-color: #28a745 !important; color: white !important; }
 .option-btn.wrong { background-color: #dc3545 !important; color: white !important; }
-
-/* 🔵 Active Dot Fix */
 .nav-dot { width: 35px !important; height: 35px !important; border-radius: 8px !important; background-color: #eee !important; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .nav-dot.active { background-color: var(--primary-blue) !important; color: white !important; }
+.nav-dot.correct-nav { background-color: #28a745 !important; color: white !important; }
+.nav-dot.wrong-nav { background-color: #dc3545 !important; color: white !important; }
 
-/* --- ⏱️ 10. Timer & Score Visibility (Premium Look) --- */
-.quiz-header-info {
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center;
-    background: #ffffff; /* සුදු පාට පසුබිම */
-    padding: 15px 25px; 
-    border-radius: 15px; 
-    margin-bottom: 25px;
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+/* --- ⏱️ 10. Timer & Score Visibility --- */
+.quiz-header-info { display: flex; justify-content: space-between; align-items: center; background: #f1f3f4; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; }
+#timer, #score-count { font-size: 16px !important; font-weight: 800 !important; color: #1a73e8 !important; background: white; padding: 6px 12px; border-radius: 50px; }
+
+/* --- 🏆 11. PREMIUM LEADERBOARD (Card Style) --- */
+.leaderboard-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+.leaderboard-item {
+    background: white; border-radius: 15px; padding: 15px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #eee; transition: 0.3s;
 }
+.leaderboard-item:hover { transform: scale(1.02); box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+.leaderboard-rank { font-size: 20px; font-weight: 800; width: 40px; color: #888; }
+.leaderboard-info { flex: 1; padding-left: 10px; }
+.leaderboard-name { font-weight: 700; color: #333; font-size: 16px; display: block; }
+.leaderboard-province { font-size: 12px; color: #1a73e8; font-weight: 600; }
+.leaderboard-score { background: #1a73e8; color: white; padding: 5px 12px; border-radius: 10px; font-weight: 800; font-size: 14px; }
 
-#timer, #score-count { 
-    font-size: 18px !important; 
-    font-weight: 800 !important; 
-    color: #1a73e8 !important; 
-    background: #f1f7ff; /* ලා නිල් පාට පසුබිමක් */
-    padding: 8px 18px; 
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border: 1px solid rgba(26, 115, 232, 0.1);
+/* --- 📊 12. EXAM HISTORY (Modern Look) --- */
+.history-card {
+    background: white; border-radius: 15px; padding: 20px; margin-bottom: 15px;
+    border-left: 6px solid var(--primary-blue); box-shadow: var(--card-shadow);
 }
-
-/* 🏆 කුසලානය සහ ⏳ ඔරලෝසුව තවත් ලොකුවට පේන්න */
-#timer::before { content: "⏳"; font-size: 20px; }
-#score-count::before { content: "🏆"; font-size: 20px; }
-
-@media (max-width: 600px) {
-    .quiz-header-info {
-        padding: 10px;
-        margin-bottom: 15px;
-    }
-    #timer, #score-count {
-        font-size: 14px !important;
-        padding: 6px 12px;
-    }
-}
-
-/* --- 📍 Navigation Dots Colors --- */
-.nav-dot.correct-nav {
-    background-color: #28a745 !important; /* කොළ පාට */
-    color: white !important;
-    border: none !important;
-}
-
-.nav-dot.wrong-nav {
-    background-color: #dc3545 !important; /* රතු පාට */
-    color: white !important;
-    border: none !important;
-}
-
-/* --- 🏆 Leaderboard Mobile Fix (Daraz Look) --- */
-@media (max-width: 768px) {
-    .leaderboard-row {
-        background: white;
-        margin-bottom: 12px;
-        border-radius: 15px;
-        padding: 15px;
-        display: flex;
-        align-items: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        border-left: 5px solid #1a73e8;
-    }
-    
-    .rank-circle {
-        width: 35px; height: 35px;
-        background: #f1f3f4;
-        border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        font-weight: 800; margin-right: 15px;
-    }
-}
+.history-header { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #f1f1f1; padding-bottom: 8px; }
+.history-date { font-weight: 700; color: #888; font-size: 13px; }
+.history-cat { background: #eee; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 800; }
+.history-body { display: flex; justify-content: space-between; align-items: center; }
+.history-score { font-size: 22px; font-weight: 800; color: var(--primary-blue); }
+.history-time { color: #666; font-size: 13px; }
