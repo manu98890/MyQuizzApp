@@ -1,81 +1,90 @@
-/* --- 1. පද්ධති සැකසුම් (Variables) --- */
-:root {
-    --primary: #1a73e8;
-    --success: #28a745;
-    --danger: #dc3545;
-    --bg: #f4f7f9;
-    --white: #ffffff;
-    --sidebar-width: 260px;
-    --shadow: 0 4px 20px rgba(0,0,0,0.08);
+/* --- 🔐 LOGIN & REGISTER STYLES --- */
+
+/* Login/Register පිටුවලදී body එක මැදට ගන්න */
+.auth-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    background: #f0f2f5;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #333; line-height: 1.6; }
-
-/* --- 2. Dashboard Layout --- */
-.dashboard-layout { display: flex; min-height: 100vh; }
-
-/* Sidebar (Desktop එකේදී වම් පැත්තේ) */
-.sidebar {
-    width: var(--sidebar-width); background: var(--white); padding: 30px 20px;
-    position: fixed; height: 100vh; border-right: 1px solid #eee; z-index: 1000; transition: 0.3s;
+.login-container, .register-container {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px; /* Desktop එකේදී ලස්සන ගාණ */
+    text-align: center;
 }
-.sidebar h3 { color: var(--primary); text-align: center; margin-bottom: 25px; font-weight: 800; }
-.sidebar a {
-    display: flex; align-items: center; padding: 12px 15px; color: #555;
-    text-decoration: none; border-radius: 12px; margin-bottom: 8px; font-weight: 600; transition: 0.3s;
+
+.login-container h2 {
+    color: var(--primary);
+    margin-bottom: 25px;
+    font-size: 28px;
+    font-weight: 800;
 }
-.sidebar a:hover, .sidebar a.active { background: var(--primary); color: white !important; }
 
-/* Main Area */
-.main-content { flex: 1; margin-left: var(--sidebar-width); padding: 40px; transition: 0.3s; }
-
-/* --- 3. Modern Quiz Cards --- */
-.quiz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
-.quiz-card {
-    background: white; border-radius: 20px; padding: 35px 20px; text-align: center;
-    box-shadow: var(--shadow); border: 1px solid #f0f0f0; transition: 0.3s;
+/* Input Boxes - එක යට එක ලස්සනට එන්න */
+.login-container input, .register-container input {
+    width: 100% !important;
+    padding: 14px;
+    margin-bottom: 15px;
+    border: 2px solid #f1f3f4;
+    border-radius: 12px;
+    font-size: 16px;
+    background: #f8f9fa;
+    transition: 0.3s;
+    display: block; /* අනිවාර්යයෙන් එක යට එක එන්න */
 }
-.quiz-card:hover { transform: translateY(-8px); border-color: var(--primary); }
 
-/* GK 1-50 Colors */
-.quiz-card:nth-child(10n+1) { border-top: 6px solid #FF5733; }
-.quiz-card:nth-child(10n+2) { border-top: 6px solid #33FF57; }
-.quiz-card:nth-child(10n+3) { border-top: 6px solid #3357FF; }
-/* ... (අනෙක්වාටත් nth-child එකෙන් auto apply වෙනවා) ... */
-
-/* --- 4. Quiz Logic (පාටවල් පේන කොටස) --- */
-.option-btn {
-    width: 100%; padding: 16px; margin: 10px 0; border-radius: 12px; border: 2px solid #eee;
-    background: #f8f9fa; cursor: pointer; text-align: left; font-size: 16px; transition: 0.2s;
+.login-container input:focus {
+    border-color: var(--primary);
+    background: white;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.1);
 }
-.option-btn.correct { background-color: var(--success) !important; color: white !important; border-color: #1e7e34 !important; font-weight: bold; }
-.option-btn.wrong { background-color: var(--danger) !important; color: white !important; border-color: #bd2130 !important; font-weight: bold; }
 
-/* --- 📱 5. MOBILE RESPONSIVE (🛑 පට්ටම වැදගත්) --- */
-@media (max-width: 768px) {
-    /* Sidebar එක උඩට ගන්නවා (Daraz Categories වගේ) */
-    .sidebar {
-        width: 100%; height: auto; position: sticky; top: 0; display: flex;
-        overflow-x: auto; padding: 10px; border-right: none; border-bottom: 1px solid #eee;
+/* Login Button */
+.login-container button {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.login-container button:hover {
+    background: #1557b0;
+    transform: translateY(-2px);
+}
+
+/* Register Link */
+.auth-link {
+    display: block;
+    margin-top: 20px;
+    color: #555;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.auth-link span {
+    color: var(--primary);
+    font-weight: bold;
+}
+
+/* 📱 Mobile එකේදී Login එක තවත් පිරිසිදුවට */
+@media (max-width: 480px) {
+    .login-container {
+        padding: 30px 20px;
+        box-shadow: none; /* Mobile එකේදී clean look එකක් ගන්න */
     }
-    .sidebar h3, .sidebar hr { display: none; }
-    .sidebar a { white-space: nowrap; margin-right: 8px; margin-bottom: 0; padding: 10px 15px; font-size: 13px; }
-
-    .main-content { margin-left: 0 !important; padding: 20px; }
-
-    /* Table එක Phone එකේදී පේළියට පල්ලෙහාට Cards විදියට වැටෙන්න (Fix for image_8c2626) */
-    .table-responsive table, thead, tbody, th, td, tr { display: block; }
-    thead tr { position: absolute; top: -9999px; left: -9999px; }
-    tr { background: white; border-radius: 15px; margin-bottom: 15px; padding: 15px; box-shadow: var(--shadow); border: 1px solid #eee; }
-    td { 
-        border: none; border-bottom: 1px solid #f1f1f1; position: relative;
-        padding-left: 50% !important; text-align: right !important; min-height: 45px;
-        display: flex; align-items: center; justify-content: flex-end;
-    }
-    td:before { 
-        position: absolute; left: 15px; width: 45%; content: attr(data-label);
-        font-weight: bold; color: var(--primary); text-align: left;
-    }
-    td:last-child { border-bottom: none; }
 }
