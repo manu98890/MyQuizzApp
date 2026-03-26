@@ -92,6 +92,46 @@ body { background-color: var(--main-bg); margin: 0; color: var(--text-dark); }
 input, select { background: #f8f9fa; border: 2px solid #f1f3f4; padding: 14px; border-radius: 12px; width: 100%; margin-bottom: 15px; }
 button { background: var(--primary-blue); color: white; border: none; padding: 15px 25px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
 
+/* --- 7. Tables (General) --- */
+.table-responsive {
+    background: white;
+    border-radius: 15px;
+    box-shadow: var(--card-shadow);
+    overflow: hidden; /* Scroll එක නැති කරන්න */
+}
+
+table { width: 100%; border-collapse: collapse; }
+th { background: #1a73e8; color: white !important; padding: 12px 8px; font-size: 14px; text-align: center; }
+td { padding: 12px 8px; border-bottom: 1px solid #f1f3f4; text-align: center; font-size: 14px; }
+
+* 🔵 Score Pill Style (Daraz Look) */
+.score-pill {
+    background: #1a73e8; color: white; padding: 4px 12px;
+    border-radius: 20px; font-weight: 800; font-size: 13px;
+    display: inline-block;
+/* --- 📱 8. Mobile Optimization (🛑 මෙතනයි උඹේ ඉල්ලීමට අනුව හැදුවේ) --- */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100% !important; height: auto !important; position: sticky !important; top: 0;
+        display: flex !important; flex-direction: row !important; overflow-x: auto !important;
+        padding: 8px !important; white-space: nowrap; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        z-index: 1001; background: #fff;
+    }
+    .sidebar h3, .sidebar hr { display: none; }
+    .sidebar a { padding: 8px 12px !important; margin-right: 6px !important; margin-bottom: 0 !important; font-size: 12px !important; flex-shrink: 0; }
+
+    .main-content { margin-left: 0 !important; padding: 12px !important; width: 100%; }
+
+    /* 📊 Leaderboard/History Table Compression */
+    th, td { padding: 8px 4px !important; font-size: 12px !important; }
+    
+    /* Content Boxes Spacing */
+    .profile-card, .quiz-container, .table-responsive { 
+        padding: 15px !important; 
+        border-radius: 15px !important; 
+        width: 100% !important;
+    }
+
 /* --- 📱 8. Mobile Optimization (Side Bar Fix) --- */
 @media (max-width: 768px) {
     .dashboard-layout { flex-direction: column; }
