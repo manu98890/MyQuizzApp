@@ -1,4 +1,4 @@
-/* --- 1. CSS Variables (ලෙහෙසියෙන් පාටවල් වෙනස් කරන්න) --- */
+/* --- 1. CSS Variables --- */
 :root {
     --primary-blue: #1a73e8;
     --sidebar-bg: #ffffff;
@@ -64,7 +64,7 @@ body {
     min-height: 100vh;
 }
 
-/* --- 5. Modern Quiz Grid & Multi-Color Cards --- */
+/* --- 5. Modern Quiz Grid --- */
 .quiz-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -72,325 +72,94 @@ body {
 }
 
 .quiz-card {
-    background: white;
-    border-radius: 20px;
-    padding: 30px 20px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: var(--card-shadow);
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: white; border-radius: 20px; padding: 30px 20px; text-align: center;
+    position: relative; overflow: hidden; transition: all 0.4s;
+    box-shadow: var(--card-shadow); border: 1px solid rgba(255, 255, 255, 0.8);
 }
+.quiz-card:hover { transform: translateY(-10px); box-shadow: var(--hover-shadow); }
 
-.quiz-card:hover {
-    transform: translateY(-10px);
-    box-shadow: var(--hover-shadow);
-}
-
-/* Card Icons */
-.quiz-card .icon {
-    font-size: 45px;
-    margin-bottom: 15px;
-    display: inline-block;
-    padding: 15px;
-    border-radius: 50%;
-    background: #f8f9fa;
-}
-
-/* Group 1: 1 - 10 */
-.cat-gk1 { border-top: 6px solid #ff9f43; }
-.cat-gk2 { border-top: 6px solid #ee5253; }
-.cat-gk3 { border-top: 6px solid #0abde3; }
-.cat-gk4 { border-top: 6px solid #10ac84; }
+/* GK Colors 1-50 (උදාහරණ කිහිපයක්) */
+.cat-gk1 { border-top: 6px solid #ff9f43; } .cat-gk2 { border-top: 6px solid #ee5253; }
+.cat-gk3 { border-top: 6px solid #0abde3; } .cat-gk4 { border-top: 6px solid #10ac84; }
 .cat-gk5 { border-top: 6px solid #5f27cd; }
-.cat-gk6 { border-top: 6px solid #2ecc71; }
-.cat-gk7 { border-top: 6px solid #3498db; }
-.cat-gk8 { border-top: 6px solid #9b59b6; }
-.cat-gk9 { border-top: 6px solid #e67e22; }
-.cat-gk10 { border-top: 6px solid #1abc9c; }
-
-/* Group 2: 11 - 20 */
-.cat-gk11 { border-top: 6px solid #d35400; }
-.cat-gk12 { border-top: 6px solid #c0392b; }
-.cat-gk13 { border-top: 6px solid #8e44ad; }
-.cat-gk14 { border-top: 6px solid #2980b9; }
-.cat-gk15 { border-top: 6px solid #16a085; }
-.cat-gk16 { border-top: 6px solid #27ae60; }
-.cat-gk17 { border-top: 6px solid #f39c12; }
-.cat-gk18 { border-top: 6px solid #e74c3c; }
-.cat-gk19 { border-top: 6px solid #95a5a6; }
-.cat-gk20 { border-top: 6px solid #34495e; }
-
-/* Group 3: 21 - 30 */
-.cat-gk21 { border-top: 6px solid #ff6b6b; }
-.cat-gk22 { border-top: 6px solid #48dbfb; }
-.cat-gk23 { border-top: 6px solid #1dd1a1; }
-.cat-gk24 { border-top: 6px solid #feca57; }
-.cat-gk25 { border-top: 6px solid #5f27cd; }
-.cat-gk26 { border-top: 6px solid #54a0ff; }
-.cat-gk27 { border-top: 6px solid #00d2d3; }
-.cat-gk28 { border-top: 6px solid #ff9ff3; }
-.cat-gk29 { border-top: 6px solid #576574; }
-.cat-gk30 { border-top: 6px solid #222f3e; }
-
-/* Group 4: 31 - 40 */
-.cat-gk31 { border-top: 6px solid #45aaf2; }
-.cat-gk32 { border-top: 6px solid #4b7bec; }
-.cat-gk33 { border-top: 6px solid #a55eea; }
-.cat-gk34 { border-top: 6px solid #20bf6b; }
-.cat-gk35 { border-top: 6px solid #eb3b5a; }
-.cat-gk36 { border-top: 6px solid #fa8231; }
-.cat-gk37 { border-top: 6px solid #f7b731; }
-.cat-gk38 { border-top: 6px solid #26de81; }
-.cat-gk39 { border-top: 6px solid #0fb9b1; }
-.cat-gk40 { border-top: 6px solid #8854d0; }
-
-/* Group 5: 41 - 50 */
-.cat-gk41 { border-top: 6px solid #fc5c65; }
-.cat-gk42 { border-top: 6px solid #fd9644; }
-.cat-gk43 { border-top: 6px solid #fed330; }
-.cat-gk44 { border-top: 6px solid #26de81; }
-.cat-gk45 { border-top: 6px solid #2bcbba; }
-.cat-gk46 { border-top: 6px solid #eb3b5a; }
-.cat-gk47 { border-top: 6px solid #fa8231; }
-.cat-gk48 { border-top: 6px solid #45aaf2; }
-.cat-gk49 { border-top: 6px solid #4b7bec; }
-.cat-gk50 { border-top: 6px solid #a55eea; }
-
-.quiz-card h4 { font-size: 18px; margin: 10px 0; color: #2c3e50; }
-.quiz-card p { font-size: 13px; color: #7f8c8d; margin-bottom: 20px; }
-
-.start-link {
-    display: inline-block;
-    background: #f1f3f4;
-    color: var(--primary-blue);
-    padding: 8px 20px;
-    border-radius: 50px;
-    font-size: 13px;
-    font-weight: 700;
-    transition: 0.3s;
-}
-
-.quiz-card:hover .start-link {
-    background: var(--primary-blue);
-    color: white;
-}
 
 /* --- 6. Profile & Containers --- */
 .profile-card, .quiz-container, .login-container {
-    background: white;
-    border-radius: 24px;
-    padding: 40px;
-    box-shadow: var(--card-shadow);
-    max-width: 800px;
-    margin: 0 auto;
+    background: white; border-radius: 24px; padding: 40px;
+    box-shadow: var(--card-shadow); max-width: 800px; margin: 0 auto;
 }
 
 input, select {
-    background: #f8f9fa;
-    border: 2px solid #f1f3f4;
-    padding: 14px;
-    border-radius: 12px;
-    width: 100%;
-    margin-bottom: 15px;
-    transition: 0.3s;
-}
-
-input:focus {
-    border-color: var(--primary-blue);
-    background: white;
-    outline: none;
+    background: #f8f9fa; border: 2px solid #f1f3f4; padding: 14px;
+    border-radius: 12px; width: 100%; margin-bottom: 15px;
 }
 
 button {
-    background: var(--primary-blue);
-    color: white;
-    border: none;
-    padding: 15px 25px;
-    border-radius: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.3s;
+    background: var(--primary-blue); color: white; border: none; padding: 15px 25px;
+    border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s;
 }
 
-button:hover {
-    filter: brightness(1.1);
-    transform: translateY(-2px);
-}
-
-/* --- 7. Responsive Tables --- */
-.table-responsive {
-    background: white;
-    border-radius: 20px;
-    padding: 10px;
-    box-shadow: var(--card-shadow);
-    overflow-x: auto;
-}
-
-table { width: 100%; border-collapse: collapse; min-width: 600px; }
-th { padding: 18px; color: #5f6368; font-weight: 700; text-align: left; border-bottom: 2px solid #f1f3f4; }
-td { padding: 18px; border-bottom: 1px solid #f1f3f4; }
-
-/* --- 📱 8. Mobile Optimization (පට්ටම වැදගත්) --- */
+/* --- 📱 8. Mobile Optimization (Side Bar Fix - පට්ටම වැදගත්) --- */
 @media (max-width: 768px) {
-    .sidebar {
-        width: 100%;
-        height: auto;
-        position: sticky;
-        top: 0;
-        padding: 10px;
-        display: flex;
-        overflow-x: auto; /* Side scroll links */
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    .dashboard-layout {
+        flex-direction: column; /* Sidebar එක සහ Content එක එක යට එක එන්න */
     }
 
-    .sidebar h3, .sidebar hr { display: none; }
+    .sidebar {
+        width: 100% !important;
+        height: auto !important;
+        position: sticky !important; /* Sidebar එක උඩ පේළියට ගන්නවා */
+        top: 0;
+        left: 0;
+        padding: 10px !important;
+        display: flex !important;
+        flex-direction: row !important; /* ලින්ක් ටික හරහට ගන්නවා */
+        overflow-x: auto !important; /* දෙපැත්තට scroll කරන්න පුළුවන් */
+        white-space: nowrap;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-right: none !important;
+        border-bottom: 1px solid #eee;
+    }
+
+    .sidebar h3 { display: none; } /* Mobile එකේදී Logo එක හංගමු */
 
     .sidebar a {
-        white-space: nowrap;
-        padding: 10px 15px;
-        margin-right: 10px;
-        margin-bottom: 0;
-        font-size: 13px;
+        padding: 10px 15px !important;
+        margin-right: 5px !important;
+        margin-bottom: 0 !important;
+        font-size: 13px !important;
+        flex-shrink: 0; /* ලින්ක් පොඩි වෙන්න දෙන්නේ නෑ */
     }
 
     .main-content {
-        margin-left: 0;
-        padding: 20px;
+        margin-left: 0 !important; /* Sidebar එකට තිබුණු ඉඩ අයින් කරනවා */
+        padding: 15px !important;
+        width: 100%;
     }
 
-    .quiz-grid {
-        grid-template-columns: 1fr; /* Mobile එකේ එක කාඩ් එකයි */
-    }
-
-    .profile-card, .quiz-container {
-        padding: 25px 20px;
-        border-radius: 18px;
-    }
-    
-    #question-nav {
-        gap: 4px;
-    }
-    
-    .nav-dot {
-        width: 28px;
-        height: 28px;
-        font-size: 11px;
-    }
+    .quiz-grid { grid-template-columns: 1fr; }
+    .profile-card, .quiz-container { padding: 20px; border-radius: 18px; }
 }
 
 /* --- 🛑 9. Updated Fixes (Answers & Navigation) --- */
-
-/* 🔘 පිළිතුරු බොත්තම් වල පෙනුම සහ අකුරු පේන්න හැදීම */
 .option-btn {
-    width: 100% !important;
-    padding: 16px 20px !important;
-    margin-bottom: 12px !important;
-    border-radius: 12px !important;
-    border: 2px solid #ddd !important;
-    text-align: left !important;
-    background-color: #981dd1 !important; /* බොත්තමේ පසුබිම් පාට */
-    color: #2c3e50 !important;           /* අකුරු වල පාට අනිවාර්යයෙන්ම කළු/තද නිල් වෙන්න */
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600 !important;        /* අකුරු ටිකක් තදට පේන්න */
-    transition: 0.2s;
-    display: block !important;
+    width: 100% !important; padding: 16px 20px !important; margin-bottom: 12px !important;
+    border-radius: 12px !important; border: 2px solid #ddd !important;
+    text-align: left !important; background-color: #ffffff !important;
+    color: #2c3e50 !important; cursor: pointer; font-size: 16px;
+    font-weight: 600 !important; transition: 0.2s; display: block !important;
 }
 
-/* Hover කරද්දී පාට පොඩ්ඩක් වෙනස් කරමු */
-.option-btn:hover:not(:disabled) {
-    background-color: #2671bd !important;
-    border-color: var(--primary-blue) !important;
-}
+.option-btn.correct { background-color: #28a745 !important; color: white !important; }
+.option-btn.wrong { background-color: #dc3545 !important; color: white !important; }
 
-/* ✅ හරි/වැරදි පාටවල් (අකුරු සුදු පාට වෙන්නම ඕනේ) */
-.option-btn.correct {
-    background-color: #28a745 !important;
-    color: blue !important;
-    border-color: #1e7e34 !important;
-}
+/* 🔵 Active Dot Fix */
+.nav-dot { width: 35px !important; height: 35px !important; border-radius: 8px !important; background-color: #eee !important; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.nav-dot.active { background-color: var(--primary-blue) !important; color: white !important; }
 
-.option-btn.wrong {
-    background-color: #dc3545 !important;
-    color: white !important;
-    border-color: #bd2130 !important;
-}
-
-/* 📍 Navigation Dots (උඩ තියෙන අංක) */
-.nav-dot {
-    width: 35px !important;
-    height: 35px !important;
-    border-radius: 8px !important;
-    background-color: #eee !important;
-    color: #333 !important;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-/* 🔵 Active Dot එක (දැන් තියෙන ප්‍රශ්නය) පැහැදිලිව පේන්න */
-.nav-dot.active {
-    background-color: var(--primary-blue) !important; /* Active එක නිල් පාට වෙන්න */
-    color: white !important;
-    border: 2px solid #1557b0 !important;
-    transform: scale(1.2);
-    box-shadow: 0 4px 10px rgba(26, 115, 232, 0.4);
-}
-
-.nav-dot.correct-nav { background-color: #28a745 !important; color: white !important; }
-.nav-dot.wrong-nav { background-color: #dc3545 !important; color: white !important; }
 /* --- ⏱️ 10. Timer & Score Visibility Fix --- */
-
-/* කාලය සහ ලකුණු තියෙන container එක */
 .quiz-header-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #f1f3f4;
-    padding: 12px 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    font-family: 'Segoe UI', sans-serif;
+    display: flex; justify-content: space-between; align-items: center;
+    background: #f1f3f4; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px;
 }
-
-/* "කාලය" සහ "ලකුණු" වෙන වෙනම ලස්සන කරමු */
-#timer, #score-count, .quiz-stats {
-    font-size: 18px !important;
-    font-weight: 800 !important;
-    color: #1a73e8 !important;
-    background: white;
-    padding: 6px 15px;
-    border-radius: 50px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-/* Timer එක ඉවර වෙන්න ලඟ නම් රතු වෙන්න (පොඩි ගැම්මක්) */
-.timer-low {
-    color: #dc3545 !important;
-    animation: blink 1s infinite;
-}
-
-@keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-}
-
-/* Mobile එකේදී stats ටික ලස්සනට පේන්න */
-@media (max-width: 600px) {
-    .quiz-header-info {
-        padding: 10px;
-        flex-direction: row; /* එක පේළියක තියමු */
-    }
-    #timer, #score-count {
-        font-size: 15px !important;
-    }
-}
+#timer, #score-count { font-size: 16px !important; font-weight: 800 !important; color: #1a73e8 !important; background: white; padding: 6px 12px; border-radius: 50px; }
