@@ -78,13 +78,66 @@ body {
 }
 .quiz-card:hover { transform: translateY(-10px); box-shadow: var(--hover-shadow); }
 
-/* GK Colors 1-50 (උඹේ පරණ ටික) */
-.cat-gk1 { border-top: 6px solid #ff9f43; } .cat-gk2 { border-top: 6px solid #ee5253; }
-.cat-gk3 { border-top: 6px solid #0abde3; } .cat-gk4 { border-top: 6px solid #10ac84; }
-.cat-gk5 { border-top: 6px solid #5f27cd; } .cat-gk6 { border-top: 6px solid #2ecc71; }
-.cat-gk7 { border-top: 6px solid #3498db; } .cat-gk8 { border-top: 6px solid #9b59b6; }
-.cat-gk9 { border-top: 6px solid #e67e22; } .cat-gk10 { border-top: 6px solid #1abc9c; }
-/* ... (අනෙක්වාටත් මෙහෙම තියෙන්න ඕනේ) ... */
+
+/* Group 1: 1 - 10 */
+.cat-gk1 { border-top: 6px solid #ff9f43; }
+.cat-gk2 { border-top: 6px solid #ee5253; }
+.cat-gk3 { border-top: 6px solid #0abde3; }
+.cat-gk4 { border-top: 6px solid #10ac84; }
+.cat-gk5 { border-top: 6px solid #5f27cd; }
+.cat-gk6 { border-top: 6px solid #2ecc71; }
+.cat-gk7 { border-top: 6px solid #3498db; }
+.cat-gk8 { border-top: 6px solid #9b59b6; }
+.cat-gk9 { border-top: 6px solid #e67e22; }
+.cat-gk10 { border-top: 6px solid #1abc9c; }
+
+/* Group 2: 11 - 20 */
+.cat-gk11 { border-top: 6px solid #d35400; }
+.cat-gk12 { border-top: 6px solid #c0392b; }
+.cat-gk13 { border-top: 6px solid #8e44ad; }
+.cat-gk14 { border-top: 6px solid #2980b9; }
+.cat-gk15 { border-top: 6px solid #16a085; }
+.cat-gk16 { border-top: 6px solid #27ae60; }
+.cat-gk17 { border-top: 6px solid #f39c12; }
+.cat-gk18 { border-top: 6px solid #e74c3c; }
+.cat-gk19 { border-top: 6px solid #95a5a6; }
+.cat-gk20 { border-top: 6px solid #34495e; }
+
+/* Group 3: 21 - 30 */
+.cat-gk21 { border-top: 6px solid #ff6b6b; }
+.cat-gk22 { border-top: 6px solid #48dbfb; }
+.cat-gk23 { border-top: 6px solid #1dd1a1; }
+.cat-gk24 { border-top: 6px solid #feca57; }
+.cat-gk25 { border-top: 6px solid #5f27cd; }
+.cat-gk26 { border-top: 6px solid #54a0ff; }
+.cat-gk27 { border-top: 6px solid #00d2d3; }
+.cat-gk28 { border-top: 6px solid #ff9ff3; }
+.cat-gk29 { border-top: 6px solid #576574; }
+.cat-gk30 { border-top: 6px solid #222f3e; }
+
+/* Group 4: 31 - 40 */
+.cat-gk31 { border-top: 6px solid #45aaf2; }
+.cat-gk32 { border-top: 6px solid #4b7bec; }
+.cat-gk33 { border-top: 6px solid #a55eea; }
+.cat-gk34 { border-top: 6px solid #20bf6b; }
+.cat-gk35 { border-top: 6px solid #eb3b5a; }
+.cat-gk36 { border-top: 6px solid #fa8231; }
+.cat-gk37 { border-top: 6px solid #f7b731; }
+.cat-gk38 { border-top: 6px solid #26de81; }
+.cat-gk39 { border-top: 6px solid #0fb9b1; }
+.cat-gk40 { border-top: 6px solid #8854d0; }
+
+/* Group 5: 41 - 50 */
+.cat-gk41 { border-top: 6px solid #fc5c65; }
+.cat-gk42 { border-top: 6px solid #fd9644; }
+.cat-gk43 { border-top: 6px solid #fed330; }
+.cat-gk44 { border-top: 6px solid #26de81; }
+.cat-gk45 { border-top: 6px solid #2bcbba; }
+.cat-gk46 { border-top: 6px solid #eb3b5a; }
+.cat-gk47 { border-top: 6px solid #fa8231; }
+.cat-gk48 { border-top: 6px solid #45aaf2; }
+.cat-gk49 { border-top: 6px solid #4b7bec; }
+.cat-gk50 { border-top: 6px solid #a55eea; }
 
 /* --- 6. Profile & Containers --- */
 .profile-card, .quiz-container, .login-container {
@@ -104,27 +157,87 @@ button {
 
 /* --- 📱 8. Mobile Optimization (Side Bar Fix) --- */
 @media (max-width: 768px) {
-    .dashboard-layout { flex-direction: column; }
-    .sidebar { width: 100% !important; height: auto !important; position: sticky !important; top: 0; left: 0; padding: 10px !important; display: flex !important; flex-direction: row !important; overflow-x: auto !important; white-space: nowrap; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-right: none !important; border-bottom: 1px solid #eee; }
+    .dashboard-layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100% !important;
+        height: auto !important;
+        position: sticky !important;
+        top: 0;
+        left: 0;
+        padding: 10px !important;
+        display: flex !important;
+        flex-direction: row !important;
+        overflow-x: auto !important;
+        white-space: nowrap;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-right: none !important;
+        border-bottom: 1px solid #eee;
+    }
+
     .sidebar h3 { display: none; }
-    .sidebar a { padding: 10px 15px !important; margin-right: 5px !important; margin-bottom: 0 !important; font-size: 13px !important; flex-shrink: 0; }
-    .main-content { margin-left: 0 !important; padding: 15px !important; width: 100%; }
+
+    .sidebar a {
+        padding: 10px 15px !important;
+        margin-right: 5px !important;
+        margin-bottom: 0 !important;
+        font-size: 13px !important;
+        flex-shrink: 0;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        padding: 15px !important;
+        width: 100%;
+    }
+
     .quiz-grid { grid-template-columns: 1fr; }
     .profile-card, .quiz-container { padding: 20px; border-radius: 18px; }
 }
 
 /* --- 🛑 9. Updated Fixes (Answers & Navigation) --- */
-.option-btn { width: 100% !important; padding: 16px 20px !important; margin-bottom: 12px !important; border-radius: 12px !important; border: 2px solid #ddd !important; text-align: left !important; background-color: #ffffff !important; color: #2c3e50 !important; cursor: pointer; font-size: 16px; font-weight: 600 !important; transition: 0.2s; display: block !important; }
+.option-btn {
+    width: 100% !important; padding: 16px 20px !important; margin-bottom: 12px !important;
+    border-radius: 12px !important; border: 2px solid #ddd !important;
+    text-align: left !important; background-color: #ffffff !important;
+    color: #2c3e50 !important; cursor: pointer; font-size: 16px;
+    font-weight: 600 !important; transition: 0.2s; display: block !important;
+}
+
 .option-btn.correct { background-color: #28a745 !important; color: white !important; }
 .option-btn.wrong { background-color: #dc3545 !important; color: white !important; }
 
-/* 🔵 Active Dot Fix */
 .nav-dot { width: 35px !important; height: 35px !important; border-radius: 8px !important; background-color: #eee !important; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .nav-dot.active { background-color: var(--primary-blue) !important; color: white !important; }
 
-/* --- ⏱️ 10. Timer & Score Visibility (Premium Look) --- */
-.quiz-header-info { display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 15px 25px; border-radius: 15px; margin-bottom: 25px; border: 1px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-#timer, #score-count { font-size: 18px !important; font-weight: 800 !important; color: #1a73e8 !important; background: #f1f7ff; padding: 8px 18px; border-radius: 50px; display: flex; align-items: center; gap: 10px; border: 1px solid rgba(26, 115, 232, 0.1); }
+/* --- ⏱️ 10. Timer & Score Visibility --- */
+.quiz-header-info {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    background: #ffffff;
+    padding: 15px 25px; 
+    border-radius: 15px; 
+    margin-bottom: 25px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+#timer, #score-count { 
+    font-size: 18px !important; 
+    font-weight: 800 !important; 
+    color: #1a73e8 !important; 
+    background: #f1f7ff; 
+    padding: 8px 18px; 
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(26, 115, 232, 0.1);
+}
+
 #timer::before { content: "⏳"; font-size: 20px; }
 #score-count::before { content: "🏆"; font-size: 20px; }
 
@@ -132,31 +245,50 @@ button {
 .nav-dot.correct-nav { background-color: #28a745 !important; color: white !important; border: none !important; }
 .nav-dot.wrong-nav { background-color: #dc3545 !important; color: white !important; border: none !important; }
 
-/* --- 🏆 11. PREMIUM LEADERBOARD (Card Style - 🛑 අලුතින් එක් කළා) --- */
-.leaderboard-list { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
-.leaderboard-card-item {
-    background: white; border-radius: 15px; padding: 15px 20px;
-    display: flex; align-items: center; justify-content: space-between;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #eee; transition: 0.3s;
-}
-.leaderboard-card-item:hover { transform: scale(1.02); box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
-.rank-badge-premium { width: 35px; height: 35px; background: #f1f3f4; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #1a73e8; margin-right: 15px; }
-.user-info-premium { flex: 1; }
-.user-name-premium { font-weight: 700; color: #333; font-size: 16px; display: block; }
-.user-province-premium { font-size: 12px; color: #1a73e8; font-weight: 600; }
-.user-score-premium { background: #1a73e8; color: white; padding: 5px 12px; border-radius: 10px; font-weight: 800; font-size: 14px; }
+/* --- 🏆 11. PREMIUM CARDS (ලීඩර්බෝඩ් සහ හිස්ට්‍රි සඳහා - 🛑 අලුතින් එක් කළා) --- */
 
-/* --- 📊 12. PREMIUM EXAM HISTORY (Card Style - 🛑 අලුතින් එක් කළා) --- */
-.history-list { display: flex; flex-direction: column; gap: 15px; }
+/* Leaderboard සහ History ලැයිස්තුව */
+.premium-list { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+
+/* 🥇 Leaderboard Card */
+.leaderboard-card-premium {
+    background: white; border-radius: 18px; padding: 15px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; transition: 0.3s;
+}
+.leaderboard-card-premium:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+
+.rank-circle-premium {
+    width: 40px; height: 40px; background: #f8f9fa; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--primary-blue); font-size: 18px;
+}
+
+/* මුල් තිදෙනාට විශේෂ වර්ණ */
+.rank-1 .rank-circle-premium { background: #ffd700; color: #fff; }
+.rank-2 .rank-circle-premium { background: #c0c0c0; color: #fff; }
+.rank-3 .rank-circle-premium { background: #cd7f32; color: #fff; }
+
+.user-details-premium { flex: 1; padding: 0 15px; }
+.user-name-premium { font-weight: 700; color: #333; font-size: 16px; display: block; }
+.user-meta-premium { font-size: 12px; color: #888; }
+
+.score-badge-premium {
+    background: var(--primary-blue); color: white; padding: 6px 15px;
+    border-radius: 12px; font-weight: 800; font-size: 14px;
+}
+
+/* 📊 Exam History Card */
 .history-card-premium {
     background: white; border-radius: 18px; padding: 20px;
-    border-left: 6px solid var(--primary-blue); box-shadow: var(--card-shadow);
-    transition: 0.3s;
+    border-left: 6px solid var(--primary-blue); box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    display: flex; flex-direction: column; gap: 10px;
 }
-.history-card-premium:hover { transform: translateY(-3px); }
-.history-top-premium { display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #f1f1f1; padding-bottom: 10px; }
-.history-date-premium { font-weight: 700; color: #888; font-size: 13px; }
-.history-cat-badge-premium { background: #eef3ff; color: #1a73e8; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; }
-.history-details-premium { display: flex; justify-content: space-between; align-items: center; }
-.history-score-premium { font-size: 24px; font-weight: 800; color: var(--primary-blue); }
-.history-time-premium { color: #666; font-size: 13px; display: flex; align-items: center; gap: 5px; }
+
+.history-top-premium { display: flex; justify-content: space-between; align-items: center; }
+.history-date-premium { font-weight: 800; color: #444; font-size: 14px; }
+.history-cat-badge { background: #eef3ff; color: var(--primary-blue); padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; }
+
+.history-bottom-premium { display: flex; justify-content: space-between; align-items: flex-end; }
+.history-score-premium { font-size: 24px; font-weight: 900; color: var(--primary-blue); }
+.history-time-premium { font-size: 13px; color: #666; font-weight: 600; }
