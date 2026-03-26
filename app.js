@@ -2833,52 +2833,50 @@ function setupProfileUpdate() {
         };
     }
 }
-
-
-// --- 📍 NAVIGATION DOTS (පාටවල් හරියට වැටෙන තැන) ---
+// 5. Quiz UI Logic
 function createNavDots() {
     const nav = document.getElementById('question-nav');
     if (!nav) return;
     nav.innerHTML = '';
-    currentQuestions.forEach((_, index) => {
+    questions.forEach((_, index) => {
         const dot = document.createElement('div');
         dot.id = `dot-${index}`;
         dot.classList.add('nav-dot');
         dot.innerText = index + 1;
-        dot.onclick = () => { 
-            if(isQuizActive) { currentQuestionIndex = index; showQuestion(); }
-        };
+        dot.onclick = () => { currentQuestionIndex = index; showQuestion(); };
         nav.appendChild(dot);
     });
 }
 
-// --- 📝 ප්‍රශ්නය පෙන්වන හැටි (Optimized) ---
 function showQuestion() {
-    const qData = currentQuestions[currentQuestionIndex];
+    const qData = questions[currentQuestionIndex];
     const qText = document.getElementById('question-text');
     const optCont = document.getElementById('options-container');
-    
     if (!qText || !optCont) return;
 
     qText.innerText = `${currentQuestionIndex + 1}. ${qData.q}`;
     optCont.innerHTML = '';
 
-    // Active Dot එක Update කරනවා
-    document.querySelectorAll('.nav-dot').forEach(d => d.classList.remove('active'));
-    const currentDot = document.getElementById(`dot-${currentQuestionIndex}`);
-    if(currentDot) currentDot.classList.add('active');
+    questions.forEach((_, i) => {
+        const d = document.getElementById(`dot-${i}`);
+        if (d) {
+            d.classList.remove('active', 'correct-nav', 'wrong-nav');
+            if (i === currentQuestionIndex) d.classList.add('active');
+            if (questionStatus[i] === true) d.classList.add('correct-nav');
+            if (questionStatus[i] === false) d.classList.add('wrong-nav');
+        }
+    });
 
-    qData.options.forEach((opt, idx) => {
+    qData.options.forEach(opt => {
         const btn = document.createElement('button');
         btn.innerText = opt;
         btn.classList.add('option-btn');
-
         if (userAnswers[currentQuestionIndex] !== null) {
             btn.disabled = true;
-            if (idx === qData.correct) btn.classList.add('correct');
-            if (idx === userAnswers[currentQuestionIndex] && idx !== qData.correct) btn.classList.add('wrong');
+            if (opt === qData.answerText) btn.classList.add('correct');
+            if (opt === userAnswers[currentQuestionIndex] && opt !== qData.answerText) btn.classList.add('wrong');
         } else {
-            btn.onclick = () => handleAnswer(idx, btn);
+            btn.onclick = () => handleAnswer(opt, btn);
         }
         optCont.appendChild(btn);
     });
@@ -3286,7 +3284,6 @@ function renderChart(labels, data) {
         }
     });
 }
-
 // 8. Logout
 const logoutBtn = document.getElementById('logout-link');
 if (logoutBtn) {
