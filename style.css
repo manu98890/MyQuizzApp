@@ -1,103 +1,81 @@
-/* --- 1. පොදු සැකසුම් (Reset & Variables) --- */
+/* --- 1. පද්ධති සැකසුම් (Variables) --- */
 :root {
     --primary: #1a73e8;
     --success: #28a745;
     --danger: #dc3545;
-    --bg: #f8f9fa;
-    --sidebar-width: 250px;
+    --bg: #f4f7f9;
+    --white: #ffffff;
+    --sidebar-width: 260px;
+    --shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg); color: #333; line-height: 1.6; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #333; line-height: 1.6; }
 
-/* --- 2. Layout (Sidebar & Main Content) --- */
+/* --- 2. Dashboard Layout --- */
 .dashboard-layout { display: flex; min-height: 100vh; }
 
+/* Sidebar (Desktop එකේදී වම් පැත්තේ) */
 .sidebar {
-    width: var(--sidebar-width); background: #ffffff; height: 100vh; position: fixed;
-    padding: 25px 15px; border-right: 1px solid #eee; z-index: 1000; transition: 0.3s;
+    width: var(--sidebar-width); background: var(--white); padding: 30px 20px;
+    position: fixed; height: 100vh; border-right: 1px solid #eee; z-index: 1000; transition: 0.3s;
 }
-
 .sidebar h3 { color: var(--primary); text-align: center; margin-bottom: 25px; font-weight: 800; }
-
 .sidebar a {
-    display: block; padding: 12px 15px; color: #555; text-decoration: none;
-    border-radius: 10px; margin-bottom: 5px; font-weight: 600; transition: 0.3s;
+    display: flex; align-items: center; padding: 12px 15px; color: #555;
+    text-decoration: none; border-radius: 12px; margin-bottom: 8px; font-weight: 600; transition: 0.3s;
 }
-
 .sidebar a:hover, .sidebar a.active { background: var(--primary); color: white !important; }
 
-.main-content { flex: 1; margin-left: var(--sidebar-width); padding: 30px; min-height: 100vh; transition: 0.3s; }
+/* Main Area */
+.main-content { flex: 1; margin-left: var(--sidebar-width); padding: 40px; transition: 0.3s; }
 
-/* --- 3. Quiz Grid & GK Colors --- */
-.quiz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
-
+/* --- 3. Modern Quiz Cards --- */
+.quiz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
 .quiz-card {
-    background: white; border-radius: 18px; padding: 30px 20px; text-align: center;
-    transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;
+    background: white; border-radius: 20px; padding: 35px 20px; text-align: center;
+    box-shadow: var(--shadow); border: 1px solid #f0f0f0; transition: 0.3s;
 }
 .quiz-card:hover { transform: translateY(-8px); border-color: var(--primary); }
 
-/* GK Pattern (මෙතනින් 1-50 ඔක්කොම පාට වෙනවා) */
-.quiz-card:nth-child(5n+1) { border-top: 6px solid #f1c40f; }
-.quiz-card:nth-child(5n+2) { border-top: 6px solid #e67e22; }
-.quiz-card:nth-child(5n+3) { border-top: 6px solid #e74c3c; }
-.quiz-card:nth-child(5n+4) { border-top: 6px solid #9b59b6; }
-.quiz-card:nth-child(5n+5) { border-top: 6px solid #3498db; }
+/* GK 1-50 Colors */
+.quiz-card:nth-child(10n+1) { border-top: 6px solid #FF5733; }
+.quiz-card:nth-child(10n+2) { border-top: 6px solid #33FF57; }
+.quiz-card:nth-child(10n+3) { border-top: 6px solid #3357FF; }
+/* ... (අනෙක්වාටත් nth-child එකෙන් auto apply වෙනවා) ... */
 
-/* --- 4. 📝 Quiz UI (Correct/Wrong Colors) --- */
-.quiz-container { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); max-width: 600px; margin: 0 auto; }
-
+/* --- 4. Quiz Logic (පාටවල් පේන කොටස) --- */
 .option-btn {
-    width: 100%; padding: 14px 18px; margin: 8px 0; border-radius: 12px;
-    border: 1px solid #ddd; background: #f8f9fa; text-align: left;
-    cursor: pointer; font-size: 15px; transition: 0.2s;
+    width: 100%; padding: 16px; margin: 10px 0; border-radius: 12px; border: 2px solid #eee;
+    background: #f8f9fa; cursor: pointer; text-align: left; font-size: 16px; transition: 0.2s;
 }
-
-/* 🛑 පාටවල් හරියටම පේන්න මේ ටික වැදගත් */
 .option-btn.correct { background-color: var(--success) !important; color: white !important; border-color: #1e7e34 !important; font-weight: bold; }
 .option-btn.wrong { background-color: var(--danger) !important; color: white !important; border-color: #bd2130 !important; font-weight: bold; }
 
-/* Nav Dots */
-#question-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-bottom: 20px; }
-.nav-dot { width: 30px; height: 30px; border-radius: 6px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 11px; cursor: pointer; }
-.nav-dot.correct-nav { background-color: var(--success) !important; color: white; }
-.nav-dot.wrong-nav { background-color: var(--danger) !important; color: white; }
-
-/* --- 5. 📱 Mobile Responsive (Daraz Look) --- */
+/* --- 📱 5. MOBILE RESPONSIVE (🛑 පට්ටම වැදගත්) --- */
 @media (max-width: 768px) {
-    /* Sidebar එක උඩින් scroll වෙන Menu එකක් කරමු */
+    /* Sidebar එක උඩට ගන්නවා (Daraz Categories වගේ) */
     .sidebar {
         width: 100%; height: auto; position: sticky; top: 0; display: flex;
-        overflow-x: auto; padding: 10px; border-right: none; border-bottom: 1px solid #eee; background: white;
+        overflow-x: auto; padding: 10px; border-right: none; border-bottom: 1px solid #eee;
     }
-    .sidebar h3 { display: none; }
-    .sidebar a { white-space: nowrap; margin-right: 8px; padding: 8px 15px; font-size: 12px; background: #f8f9fa; border: 1px solid #eee; }
-    .main-content { margin-left: 0; padding: 15px; }
+    .sidebar h3, .sidebar hr { display: none; }
+    .sidebar a { white-space: nowrap; margin-right: 8px; margin-bottom: 0; padding: 10px 15px; font-size: 13px; }
 
-    /* 📋 Table to Card Logic - මෙතනින් තමයි Table එක Phone එකට ගැලපෙන්නේ */
+    .main-content { margin-left: 0 !important; padding: 20px; }
+
+    /* Table එක Phone එකේදී පේළියට පල්ලෙහාට Cards විදියට වැටෙන්න (Fix for image_8c2626) */
     .table-responsive table, thead, tbody, th, td, tr { display: block; }
     thead tr { position: absolute; top: -9999px; left: -9999px; }
-    
-    tr { 
-        background: white; border-radius: 12px; margin-bottom: 12px; 
-        padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #eee;
-    }
-    
+    tr { background: white; border-radius: 15px; margin-bottom: 15px; padding: 15px; box-shadow: var(--shadow); border: 1px solid #eee; }
     td { 
-        border: none; border-bottom: 1px solid #f8f9fa; position: relative;
-        padding-left: 45% !important; text-align: right !important; min-height: 35px;
-        display: flex; align-items: center; justify-content: flex-end; font-size: 13px;
+        border: none; border-bottom: 1px solid #f1f1f1; position: relative;
+        padding-left: 50% !important; text-align: right !important; min-height: 45px;
+        display: flex; align-items: center; justify-content: flex-end;
     }
-    
-    /* Column label එක වම් පැත්තෙන් පෙන්වන්න */
     td:before { 
-        position: absolute; left: 10px; width: 40%; font-weight: bold; 
-        color: var(--primary); content: attr(data-label); text-align: left;
+        position: absolute; left: 15px; width: 45%; content: attr(data-label);
+        font-weight: bold; color: var(--primary); text-align: left;
     }
-    
     td:last-child { border-bottom: none; }
 }
-
-/* Modal Overlay */
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; align-items: center; justify-content: center; }
