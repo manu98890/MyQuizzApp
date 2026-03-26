@@ -290,7 +290,7 @@ td { padding: 18px; border-bottom: 1px solid #f1f3f4; }
     border-radius: 12px !important;
     border: 2px solid #ddd !important;
     text-align: left !important;
-    background-color: #f8f9fa !important; /* බොත්තමේ පසුබිම් පාට */
+    background-color: #981dd1 !important; /* බොත්තමේ පසුබිම් පාට */
     color: #2c3e50 !important;           /* අකුරු වල පාට අනිවාර්යයෙන්ම කළු/තද නිල් වෙන්න */
     cursor: pointer;
     font-size: 16px;
@@ -301,7 +301,7 @@ td { padding: 18px; border-bottom: 1px solid #f1f3f4; }
 
 /* Hover කරද්දී පාට පොඩ්ඩක් වෙනස් කරමු */
 .option-btn:hover:not(:disabled) {
-    background-color: #eef2f7 !important;
+    background-color: #2671bd !important;
     border-color: var(--primary-blue) !important;
 }
 
