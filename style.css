@@ -78,10 +78,67 @@ body {
 }
 .quiz-card:hover { transform: translateY(-10px); box-shadow: var(--hover-shadow); }
 
-/* GK Colors 1-50 (උදාහරණ කිහිපයක්) */
-.cat-gk1 { border-top: 6px solid #ff9f43; } .cat-gk2 { border-top: 6px solid #ee5253; }
-.cat-gk3 { border-top: 6px solid #0abde3; } .cat-gk4 { border-top: 6px solid #10ac84; }
+
+/* Group 1: 1 - 10 */
+.cat-gk1 { border-top: 6px solid #ff9f43; }
+.cat-gk2 { border-top: 6px solid #ee5253; }
+.cat-gk3 { border-top: 6px solid #0abde3; }
+.cat-gk4 { border-top: 6px solid #10ac84; }
 .cat-gk5 { border-top: 6px solid #5f27cd; }
+.cat-gk6 { border-top: 6px solid #2ecc71; }
+.cat-gk7 { border-top: 6px solid #3498db; }
+.cat-gk8 { border-top: 6px solid #9b59b6; }
+.cat-gk9 { border-top: 6px solid #e67e22; }
+.cat-gk10 { border-top: 6px solid #1abc9c; }
+
+/* Group 2: 11 - 20 */
+.cat-gk11 { border-top: 6px solid #d35400; }
+.cat-gk12 { border-top: 6px solid #c0392b; }
+.cat-gk13 { border-top: 6px solid #8e44ad; }
+.cat-gk14 { border-top: 6px solid #2980b9; }
+.cat-gk15 { border-top: 6px solid #16a085; }
+.cat-gk16 { border-top: 6px solid #27ae60; }
+.cat-gk17 { border-top: 6px solid #f39c12; }
+.cat-gk18 { border-top: 6px solid #e74c3c; }
+.cat-gk19 { border-top: 6px solid #95a5a6; }
+.cat-gk20 { border-top: 6px solid #34495e; }
+
+/* Group 3: 21 - 30 */
+.cat-gk21 { border-top: 6px solid #ff6b6b; }
+.cat-gk22 { border-top: 6px solid #48dbfb; }
+.cat-gk23 { border-top: 6px solid #1dd1a1; }
+.cat-gk24 { border-top: 6px solid #feca57; }
+.cat-gk25 { border-top: 6px solid #5f27cd; }
+.cat-gk26 { border-top: 6px solid #54a0ff; }
+.cat-gk27 { border-top: 6px solid #00d2d3; }
+.cat-gk28 { border-top: 6px solid #ff9ff3; }
+.cat-gk29 { border-top: 6px solid #576574; }
+.cat-gk30 { border-top: 6px solid #222f3e; }
+
+/* Group 4: 31 - 40 */
+.cat-gk31 { border-top: 6px solid #45aaf2; }
+.cat-gk32 { border-top: 6px solid #4b7bec; }
+.cat-gk33 { border-top: 6px solid #a55eea; }
+.cat-gk34 { border-top: 6px solid #20bf6b; }
+.cat-gk35 { border-top: 6px solid #eb3b5a; }
+.cat-gk36 { border-top: 6px solid #fa8231; }
+.cat-gk37 { border-top: 6px solid #f7b731; }
+.cat-gk38 { border-top: 6px solid #26de81; }
+.cat-gk39 { border-top: 6px solid #0fb9b1; }
+.cat-gk40 { border-top: 6px solid #8854d0; }
+
+/* Group 5: 41 - 50 */
+.cat-gk41 { border-top: 6px solid #fc5c65; }
+.cat-gk42 { border-top: 6px solid #fd9644; }
+.cat-gk43 { border-top: 6px solid #fed330; }
+.cat-gk44 { border-top: 6px solid #26de81; }
+.cat-gk45 { border-top: 6px solid #2bcbba; }
+.cat-gk46 { border-top: 6px solid #eb3b5a; }
+.cat-gk47 { border-top: 6px solid #fa8231; }
+.cat-gk48 { border-top: 6px solid #45aaf2; }
+.cat-gk49 { border-top: 6px solid #4b7bec; }
+.cat-gk50 { border-top: 6px solid #a55eea; }
+/* ...අනෙක්වාටත් මෙහෙම දාන්න පුළුවන්... */
 
 /* --- 6. Profile & Containers --- */
 .profile-card, .quiz-container, .login-container {
