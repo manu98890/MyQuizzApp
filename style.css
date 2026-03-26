@@ -175,7 +175,7 @@ table {
 th {
     background: #1a73e8 !important;
     color: white !important;
-    padding: 18px 15px !important;
+    padding: 28px 15px !important;
     font-size: 15px !important;
     font-weight: 700 !important;
     text-transform: none;
@@ -251,7 +251,7 @@ td:last-child {
 /* Leaderboard එක තියෙන Container එක */
 .table-responsive {
     background: white;
-    border-radius: 35px !important; /* පින්තූරයේ වගේ හොඳට Round වෙන්න */
+    border-radius: 25px !important; /* පින්තූරයේ වගේ හොඳට Round වෙන්න */
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05) !important;
     padding: 0 !important;
     margin-top: 25px;
