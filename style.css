@@ -197,3 +197,38 @@ button {
         padding: 6px 12px;
     }
 }
+
+/* --- 📍 Navigation Dots Colors --- */
+.nav-dot.correct-nav {
+    background-color: #28a745 !important; /* කොළ පාට */
+    color: white !important;
+    border: none !important;
+}
+
+.nav-dot.wrong-nav {
+    background-color: #dc3545 !important; /* රතු පාට */
+    color: white !important;
+    border: none !important;
+}
+
+/* --- 🏆 Leaderboard Mobile Fix (Daraz Look) --- */
+@media (max-width: 768px) {
+    .leaderboard-row {
+        background: white;
+        margin-bottom: 12px;
+        border-radius: 15px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border-left: 5px solid #1a73e8;
+    }
+    
+    .rank-circle {
+        width: 35px; height: 35px;
+        background: #f1f3f4;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 800; margin-right: 15px;
+    }
+}
