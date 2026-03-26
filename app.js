@@ -2833,20 +2833,7 @@ function setupProfileUpdate() {
         };
     }
 }
-// 5. Quiz UI Logic
-function createNavDots() {
-    const nav = document.getElementById('question-nav');
-    if (!nav) return;
-    nav.innerHTML = '';
-    questions.forEach((_, index) => {
-        const dot = document.createElement('div');
-        dot.id = `dot-${index}`;
-        dot.classList.add('nav-dot');
-        dot.innerText = index + 1;
-        dot.onclick = () => { currentQuestionIndex = index; showQuestion(); };
-        nav.appendChild(dot);
-    });
-}
+
 
 // --- 📍 NAVIGATION DOTS (පාටවල් හරියට වැටෙන තැන) ---
 function createNavDots() {
