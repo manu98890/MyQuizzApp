@@ -20,7 +20,7 @@ body { background-color: var(--main-bg); margin: 0; color: var(--text-dark); }
 }
 .sidebar h3 { color: var(--primary-blue); font-size: 24px; margin-bottom: 30px; text-align: center; font-weight: 800; }
 .sidebar a { display: flex; align-items: center; padding: 14px 18px; color: #5f6368; text-decoration: none; border-radius: 12px; margin-bottom: 10px; font-weight: 600; transition: all 0.3s ease; }
-.sidebar a:hover, .sidebar a.active { background: var(--primary-blue); color: white; box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3); }
+.sidebar a:hover, .sidebar a.active { background: var(--primary-blue); color: white !important; box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3); }
 
 /* --- 4. Main Content Area --- */
 .main-content { flex: 1; margin-left: 260px; padding: 40px; min-height: 100vh; }
@@ -30,6 +30,18 @@ body { background-color: var(--main-bg); margin: 0; color: var(--text-dark); }
 .quiz-card { background: white; border-radius: 20px; padding: 30px 20px; text-align: center; transition: 0.4s; box-shadow: var(--card-shadow); border: 1px solid rgba(255, 255, 255, 0.8); }
 .quiz-card:hover { transform: translateY(-10px); box-shadow: var(--hover-shadow); }
 
+/* GK Colors 1-50 (උඹේ පරණ ටික) */
+.cat-gk1 { border-top: 6px solid #ff9f43; } .cat-gk2 { border-top: 6px solid #ee5253; }
+.cat-gk3 { border-top: 6px solid #0abde3; } .cat-gk4 { border-top: 6px solid #10ac84; }
+.cat-gk5 { border-top: 6px solid #5f27cd; } .cat-gk6 { border-top: 6px solid #2ecc71; }
+.cat-gk7 { border-top: 6px solid #3498db; } .cat-gk8 { border-top: 6px solid #9b59b6; }
+.cat-gk9 { border-top: 6px solid #e67e22; } .cat-gk10 { border-top: 6px solid #1abc9c; }
+
+/* --- 6. Profile & Containers --- */
+.profile-card, .quiz-container, .login-container { background: white; border-radius: 24px; padding: 40px; box-shadow: var(--card-shadow); max-width: 800px; margin: 0 auto; }
+input, select { background: #f8f9fa; border: 2px solid #f1f3f4; padding: 14px; border-radius: 12px; width: 100%; margin-bottom: 15px; }
+button { background: var(--primary-blue); color: white; border: none; padding: 15px 25px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+
 /* --- 📱 8. Mobile Optimization (Side Bar Fix) --- */
 @media (max-width: 768px) {
     .dashboard-layout { flex-direction: column; }
@@ -38,43 +50,50 @@ body { background-color: var(--main-bg); margin: 0; color: var(--text-dark); }
     .sidebar a { padding: 10px 15px !important; margin-right: 5px !important; margin-bottom: 0 !important; font-size: 13px !important; flex-shrink: 0; }
     .main-content { margin-left: 0 !important; padding: 15px !important; width: 100%; }
     .quiz-grid { grid-template-columns: 1fr; }
+    .profile-card, .quiz-container { padding: 20px; border-radius: 18px; }
 }
 
 /* --- 🛑 9. Updated Fixes (Answers & Navigation) --- */
-.option-btn { width: 100% !important; padding: 16px 20px !important; margin-bottom: 12px !important; border-radius: 12px !important; border: 2px solid #ddd !important; text-align: left !important; background-color: #ffffff !important; color: #2c3e50 !important; font-size: 16px; font-weight: 600 !important; transition: 0.2s; display: block !important; }
+.option-btn { width: 100% !important; padding: 16px 20px !important; margin-bottom: 12px !important; border-radius: 12px !important; border: 2px solid #ddd !important; text-align: left !important; background-color: #ffffff !important; color: #2c3e50 !important; cursor: pointer; font-size: 16px; font-weight: 600 !important; transition: 0.2s; display: block !important; }
 .option-btn.correct { background-color: #28a745 !important; color: white !important; }
 .option-btn.wrong { background-color: #dc3545 !important; color: white !important; }
 .nav-dot { width: 35px !important; height: 35px !important; border-radius: 8px !important; background-color: #eee !important; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .nav-dot.active { background-color: var(--primary-blue) !important; color: white !important; }
-.nav-dot.correct-nav { background-color: #28a745 !important; color: white !important; }
-.nav-dot.wrong-nav { background-color: #dc3545 !important; color: white !important; }
+.nav-dot.correct-nav { background-color: #28a745 !important; color: white !important; border: none !important; }
+.nav-dot.wrong-nav { background-color: #dc3545 !important; color: white !important; border: none !important; }
 
 /* --- ⏱️ 10. Timer & Score Visibility --- */
-.quiz-header-info { display: flex; justify-content: space-between; align-items: center; background: #f1f3f4; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; }
-#timer, #score-count { font-size: 16px !important; font-weight: 800 !important; color: #1a73e8 !important; background: white; padding: 6px 12px; border-radius: 50px; }
+.quiz-header-info { display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 15px 25px; border-radius: 15px; margin-bottom: 25px; border: 1px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+#timer, #score-count { font-size: 18px !important; font-weight: 800 !important; color: #1a73e8 !important; background: #f1f7ff; padding: 8px 18px; border-radius: 50px; display: flex; align-items: center; gap: 10px; border: 1px solid rgba(26, 115, 232, 0.1); }
+#timer::before { content: "⏳"; font-size: 20px; }
+#score-count::before { content: "🏆"; font-size: 20px; }
 
 /* --- 🏆 11. PREMIUM LEADERBOARD (Card Style) --- */
-.leaderboard-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+.leaderboard-list { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
 .leaderboard-item {
     background: white; border-radius: 15px; padding: 15px 20px;
     display: flex; align-items: center; justify-content: space-between;
     box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #eee; transition: 0.3s;
 }
-.leaderboard-item:hover { transform: scale(1.02); box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
-.leaderboard-rank { font-size: 20px; font-weight: 800; width: 40px; color: #888; }
-.leaderboard-info { flex: 1; padding-left: 10px; }
-.leaderboard-name { font-weight: 700; color: #333; font-size: 16px; display: block; }
-.leaderboard-province { font-size: 12px; color: #1a73e8; font-weight: 600; }
-.leaderboard-score { background: #1a73e8; color: white; padding: 5px 12px; border-radius: 10px; font-weight: 800; font-size: 14px; }
+.leaderboard-item:hover { transform: scale(1.02); }
+.rank-badge {
+    width: 35px; height: 35px; background: #f1f3f4; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-weight: 800; color: #1a73e8; margin-right: 15px;
+}
+.user-info { flex: 1; }
+.user-name { font-weight: 700; color: #333; font-size: 16px; display: block; }
+.user-province { font-size: 12px; color: #1a73e8; font-weight: 600; }
+.user-score { background: #1a73e8; color: white; padding: 5px 12px; border-radius: 10px; font-weight: 800; font-size: 14px; }
 
-/* --- 📊 12. EXAM HISTORY (Modern Look) --- */
+/* --- 📊 12. EXAM HISTORY (Daraz Order History Look) --- */
+.history-container { display: flex; flex-direction: column; gap: 15px; }
 .history-card {
-    background: white; border-radius: 15px; padding: 20px; margin-bottom: 15px;
+    background: white; border-radius: 15px; padding: 20px;
     border-left: 6px solid var(--primary-blue); box-shadow: var(--card-shadow);
 }
-.history-header { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #f1f1f1; padding-bottom: 8px; }
+.history-top { display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #f1f1f1; padding-bottom: 10px; }
 .history-date { font-weight: 700; color: #888; font-size: 13px; }
-.history-cat { background: #eee; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 800; }
-.history-body { display: flex; justify-content: space-between; align-items: center; }
-.history-score { font-size: 22px; font-weight: 800; color: var(--primary-blue); }
-.history-time { color: #666; font-size: 13px; }
+.history-cat-tag { background: #eee; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; color: #555; }
+.history-details { display: flex; justify-content: space-between; align-items: center; }
+.history-score-big { font-size: 24px; font-weight: 800; color: var(--primary-blue); }
+.history-time-small { color: #666; font-size: 13px; display: flex; align-items: center; gap: 5px; }
