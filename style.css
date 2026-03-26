@@ -344,3 +344,53 @@ td { padding: 18px; border-bottom: 1px solid #f1f3f4; }
 
 .nav-dot.correct-nav { background-color: #28a745 !important; color: white !important; }
 .nav-dot.wrong-nav { background-color: #dc3545 !important; color: white !important; }
+/* --- ⏱️ 10. Timer & Score Visibility Fix --- */
+
+/* කාලය සහ ලකුණු තියෙන container එක */
+.quiz-header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f1f3f4;
+    padding: 12px 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* "කාලය" සහ "ලකුණු" වෙන වෙනම ලස්සන කරමු */
+#timer, #score-count, .quiz-stats {
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    color: #1a73e8 !important;
+    background: white;
+    padding: 6px 15px;
+    border-radius: 50px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Timer එක ඉවර වෙන්න ලඟ නම් රතු වෙන්න (පොඩි ගැම්මක්) */
+.timer-low {
+    color: #dc3545 !important;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* Mobile එකේදී stats ටික ලස්සනට පේන්න */
+@media (max-width: 600px) {
+    .quiz-header-info {
+        padding: 10px;
+        flex-direction: row; /* එක පේළියක තියමු */
+    }
+    #timer, #score-count {
+        font-size: 15px !important;
+    }
+}
