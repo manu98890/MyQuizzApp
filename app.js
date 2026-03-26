@@ -2627,7 +2627,7 @@ gk50: [
 };
 
 // 3. Global Variables
-let allquestions = []; 
+let currentQuizQuestions = []; // දැනට කරන විභාගයේ ප්‍රශ්න 50
 let currentQuestionIndex = 0;
 let score = 0;
 let timeLeft = 3600; 
@@ -2733,34 +2733,47 @@ function setupRegistration() {
     }
 }
 
-
-
-// 4. Category එක බලලා Quiz එක පටන් ගන්න එක
+// --- 🎯 QUIZ START LOGIC ---
 function getCategoryAndStart() {
     const urlParams = new URLSearchParams(window.location.search);
-    const cat = urlParams.get('cat') || 'gk1'; 
+    const cat = urlParams.get('cat') || 'gk1';
     
-    questions = allQuestions[cat] || allQuestions['gk1'];
+    // ප්‍රශ්න 50 ම එකපාර Array එකකට ගන්නවා (ලැග් එක නැති වෙන්නේ මෙතනදී)
+    currentQuizQuestions = allQuestions[cat] || allQuestions['gk1'];
     
-    startQuiz();
+    const modal = document.getElementById('rules-modal');
+    if (modal) modal.style.display = 'flex';
 }
 
 function startQuiz() {
-    isQuizActive = true; // විභාගය පටන් ගත්තා!
-    currentQuestionIndex = 0; // මුල ඉඳන් පටන් ගන්න
+    isQuizActive = true;
+    currentQuestionIndex = 0;
     score = 0;
-   
+    userAnswers.fill(null);
+    questionStatus.fill(null);
     
-    questions.forEach(q => {
-        // Shuffle කරන්නේ නැති නිසා correct index එකේ තියෙන text එක කෙලින්ම ගන්නවා
-        q.answerText = q.options[q.correct]; 
-    });
-
     createNavDots();
     showQuestion();
     startTimer();
 }
 
+
+// --- 📍 NAVIGATION DOTS ---
+function createNavDots() {
+    const nav = document.getElementById('question-nav');
+    if (!nav) return;
+    nav.innerHTML = '';
+    currentQuizQuestions.forEach((_, index) => {
+        const dot = document.createElement('div');
+        dot.id = `dot-${index}`;
+        dot.classList.add('nav-dot');
+        dot.innerText = index + 1;
+        dot.onclick = () => { 
+            if(isQuizActive) { currentQuestionIndex = index; showQuestion(); }
+        };
+        nav.appendChild(dot);
+    });
+}
 
 
 
@@ -2848,67 +2861,67 @@ function createNavDots() {
     });
 }
 
+// --- 📝 SHOW QUESTION (Optimized) ---
 function showQuestion() {
-    const qData = questions[currentQuestionIndex];
+    const qData = currentQuizQuestions[currentQuestionIndex];
     const qText = document.getElementById('question-text');
     const optCont = document.getElementById('options-container');
+    
     if (!qText || !optCont) return;
 
     qText.innerText = `${currentQuestionIndex + 1}. ${qData.q}`;
     optCont.innerHTML = '';
 
-    questions.forEach((_, i) => {
-        const d = document.getElementById(`dot-${i}`);
-        if (d) {
-            d.classList.remove('active', 'correct-nav', 'wrong-nav');
-            if (i === currentQuestionIndex) d.classList.add('active');
-            if (questionStatus[i] === true) d.classList.add('correct-nav');
-            if (questionStatus[i] === false) d.classList.add('wrong-nav');
-        }
-    });
+    // Active Dot එක විතරක් Update කරනවා (Performance එකට හොඳයි)
+    document.querySelectorAll('.nav-dot').forEach(d => d.classList.remove('active'));
+    document.getElementById(`dot-${currentQuestionIndex}`).classList.add('active');
 
-    qData.options.forEach(opt => {
+    qData.options.forEach((opt, idx) => {
         const btn = document.createElement('button');
         btn.innerText = opt;
         btn.classList.add('option-btn');
+
+        // කලින් උත්තර දීලා නම් බටන් Disable කරනවා
         if (userAnswers[currentQuestionIndex] !== null) {
             btn.disabled = true;
-            if (opt === qData.answerText) btn.classList.add('correct');
-            if (opt === userAnswers[currentQuestionIndex] && opt !== qData.answerText) btn.classList.add('wrong');
+            if (idx === qData.correct) btn.classList.add('correct');
+            if (idx === userAnswers[currentQuestionIndex] && idx !== qData.correct) btn.classList.add('wrong');
         } else {
-            btn.onclick = () => handleAnswer(opt, btn);
+            btn.onclick = () => handleAnswer(idx, btn);
         }
         optCont.appendChild(btn);
     });
 }
 
-function handleAnswer(selected, btn) {
-    const qData = questions[currentQuestionIndex];
-    const correctAnswerText = qData.answerText;
+// --- ✅ HANDLE ANSWER ---
+function handleAnswer(selectedIndex, btn) {
+    const qData = currentQuizQuestions[currentQuestionIndex];
     const allButtons = document.querySelectorAll('.option-btn');
+    const currentDot = document.getElementById(`dot-${currentQuestionIndex}`);
 
-    userAnswers[currentQuestionIndex] = selected;
-    clearTimeout(autoNextTimeout); // පරණ timeout එක clear කරනවා පනින එක නතර කරන්න
+    userAnswers[currentQuestionIndex] = selectedIndex;
+    allButtons.forEach(b => b.disabled = true);
 
-    if (selected === correctAnswerText) {
+    if (selectedIndex === qData.correct) {
         btn.classList.add('correct');
-        score += 1;
+        score++;
         questionStatus[currentQuestionIndex] = true;
+        currentDot.classList.add('correct-nav'); // Dot එක කොළ වෙනවා
     } else {
         btn.classList.add('wrong');
         questionStatus[currentQuestionIndex] = false;
-        allButtons.forEach(b => { 
-            if (b.innerText === correctAnswerText) b.classList.add('correct'); 
-        });
+        currentDot.classList.add('wrong-nav'); // Dot එක රතු වෙනවා
+        allButtons[qData.correct].classList.add('correct'); // හරි උත්තරේ පෙන්වනවා
     }
-    
-    allButtons.forEach(b => b.disabled = true);
-    document.getElementById('score-display').innerText = "ලකුණු: " + score;
-    autoNextTimeout =setTimeout(() => { 
-        if(currentQuestionIndex < questions.length - 1) {
+
+    document.getElementById('score-count').innerText = `🏆 ලකුණු: ${score}`;
+
+    // තත්පර 1කින් ඊළඟ ප්‍රශ්නයට (Lag එකක් දැනෙන්නේ නැති වෙන්න 800ms දැම්මා)
+    setTimeout(() => {
+        if (currentQuestionIndex < currentQuizQuestions.length - 1) {
             currentQuestionIndex++;
             showQuestion();
-        }else{
+        } else {
             showResultSummary();
         }
     }, 120000);
@@ -2973,16 +2986,19 @@ function terminateExam() {
     window.location.href = "profile.html"; 
 }
 
-   
+// --- ⏱️ TIMER ---
 function startTimer() {
-    const timerDisp = document.getElementById('timer');
-    if (!timerDisp) return;
     timerInterval = setInterval(() => {
         timeLeft--;
         let m = Math.floor(timeLeft / 60);
         let s = timeLeft % 60;
-        timerDisp.innerText = `කාලය: ${m}:${s < 10 ? '0' : ''}${s}`;
-        if (timeLeft <= 0) { clearInterval(timerInterval); saveScore(score); }
+        const timerDisp = document.getElementById('timer');
+        if(timerDisp) timerDisp.innerText = `⏳ කාලය: ${m}:${s < 10 ? '0' : ''}${s}`;
+        
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            showResultSummary();
+        }
     }, 1000);
 }
 
@@ -3028,32 +3044,25 @@ function setupQuizButtons() {
         };
     }
 }
+// --- 📊 RESULT SUMMARY ---
 function showResultSummary() {
-    isQuizActive = false; // විභාගය ඉවරයි කියලා ස්ථිර කරනවා
+    isQuizActive = false;
     clearInterval(timerInterval);
     const quizContainer = document.querySelector('.quiz-container');
     
-    let correctCount = questionStatus.filter(s => s === true).length;
-    let wrongCount = questionStatus.filter(s => s === false).length;
-    let skippedCount = 50 - (correctCount + wrongCount);
+    let correct = questionStatus.filter(s => s === true).length;
+    let wrong = questionStatus.filter(s => s === false).length;
 
     quizContainer.innerHTML = `
         <div style="text-align: center; padding: 20px;">
-            <h2 style="color: #1a73e8;">විභාග සාරාංශය</h2>
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 15px; margin: 20px 0; border: 1px solid #ddd;">
-                <p style="font-size: 22px; color: #1a73e8;"><b>මුළු ලකුණු: ${score} / 50</b></p>
-                <hr style="border: 0.5px solid #eee;">
-                <p style="color: #28a745;">✅ නිවැරදි පිළිතුරු: <b>${correctCount}</b></p>
-                <p style="color: #dc3545;">❌ වැරදි පිළිතුරු: <b>${wrongCount}</b></p>
-                <p style="color: #666;">🔘 නොකළ ප්‍රශ්න: <b>${skippedCount}</b></p>
+            <h2 style="color: #1a73e8;">විභාගය අවසන්!</h2>
+            <div style="background: #f8f9fa; padding: 30px; border-radius: 20px; margin: 20px 0; border: 2px solid #eee;">
+                <p style="font-size: 28px; color: #1a73e8;"><b>ලකුණු: ${score} / 50</b></p>
+                <p style="color: #28a745;">✅ නිවැරදි: ${correct}</p>
+                <p style="color: #dc3545;">❌ වැරදි: ${wrong}</p>
             </div>
-            <p style="font-size: 14px; color: #888;">ප්‍රගති පුවරුවට (Leaderboard) ඇතුළත් වීමට පහත බටන් එක ඔබන්න.</p>
-             <div style="margin-top: 30px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-    
-            <button onclick="saveScoreAndRedirect(${score})" style="background: #34a853; margin-top: 10px;">ප්‍රගති පුවරුව බලන්න</button>
-            <button onclick="window.location.href='profile.html'" style="background-color: #6c757d; width: 150px;">ප්‍රධාන පිටුවට</button>
-        </div>
-    `;
+            <button onclick="saveScoreAndRedirect(${score})" class="start-btn">ප්‍රගති පුවරුවට ඇතුළත් වන්න</button>
+        </div>`;
 }
 // 6. Data Saving & Leaderboard
 async function saveScoreAndRedirect(finalScore) {
@@ -3106,45 +3115,31 @@ async function saveScoreAndRedirect(finalScore) {
         alert("දෝෂය: " + error.message); 
     }
 }
+// --- 🏆 LEADERBOARD (Organized with data-labels) ---
 function loadLeaderboard() {
     const lbBody = document.getElementById('leaderboard-body');
     if (!lbBody) return;
 
-    db.collection("leaderboard")
-        .orderBy("score", "desc")
-        .orderBy("timeUsed", "asc")
-        .onSnapshot((snap) => {
-            lbBody.innerHTML = '';
-            let rank = 1;
+    db.collection("leaderboard").orderBy("score", "desc").orderBy("timeUsed", "asc").limit(50).onSnapshot(snap => {
+        lbBody.innerHTML = '';
+        let rank = 1;
+        snap.forEach(doc => {
+            const d = doc.data();
+            const mins = Math.floor(d.timeUsed / 60);
+            const secs = d.timeUsed % 60;
+            
+            let rankIcon = rank <= 3 ? (rank === 1 ? "🥇" : rank === 2 ? "🥈" : "🥉") : rank;
 
-            snap.forEach(doc => {
-                const d = doc.data();
-                const mins = Math.floor(d.timeUsed / 60);
-                const secs = d.timeUsed % 60;
-                
-                // Rank එක අනුව Medal එක තෝරනවා
-                let medal = "";
-                let rankClass = "";
-                if(rank === 1) { medal = "🥇"; rankClass = "rank-1"; }
-                else if(rank === 2) { medal = "🥈"; rankClass = "rank-2"; }
-                else if(rank === 3) { medal = "🥉"; rankClass = "rank-3"; }
-                else { medal = rank; }
-
-                lbBody.innerHTML += `
-                    <tr class="${rankClass}">
-                        <td>${medal}</td>
-                        <td style="text-align: left; min-width: 150px;">
-                            <span style="font-weight: bold; color: #333;">${d.name}</span><br>
-                            <small style="color: #666;">📧 ${d.email || 'No Email'}</small><br>
-                            <small style="color: #1a73e8;">📍 පළාත: ${d.province}</small>
-                        </td>
-                        <td><span class="score-badge">${d.score} / 50</span></td>
-                        <td>${mins}:${secs < 10 ? '0' : ''}${secs} min</td>
-                    </tr>
-                `;
-                rank++;
-            });
+            lbBody.innerHTML += `
+                <tr>
+                    <td data-label="Rank">${rankIcon}</td>
+                    <td data-label="නම"><b>${d.name || 'Anonymous'}</b><br><small>${d.province || 'N/A'}</small></td>
+                    <td data-label="ලකුණු"><span class="score-badge">${d.score} / 50</span></td>
+                    <td data-label="කාලය">${mins}:${secs < 10 ? '0' : ''}${secs} min</td>
+                </tr>`;
+            rank++;
         });
+    });
 }
 
 // 7. Page Load Manager
@@ -3154,7 +3149,7 @@ window.onload = () => {
     setupCheatingProtection(); // <--- අනිවාර්යයෙන් මේක මෙතන තියෙන්න ඕනේ
     setupRulesModal(); // <--- මෙන්න මේක අලුතින් එකතු කළා
     setupProfileUpdate();
-
+   
     if (document.getElementById('user-info-display')) loadProfileData(); 
     if (document.getElementById('history-body')) loadUserHistory();
     
