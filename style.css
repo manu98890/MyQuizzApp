@@ -131,6 +131,66 @@ td { padding: 12px 8px; border-bottom: 1px solid #f1f3f4; text-align: center; fo
         border-radius: 15px !important; 
         width: 100% !important;
     }
+       /* Score Pill Mobile */
+    .score-pill { padding: 3px 8px !important; font-size: 11px !important; }
+
+    /* Quiz Navigation Dots */
+    #question-nav { gap: 4px; }
+    .nav-dot { width: 28px; height: 28px; font-size: 11px; }
+
+    /* Multicolor borders adu kranna mobile eke */
+    .quiz-card { padding: 20px 10px !important; }
+}
+
+/* --- 📱 8. Mobile Optimization (පට්ටම වැදගත්) --- */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: sticky;
+        top: 0;
+        padding: 10px;
+        display: flex;
+        overflow-x: auto; /* Side scroll links */
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .sidebar h3, .sidebar hr { display: none; }
+
+    .sidebar a {
+        white-space: nowrap;
+        padding: 10px 15px;
+        margin-right: 10px;
+        margin-bottom: 0;
+        font-size: 13px;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .quiz-grid {
+        grid-template-columns: 1fr; /* Mobile එකේ එක කාඩ් එකයි */
+    }
+
+    .profile-card, .quiz-container {
+        padding: 25px 20px;
+        border-radius: 18px;
+    }
+    
+    /* Quiz Navigation Dots Mobile එකේ පේළියට */
+    #question-nav {
+        gap: 4px;
+    }
+    
+    .nav-dot {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+    }
+}
+
 
 /* --- 📱 8. Mobile Optimization (Side Bar Fix) --- */
 @media (max-width: 768px) {
