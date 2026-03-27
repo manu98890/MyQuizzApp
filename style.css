@@ -286,7 +286,7 @@ td:last-child {
 
     /* ලකුණු සහ කාලය එක ළඟ පිළිවෙලට තියන්න */
     td:nth-child(3), td:last-child {
-        min-width: 60px !important; /* Column එකට අවම ඉඩක් වෙන් කළා */
+        min-width: 40px !important; /* Column එකට අවම ඉඩක් වෙන් කළා */
         text-align: center !important;
         font-weight: 700 !important;
         line-height: 1.2;
@@ -295,7 +295,7 @@ td:last-child {
     /* ලකුණු කොටස (40 / 50) පේළි දෙකකට කැඩෙන එක නතර කරන්න */
     .score-pill {
         white-space: nowrap !important;
-        font-size: 11px !important;
+        font-size: 10px !important;
     }
 
     /* Icon සහ Email ලස්සනට පේන්න */
