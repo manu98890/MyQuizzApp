@@ -122,108 +122,153 @@ button { background: var(--primary-blue); color: white; border: none; padding: 1
 
 /* --- 🏆 13. SCREENSHOT විදියටම LEADERBOARD එක (🛑 මෙතනයි වැඩේ තියෙන්නේ) --- */
 
-/* මුළු Leaderboard එක තියෙන තැන */
-.leaderboard-wrapper {
+/* --- 🏆 13. PREMIUM LEADERBOARD & HISTORY UI (FINAL FIX) --- */
+
+/* Leaderboard එක තියෙන මුළු Container එක */
+.table-responsive {
     background: white;
-    border-radius: 15px;
+    border-radius: 20px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    padding: 0 !important;
+    margin-top: 25px;
     overflow: hidden;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    margin-top: 20px;
+    border: 1px solid #edf2f7;
 }
 
-/* අර නිල් පාට Header එක */
-.leaderboard-header-row {
-    background: #1a73e8;
-    color: white;
-    display: grid;
-    grid-template-columns: 0.8fr 2fr 1.2fr; /* Rank, විස්තරය, ලකුණු */
-    padding: 15px;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+/* 🔵 Leaderboard Header (නිල් පාට කොටස) */
+th {
+    background: #1a73e8 !important;
+    color: white !important;
+    padding: 18px 10px !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    text-align: center;
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ⚪ පේළි (Rows) වල පොදු පෙනුම */
+td {
+    padding: 18px 10px !important;
+    border-bottom: 1px solid #f1f4f8;
+    vertical-align: middle;
+    color: #444;
+}
+
+/* Rank Medal/Number column */
+td:first-child {
     font-weight: 800;
+    color: #1a73e8;
+    font-size: 18px;
+    width: 60px;
     text-align: center;
 }
 
-/* එක පේළියක් (User Row) */
-.leaderboard-user-card {
-    display: grid;
-    grid-template-columns: 0.8fr 2fr 1.2fr;
-    align-items: center;
-    padding: 20px 10px;
-    border-bottom: 1px solid #f0f0f0;
-    background: white;
+/* 👤 User Details Column (නම, ඊමේල්, පළාත) */
+td:nth-child(2) {
+    text-align: left !important;
+    padding-left: 20px !important;
 }
 
-/* Rank අංකය සහ Icon එක */
-.user-rank-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-}
-.rank-medal { font-size: 24px; margin-bottom: -5px; }
-
-/* මැද තියෙන විස්තර ටික (Name, Email, Province) */
-.user-details-box {
-    padding-left: 10px;
-}
-.user-name-text {
-    font-size: 18px;
-    font-weight: 800;
-    color: #333;
+td b, td strong {
+    color: #2c3e50;
+    font-size: 16px;
     display: block;
-    margin-bottom: 4px;
-}
-.user-email-text {
-    font-size: 13px;
-    color: #666;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-.user-province-text {
-    font-size: 13px;
-    color: #1a73e8;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 4px;
+    margin-bottom: 2px;
 }
 
-/* දකුණු පැත්තේ තියෙන ලකුණු Badge එක */
-.user-score-box {
+/* Email සහ Province වලට පොඩි styles */
+.user-info-sub {
+    font-size: 12px;
+    color: #7f8c8d;
     display: flex;
-    flex-direction: column;
     align-items: center;
+    gap: 6px;
+    margin-top: 2px;
 }
-.score-pill-screenshot {
-    background: #1a73e8;
-    color: white;
-    padding: 8px 18px;
+
+/* 🏆 Score Badge (ලකුණු පෙට්ටිය) */
+.score-badge {
+    background: #e8f0fe !important;
+    color: #1a73e8 !important;
+    padding: 6px 14px;
     border-radius: 50px;
     font-weight: 800;
-    font-size: 15px;
-    box-shadow: 0 4px 8px rgba(26, 115, 232, 0.2);
+    font-size: 14px;
+    display: inline-block;
+    border: 1px solid rgba(26, 115, 232, 0.1);
 }
-.time-taken-text {
-    font-size: 12px;
-    color: #888;
-    margin-top: 5px;
+
+/* ⏱️ Time Column */
+td:last-child {
     font-weight: 600;
+    color: #5f6368;
+    font-size: 14px;
+    text-align: center;
 }
 
-/* Rank 1, 2, 3 වලට දාපු Highlights */
-.top-rank-bg { background-color: #fffdf0; }
+/* 📊 History Page එකේ Category Tag එක */
+.cat-tag {
+    background: #f1f3f4;
+    color: #555;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 11px;
+    text-transform: uppercase;
+}
 
-/* 📊 History එකත් මේ විදියටම Cards කරන්න */
-.history-card-v2 {
-    background: white;
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    border: 1px solid #eee;
+/* Row Hover Effect */
+tr:hover td {
+    background-color: #f8fbff;
+}
+
+/* --- 📱 Mobile Optimization (Squeeze වෙන්නේ නැති වෙන්න) --- */
+@media (max-width: 768px) {
+    .main-content { padding: 15px !important; }
+
+    th {
+        padding: 12px 5px !important;
+        font-size: 12px !important;
+    }
+
+    td {
+        padding: 15px 5px !important;
+        font-size: 11px !important;
+    }
+
+    /* නම පේළි දෙකකට යෑම වැළැක්වීමට */
+    td b, td strong {
+        font-size: 13px !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100px;
+    }
+
+    .user-info-sub {
+        font-size: 10px !important;
+        flex-direction: column; /* Mobile එකේදී එක යට එක පෙන්වමු */
+        align-items: flex-start;
+        gap: 0;
+    }
+
+    /* ලකුණු සහ කාලය පිළිවෙලට තැබීම */
+    .score-badge {
+        padding: 4px 8px !important;
+        font-size: 11px !important;
+        white-space: nowrap;
+    }
+
+    td:last-child {
+        font-size: 11px !important;
+        min-width: 50px;
+    }
 }
