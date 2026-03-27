@@ -95,22 +95,9 @@ body { background-color: var(--main-bg); margin: 0; color: var(--text-dark); }
     overflow: hidden; /* Scroll එක නැති කරන්න */
 }
 
-table { width: 100%; border-collapse: collapse; }
-th { background: #1a73e8; color: white !important; padding: 12px 8px; font-size: 14px; text-align: center; }
-td { padding: 12px 8px; border-bottom: 1px solid #f1f3f4; text-align: center; font-size: 14px; }
- /* 📊 Leaderboard/History Table Compression */
-    th, td { padding: 8px 4px !important; font-size: 12px !important; }
+
     
-    /* Content Boxes Spacing */
-    .table-responsive { 
-        padding: 15px !important; 
-        border-radius: 15px !important; 
-        width: 100% !important;
-    }
-
-
-}
-
+  
 
 
 /* --- 6. Profile & Containers --- */
