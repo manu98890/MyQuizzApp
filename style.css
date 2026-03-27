@@ -248,3 +248,60 @@ td:last-child {
     }
 }
 
+
+/* --- 📱 Mobile එකේ ලකුණු සහ කාලය පිළිවෙලට පෙන්වීමට Fix එක --- */
+@media (max-width: 768px) {
+    /* Table එක screen එකට fit වෙන්න */
+    .table-responsive {
+        border-radius: 12px !important;
+        margin-top: 10px;
+        width: 100% !important;
+        overflow-x: auto; /* Screen එකෙන් එළියට යනවා නම් විතරක් scroll වෙන්න */
+    }
+
+    /* Padding අඩු කරලා ඉඩ ඉතිරි කරමු */
+    th {
+        padding: 12px 5px !important;
+        font-size: 12px !important;
+    }
+
+    td {
+        padding: 12px 5px !important;
+        font-size: 11px !important; /* Font එක පොඩ්ඩක් අඩු කළා */
+    }
+
+    /* Rank column එක පොඩි කරමු */
+    td:first-child {
+        width: 40px !important;
+        font-size: 14px !important;
+    }
+
+    /* විස්තරය (Details) column එකේ නම පේළි දෙකකට නොයා පේන්න */
+    td b, td strong {
+        font-size: 13px !important;
+        white-space: nowrap; /* නම එක පේළියක තියාගන්න */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 120px; /* නම ගොඩක් දිග නම් තිත් පේන්න */
+    }
+
+    /* ලකුණු සහ කාලය එක ළඟ පිළිවෙලට තියන්න */
+    td:nth-child(3), td:last-child {
+        min-width: 40px !important; /* Column එකට අවම ඉඩක් වෙන් කළා */
+        text-align: center !important;
+        font-weight: 700 !important;
+        line-height: 1.2;
+    }
+
+    /* ලකුණු කොටස (40 / 50) පේළි දෙකකට කැඩෙන එක නතර කරන්න */
+    .score-pill {
+        white-space: nowrap !important;
+        font-size: 10px !important;
+    }
+
+    /* Icon සහ Email ලස්සනට පේන්න */
+    .user-info-sub {
+        font-size: 10px !important;
+        gap: 4px;
+    }
+}
