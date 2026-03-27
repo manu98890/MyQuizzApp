@@ -87,6 +87,42 @@ body { background-color: var(--main-bg); margin: 0; color: var(--text-dark); }
 .cat-gk49 { border-top: 6px solid #4b7bec; }
 .cat-gk50 { border-top: 6px solid #a55eea; }
 
+/* --- 7. Tables (General) --- */
+.table-responsive {
+    background: white;
+    border-radius: 15px;
+    box-shadow: var(--card-shadow);
+    overflow: hidden; /* Scroll එක නැති කරන්න */
+}
+
+table { width: 100%; border-collapse: collapse; }
+th { background: #1a73e8; color: white !important; padding: 12px 8px; font-size: 14px; text-align: center; }
+td { padding: 12px 8px; border-bottom: 1px solid #f1f3f4; text-align: center; font-size: 14px; }
+ /* 📊 Leaderboard/History Table Compression */
+    th, td { padding: 8px 4px !important; font-size: 12px !important; }
+    
+    /* Content Boxes Spacing */
+    .table-responsive { 
+        padding: 15px !important; 
+        border-radius: 15px !important; 
+        width: 100% !important;
+    }
+
+
+}
+/* 🏷️ Category Tag (GK) */
+.cat-tag {
+    background: #f1f3f4; color: #555; padding: 2px 8px;
+    border-radius: 6px; font-weight: 800; font-size: 11px;
+}
+* 🔵 Score Pill Style (Daraz Look) */
+.score-pill {
+    background: #1a73e8; color: white; padding: 4px 12px;
+    border-radius: 20px; font-weight: 800; font-size: 14px;
+    display: inline-block;
+
+
+
 /* --- 6. Profile & Containers --- */
 .profile-card, .quiz-container, .login-container { background: white; border-radius: 24px; padding: 40px; box-shadow: var(--card-shadow); max-width: 800px; margin: 0 auto; }
 input, select { background: #f8f9fa; border: 2px solid #f1f3f4; padding: 14px; border-radius: 12px; width: 100%; margin-bottom: 15px; }
@@ -120,23 +156,5 @@ button { background: var(--primary-blue); color: white; border: none; padding: 1
 .nav-dot.correct-nav { background-color: #28a745 !important; color: white !important; border: none !important; }
 .nav-dot.wrong-nav { background-color: #dc3545 !important; color: white !important; border: none !important; }
 
-/* --- 7. Tables (General) --- */
-.table-responsive {
-    background: white;
-    border-radius: 15px;
-    box-shadow: var(--card-shadow);
-    overflow: hidden; /* Scroll එක නැති කරන්න */
-}
 
-table { width: 100%; border-collapse: collapse; }
-th { background: #1a73e8; color: white !important; padding: 12px 8px; font-size: 14px; text-align: center; }
-td { padding: 12px 8px; border-bottom: 1px solid #f1f3f4; text-align: center; font-size: 14px; }
- /* 📊 Leaderboard/History Table Compression */
-    th, td { padding: 8px 4px !important; font-size: 12px !important; }
-    
-    /* Content Boxes Spacing */
-    .table-responsive { 
-        padding: 15px !important; 
-        border-radius: 15px !important; 
-        width: 100% !important;
-    }
+
