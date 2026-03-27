@@ -111,7 +111,7 @@ td { padding: 12px 8px; border-bottom: 1px solid #f1f3f4; text-align: center; fo
 * 🔵 Score Pill Style (Daraz Look) */
 .score-pill {
     background: #1a73e8; color: white; padding: 4px 12px;
-    border-radius: 20px; font-weight: 800; font-size: 11px;
+    border-radius: 20px; font-weight: 800; font-size: 14px;
     display: inline-block;
 }
 /* 🏷️ Category Tag (GK) */
@@ -246,117 +246,61 @@ td:last-child {
     }
 }
 
-/* --- 🏆 13. SCREENSHOT විදියටම LEADERBOARD එක සම්පූර්ණයෙන්ම FIX කිරීම --- */
 
-/* Leaderboard එක තියෙන Container එක */
-.table-responsive {
-    background: white;
-    border-radius: 25px !important; /* පින්තූරයේ වගේ හොඳට Round වෙන්න */
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05) !important;
-    padding: 0 !important;
-    margin-top: 25px;
-    overflow: hidden;
-    border: 1px solid #edf2f7;
-}
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-/* Header එකේ නිල් පාට සහ Font එක */
-th {
-    background: #1a73e8 !important;
-    color: white !important;
-    padding: 25px 15px !important; /* ටිකක් ලොකු කළා */
-    font-size: 16px !important;
-    font-weight: 700 !important;
-    text-align: center;
-    border: none;
-    letter-spacing: 0.5px;
-}
-
-/* පේළි (Rows) අතර පෙනුම */
-td {
-    padding: 22px 15px !important; /* පේළි අතර ඉඩ වැඩි කර ලස්සන කළා */
-    border-bottom: 1px solid #f1f4f8;
-    vertical-align: middle;
-    color: #444;
-}
-
-/* Rank (අංක හෝ පදක්කම්) තියෙන කොටස */
-td:first-child {
-    font-weight: 800;
-    color: #1a73e8;
-    font-size: 18px;
-    width: 90px;
-    text-align: center;
-}
-
-/* විස්තරය (Details) Column එක */
-td:nth-child(2) {
-    text-align: left !important;
-    padding-left: 25px !important;
-}
-
-/* User Name එක කැපී පේන්න */
-td b, td strong {
-    color: #1a202c;
-    font-size: 16px;
-    display: block;
-    margin-bottom: 4px;
-    font-weight: 700;
-}
-
-/* Email සහ Province වලට පොඩි icons සහ style එක */
-.user-info-sub {
-    font-size: 13px;
-    color: #718096;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 2px;
-}
-
-/* ලකුණු (Score) Column එක */
-td:nth-child(3) {
-    font-weight: 600;
-    font-size: 14px;
-    color: #2d3748;
-    text-align: center;
-}
-
-/* කාලය (Time) Column එක */
-td:last-child {
-    font-weight: 600;
-    color: #4a5568;
-    font-size: 15px;
-    text-align: center;
-}
-
-/* Hover effect එකක් දැම්මා පේළියක් උඩට යනකොට පේන්න */
-tr:hover td {
-    background-color: #f8fbff;
-}
-
-/* --- Mobile Optimization Fix --- */
+/* --- 📱 Mobile එකේ ලකුණු සහ කාලය පිළිවෙලට පෙන්වීමට Fix එක --- */
 @media (max-width: 768px) {
+    /* Table එක screen එකට fit වෙන්න */
     .table-responsive {
-        border-radius: 15px !important;
-        margin-top: 15px;
-    }
-    
-    th {
-        padding: 12px 8px !important;
-        font-size: 13px !important;
-    }
-    
-    td {
-        padding: 15px 8px !important;
-        font-size: 13px !important;
+        border-radius: 12px !important;
+        margin-top: 10px;
+        width: 100% !important;
+        overflow-x: auto; /* Screen එකෙන් එළියට යනවා නම් විතරක් scroll වෙන්න */
     }
 
+    /* Padding අඩු කරලා ඉඩ ඉතිරි කරමු */
+    th {
+        padding: 12px 5px !important;
+        font-size: 12px !important;
+    }
+
+    td {
+        padding: 12px 5px !important;
+        font-size: 11px !important; /* Font එක පොඩ්ඩක් අඩු කළා */
+    }
+
+    /* Rank column එක පොඩි කරමු */
+    td:first-child {
+        width: 40px !important;
+        font-size: 14px !important;
+    }
+
+    /* විස්තරය (Details) column එකේ නම පේළි දෙකකට නොයා පේන්න */
     td b, td strong {
-        font-size: 14px;
+        font-size: 13px !important;
+        white-space: nowrap; /* නම එක පේළියක තියාගන්න */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 120px; /* නම ගොඩක් දිග නම් තිත් පේන්න */
+    }
+
+    /* ලකුණු සහ කාලය එක ළඟ පිළිවෙලට තියන්න */
+    td:nth-child(3), td:last-child {
+        min-width: 60px !important; /* Column එකට අවම ඉඩක් වෙන් කළා */
+        text-align: center !important;
+        font-weight: 700 !important;
+        line-height: 1.2;
+    }
+
+    /* ලකුණු කොටස (40 / 50) පේළි දෙකකට කැඩෙන එක නතර කරන්න */
+    .score-pill {
+        white-space: nowrap !important;
+        font-size: 11px !important;
+    }
+
+    /* Icon සහ Email ලස්සනට පේන්න */
+    .user-info-sub {
+        font-size: 10px !important;
+        gap: 4px;
     }
 }
