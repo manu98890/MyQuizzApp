@@ -2945,8 +2945,6 @@ function handleAnswer(selected, btn) {
     
     allButtons.forEach(b => b.disabled = true);
     document.getElementById('score-display').innerText = "ලකුණු: " + score;
-    // 🔥 ප්‍රශ්නයට උත්තරය දුන්න ගමන්ම ලකුණු ටික background එකේ save කරනවා
-    autoSaveScore(score);
     autoNextTimeout =setTimeout(() => { 
         if(currentQuestionIndex < questions.length - 1) {
             currentQuestionIndex++;
@@ -3025,7 +3023,7 @@ function startTimer() {
         let m = Math.floor(timeLeft / 60);
         let s = timeLeft % 60;
         timerDisp.innerText = `කාලය: ${m}:${s < 10 ? '0' : ''}${s}`;
-        if (timeLeft <= 0) { clearInterval(timerInterval); autoSaveScore(score); }
+        if (timeLeft <= 0) { clearInterval(timerInterval); saveScore(score); }
     }, 1000);
 }
 
@@ -3052,7 +3050,6 @@ function setupQuizButtons() {
             isQuizActive = false; // හොර මැරකම් අල්ලන එක තාවකාලිකව නවත්වනවා
             if (confirm("විභාගය අවසන් කරන්නද?")) {
                 clearInterval(timerInterval);
-                autoSaveScore(score); // 🔥 මෙතනත් auto save එක දැම්මා
                 showResultSummary();
             } else {
                 isQuizActive = true; // "Cancel" කළොත් ආයෙත් පණගන්වනවා
@@ -3129,7 +3126,7 @@ async function saveScoreAndRedirect(finalScore) {
         let timeUsed = 3600 - timeLeft;
 
         // 3. Leaderboard එකට දත්ත ඇතුළත් කරනවා
-        await db.collection("leaderboard").doc(user.uid).set({
+        await db.collection("leaderboard").add({
             userId: user.uid,        // අලුතින් එක් කළා
             email: user.email,      // අලුතින් එක් කළා (History එකට ඕනේ වෙනවා)
             name: name,
@@ -3138,13 +3135,6 @@ async function saveScoreAndRedirect(finalScore) {
             score: finalScore,
             timeUsed: timeUsed,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true }); // merge true දැම්මම පරණ දත්ත මැකෙන්නේ නැහැ
-
-        console.log("Auto-saved successfully!");
-    } catch (error) {
-        console.error("Error auto-saving score: ", error);
-    }
-}
         });
 
         console.log("Score saved successfully!");
