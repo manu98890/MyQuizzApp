@@ -2626,33 +2626,19 @@ gk50: [
 ]
 };
 
-
-
 // 3. Global Variables
-let questions = []; 
+let allquestions = []; 
 let currentQuestionIndex = 0;
 let score = 0;
 let timeLeft = 3600; 
 let timerInterval;
 let userAnswers = new Array(50).fill(null);
 let questionStatus = new Array(50).fill(null);
-let autoNextTimeout; 
-let isQuizActive = false; 
+let autoNextTimeout; // මේක උඩින් variable එකක් විදිහට දාන්න
+let isQuizActive = false; // ක්විස් එක පටන් ගත්තම විතරක් මේක true කරමු
 let myChart;
 
-// --- 🔐 AUTHENTICATION LOGIC (NEW UPDATED) ---
-
-function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-}
-
-function validateNIC(nic) {
-    const oldNIC = /^[0-9]{9}[vVxX]$/;
-    const newNIC = /^[0-9]{12}$/;
-    return oldNIC.test(nic) || newNIC.test(nic);
-}
-
+/// --- 🔐 LOGIN LOGIC ---
 function setupLogin() {
     const loginBtn = document.getElementById('login-btn');
     if (loginBtn) {
@@ -2674,6 +2660,18 @@ function setupLogin() {
     }
 }
 
+// --- 📝 REGISTRATION LOGIC ---
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+function validateNIC(nic) {
+    const oldNIC = /^[0-9]{9}[vVxX]$/;
+    const newNIC = /^[0-9]{12}$/;
+    return oldNIC.test(nic) || newNIC.test(nic);
+}
+
 function setupRegistration() {
     const registerBtn = document.getElementById('final-register-btn');
     if (registerBtn) {
@@ -2687,6 +2685,7 @@ function setupRegistration() {
             const question = document.getElementById('reg-security-question').value;
             const answer = document.getElementById('reg-security-answer').value.trim();
 
+            // Validation
             if (!name || !nic || !email || !password || !province || !district || !question || !answer) {
                 alert("කරුණාකර සියලු විස්තර පුරවන්න!");
                 return;
@@ -2702,9 +2701,11 @@ function setupRegistration() {
                 return;
             }
 
+            // 1. Firebase Auth හරහා User සාදමු
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     const user = userCredential.user;
+                    // 2. Firestore එකේ Profile එක සහ Security Data සේව් කරමු
                     return db.collection("users").doc(user.uid).set({
                         name: name,
                         idNo: nic,
@@ -2713,7 +2714,7 @@ function setupRegistration() {
                         district: district,
                         password: password, 
                         securityQuestion: question,
-                        answer: answer.toLowerCase(),
+                        answer: answer.toLowerCase(), // පසුව සසඳන්න ලෙහෙසි වෙන්න lower case කරනවා
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 })
@@ -2731,8 +2732,9 @@ function setupRegistration() {
     }
 }
 
-// --- 🔑 FORGOT PASSWORD LOGIC (NEW) ---
+// --- 🔑 FORGOT PASSWORD LOGIC ---
 
+// 1. User ඉන්නවද බලලා ප්‍රශ්නය ඇදලා ගැනීම
 function checkUser() {
     const email = document.getElementById('user-email').value.trim();
     if(!email) return alert("කරුණාකර Email එක ඇතුළත් කරන්න.");
@@ -2747,6 +2749,7 @@ function checkUser() {
                     document.getElementById('step-1').style.display = 'none';
                     document.getElementById('step-2').style.display = 'block';
                     
+                    // පසුව පරීක්ෂා කිරීමට data store කරගමු
                     window.correctAnswer = data.answer.toLowerCase();
                     window.userPassword = data.password;
                 } else {
@@ -2760,8 +2763,10 @@ function checkUser() {
     .catch(err => alert("Error: " + err.message));
 }
 
+// 2. පිළිතුර පරීක්ෂා කිරීම
 function verifyAnswer() {
     const userAnswer = document.getElementById('user-answer').value.trim().toLowerCase();
+
     if (userAnswer === window.correctAnswer) {
         document.getElementById('step-2').style.display = 'none';
         document.getElementById('step-3').style.display = 'block';
@@ -2771,7 +2776,39 @@ function verifyAnswer() {
     }
 }
 
-// --- 👤 PROFILE & HISTORY LOGIC ---
+// 4. Category එක බලලා Quiz එක පටන් ගන්න එක
+function getCategoryAndStart() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const cat = urlParams.get('cat') || 'gk1'; 
+    
+    questions = allQuestions[cat] || allQuestions['gk1'];
+    
+    startQuiz();
+}
+
+function startQuiz() {
+    isQuizActive = true; // විභාගය පටන් ගත්තා!
+    currentQuestionIndex = 0; // මුල ඉඳන් පටන් ගන්න
+    score = 0;
+   
+    
+    questions.forEach(q => {
+        // Shuffle කරන්නේ නැති නිසා correct index එකේ තියෙන text එක කෙලින්ම ගන්නවා
+        q.answerText = q.options[q.correct]; 
+    });
+
+    createNavDots();
+    showQuestion();
+    startTimer();
+}
+
+
+
+
+// ප්‍රශ්න බැංකුව (ප්‍රශ්න 50 ම මෙතන තියෙන්න ඕනේ)
+
+
+
 
 function loadProfileData() {
     auth.onAuthStateChanged((user) => {
@@ -2780,14 +2817,17 @@ function loadProfileData() {
             db.collection("users").doc(user.uid).onSnapshot((doc) => {
                 if (doc.exists) {
                     const data = doc.data();
+                    // මෙතන තමයි ඔක්කොම විස්තර ටික HTML එකට දාන්නේ
                     display.innerHTML = `
                         <p><b>නම:</b> ${data.name || 'ඇතුළත් කර නැත'}</p>
                         <p><b>Email:</b> ${data.email || 'ඇතුළත් කර නැත'}</p>
                         <p><b>හැඳුනුම්පත:</b> ${data.idNo || 'ඇතුළත් කර නැත'}</p>
-                        <p><b>පළාත:</b> ${data.province || ''} | <b>දිස්ත්‍රික්කය:</b> ${data.district || ''}</p>
+                        <p><b>පළාත:</b> ${data.province || 'ඇතුළත් කර නැත'} | <b>දිස්ත්‍රික්කය:</b> ${data.district || 'ඇතුළත් කර නැත'}</p>
                         <p><b>ලිපිනය:</b> ${data.address || 'තවම ඇතුළත් කර නැත'}</p>
                         <p><b>දුරකථනය:</b> ${data.phone || 'තවම ඇතුළත් කර නැත'}</p>
                     `;
+                    
+                    // Update කරන්න ලේසි වෙන්න Input fields වලටත් දත්ත පුරවමු
                     if(document.getElementById('edit-address')) document.getElementById('edit-address').value = data.address || '';
                     if(document.getElementById('edit-phone')) document.getElementById('edit-phone').value = data.phone || '';
                 }
@@ -2796,128 +2836,45 @@ function loadProfileData() {
     });
 }
 
+// --- 👤 UPDATE PROFILE LOGIC ---
 function setupProfileUpdate() {
     const updateBtn = document.getElementById('update-profile-btn');
     if (updateBtn) {
         updateBtn.onclick = () => {
             const user = auth.currentUser;
+            if (!user) {
+                alert("කරුණාකර නැවත Login වන්න!");
+                return;
+            }
+
             const newAddress = document.getElementById('edit-address').value.trim();
             const newPhone = document.getElementById('edit-phone').value.trim();
-            if (!user || !newAddress || !newPhone) return alert("විස්තර පුරවන්න!");
 
-            db.collection("users").doc(user.uid).update({ address: newAddress, phone: newPhone })
-                .then(() => alert("ඔබේ විස්තර සාර්ථකව යාවත්කාලීන විය! ✅"))
-                .catch(err => alert("දෝෂයක් ඇතිවිය: " + err.message));
+            // හිස්ව තිබුණොත් Update කරන්න දෙන්නේ නැහැ
+            if (!newAddress || !newPhone) {
+                alert("කරුණාකර ලිපිනය සහ දුරකථන අංකය යන දෙකම ඇතුළත් කරන්න!");
+                return;
+            }
+
+            // Firestore එකේ තියෙන User ගේ Document එක Update කරනවා
+            db.collection("users").doc(user.uid).update({
+                address: newAddress,
+                phone: newPhone
+            })
+            .then(() => {
+                alert("ඔබේ විස්තර සාර්ථකව යාවත්කාලීන විය! ✅");
+                // පෝරමය (Input fields) Clear කරන්න ඕන නම් මේ ටික පාවිච්චි කරන්න පුළුවන්
+                // document.getElementById('edit-address').value = '';
+                // document.getElementById('edit-phone').value = '';
+            })
+            .catch(err => {
+                console.error("Update Error:", err);
+                alert("යාවත්කාලීන කිරීමේදී දෝෂයක් ඇතිවිය: " + err.message);
+            });
         };
     }
 }
-
-// --- 📈 EXAM HISTORY & GRAPH ---
-
-function loadUserHistory() {
-    const historyBody = document.getElementById('history-body');
-    if (!historyBody) return;
-
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            db.collection("leaderboard")
-                .where("email", "==", user.email)
-                .orderBy("timestamp", "desc")
-                .onSnapshot((snap) => {
-                    let dates = [], scores = [], tableHTML = '';
-                    if (snap.empty) {
-                        historyBody.innerHTML = '<tr><td colspan="4">තවම විභාග දත්ත ලබාගෙන නැත.</td></tr>';
-                        return;
-                    }
-                    snap.forEach(doc => {
-                        const d = doc.data();
-                        const date = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "Pending";
-                        dates.push(date); 
-                        scores.push(d.score || 0);
-                        tableHTML += `
-                            <tr>
-                                <td>${date}</td>
-                                <td><span class="cat-tag">${d.category ? d.category.toUpperCase() : 'GK'}</span></td>
-                                <td><span class="score-badge">${d.score} / 50</span></td>
-                                <td>${Math.floor(d.timeUsed / 60)}:${d.timeUsed % 60 < 10 ? '0' : ''}${d.timeUsed % 60} min</td>
-                            </tr>`;
-                    });
-                    historyBody.innerHTML = tableHTML;
-                    renderChart(dates, scores);
-                });
-        }
-    });
-}
-
-function renderChart(labels, data) {
-    const canvas = document.getElementById('scoreChart');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (myChart) myChart.destroy();
-    myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels.reverse(),
-            datasets: [{
-                label: 'ලකුණු මට්ටම',
-                data: data.reverse(),
-                borderColor: '#1a73e8',
-                backgroundColor: 'rgba(26, 115, 232, 0.1)',
-                tension: 0.3, fill: true
-            }]
-        },
-        options: { scales: { y: { beginAtZero: true, max: 50 } } }
-    });
-}
-
-// --- 🛡️ CHEATING PROTECTION ---
-
-function setupCheatingProtection() {
-    document.addEventListener("visibilitychange", () => {
-        if (document.hidden && isQuizActive) terminateExam();
-    });
-    window.onblur = () => {
-        setTimeout(() => { if (isQuizActive) terminateExam(); }, 6000); 
-    };
-}
-
-function terminateExam() {
-    isQuizActive = false;
-    clearInterval(timerInterval);
-    alert("අවධානයයි: ඔබ විභාගය අතරතුර වෙනත් පිටුවකට ගිය නිසා මෙම විභාගය අවලංගු වේ!");
-    window.location.href = "profile.html";
-}
-
-// --- ✍️ QUIZ CORE ENGINE ---
-
-function getCategoryAndStart() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const cat = urlParams.get('cat') || 'gk1';
-    questions = allQuestions[cat] || allQuestions['gk1'];
-    questions.forEach(q => { q.answerText = q.options[q.correct]; });
-    const modal = document.getElementById('rules-modal');
-    if (modal) modal.style.display = 'flex';
-}
-
-function setupRulesModal() {
-    const startBtn = document.getElementById('start-exam-btn');
-    if (startBtn) {
-        startBtn.onclick = () => {
-            document.getElementById('rules-modal').style.display = 'none';
-            startQuiz();
-        };
-    }
-}
-
-function startQuiz() {
-    isQuizActive = true;
-    currentQuestionIndex = 0;
-    score = 0;
-    createNavDots();
-    showQuestion();
-    startTimer();
-}
-
+// 5. Quiz UI Logic
 function createNavDots() {
     const nav = document.getElementById('question-nav');
     if (!nav) return;
@@ -2934,14 +2891,17 @@ function createNavDots() {
 
 function showQuestion() {
     const qData = questions[currentQuestionIndex];
-    document.getElementById('question-text').innerText = `${currentQuestionIndex + 1}. ${qData.q}`;
+    const qText = document.getElementById('question-text');
     const optCont = document.getElementById('options-container');
+    if (!qText || !optCont) return;
+
+    qText.innerText = `${currentQuestionIndex + 1}. ${qData.q}`;
     optCont.innerHTML = '';
 
     questions.forEach((_, i) => {
         const d = document.getElementById(`dot-${i}`);
         if (d) {
-            d.classList.remove('active');
+            d.classList.remove('active', 'correct-nav', 'wrong-nav');
             if (i === currentQuestionIndex) d.classList.add('active');
             if (questionStatus[i] === true) d.classList.add('correct-nav');
             if (questionStatus[i] === false) d.classList.add('wrong-nav');
@@ -2951,119 +2911,305 @@ function showQuestion() {
     qData.options.forEach(opt => {
         const btn = document.createElement('button');
         btn.innerText = opt;
-        btn.className = 'option-btn';
+        btn.classList.add('option-btn');
         if (userAnswers[currentQuestionIndex] !== null) {
             btn.disabled = true;
             if (opt === qData.answerText) btn.classList.add('correct');
             if (opt === userAnswers[currentQuestionIndex] && opt !== qData.answerText) btn.classList.add('wrong');
-        } else btn.onclick = () => handleAnswer(opt, btn);
+        } else {
+            btn.onclick = () => handleAnswer(opt, btn);
+        }
         optCont.appendChild(btn);
     });
 }
 
 function handleAnswer(selected, btn) {
     const qData = questions[currentQuestionIndex];
+    const correctAnswerText = qData.answerText;
+    const allButtons = document.querySelectorAll('.option-btn');
+
     userAnswers[currentQuestionIndex] = selected;
-    if (selected === qData.answerText) {
+    clearTimeout(autoNextTimeout); // පරණ timeout එක clear කරනවා පනින එක නතර කරන්න
+
+    if (selected === correctAnswerText) {
         btn.classList.add('correct');
-        score++;
+        score += 1;
         questionStatus[currentQuestionIndex] = true;
     } else {
         btn.classList.add('wrong');
         questionStatus[currentQuestionIndex] = false;
+        allButtons.forEach(b => { 
+            if (b.innerText === correctAnswerText) b.classList.add('correct'); 
+        });
     }
+    
+    allButtons.forEach(b => b.disabled = true);
     document.getElementById('score-display').innerText = "ලකුණු: " + score;
-    setTimeout(() => {
-        if (currentQuestionIndex < questions.length - 1) {
+    autoNextTimeout =setTimeout(() => { 
+        if(currentQuestionIndex < questions.length - 1) {
             currentQuestionIndex++;
             showQuestion();
-        } else {
+        }else{
             showResultSummary();
         }
     }, 120000);
 }
+function setupCheatingProtection() {
+    // 1. ටැබ් එක මාරු කිරීම හෝ Browser එක Minimize කිරීම පරීක්ෂාව
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden && isQuizActive) {
+            terminateExam();
+        }
+    });
 
+    // 2. වෙනත් Application එකක් හෝ Window එකක් ක්ලික් කිරීම (Focus අවුට් වීම)
+    window.onblur = () => {
+        setTimeout(() => {
+        if (isQuizActive) {
+            terminateExam();
+        }
+    }, 6000);
+    };
+}
+function getCategoryAndStart() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const cat = urlParams.get('cat') || 'gk1';
+    
+    // මෙතන තමයි වැදගත්ම දේ - ප්‍රශ්න ටික Global variable එකට ලෝඩ් කරනවා
+    questions = allQuestions[cat] || allQuestions['gk1'];
+    
+    // ප්‍රශ්නවලට අදාළ answerText ටික කලින්ම හදාගන්නවා
+    questions.forEach(q => {
+        q.answerText = q.options[q.correct]; 
+    });
+
+    // 🛑 වැදගත්: මෙතනදී startQuiz() කෙලින්ම call කරන්නේ නැහැ. 
+    // ඒ වෙනුවට Modal එක පෙන්වනවා.
+    const modal = document.getElementById('rules-modal');
+    if (modal) {
+        modal.style.display = 'flex'; // Modal එක පෙන්වන්න
+    }
+}
+function setupRulesModal() {
+    const startBtn = document.getElementById('start-exam-btn');
+    const modal = document.getElementById('rules-modal');
+
+    if (startBtn && modal) {
+        startBtn.onclick = () => {
+            console.log("Exam starting..."); // Debugging වලට
+            modal.style.display = 'none'; // Modal එක වහනවා
+            startQuiz(); // දැන් තමයි ඇත්තටම පටන් ගන්නේ
+        };
+    }
+}
+
+// විභාගය අතරතුර හොරයක් කළොත් කරන දේ
+function terminateExam() {
+    isQuizActive = false; // ලොජික් එක නවත්වනවා
+    clearInterval(timerInterval); // ටයිමර් එක නවත්වනවා
+    
+    alert("අවධානයයි: ඔබ විභාගය අතරතුර වෙනත් පිටුවකට හෝ Window එකකට ගිය නිසා මෙම විභාගය අවලංගු කරනු ලැබේ!");
+    
+    // කෙලින්ම ප්‍රොෆයිල් එකට යවනවා (නැත්නම් location.reload() දාන්නත් පුළුවන්)
+    window.location.href = "profile.html"; 
+}
+
+   
 function startTimer() {
+    const timerDisp = document.getElementById('timer');
+    if (!timerDisp) return;
     timerInterval = setInterval(() => {
         timeLeft--;
-        let m = Math.floor(timeLeft / 60), s = timeLeft % 60;
-        document.getElementById('timer').innerText = `කාලය: ${m}:${s < 10 ? '0' : ''}${s}`;
-        if (timeLeft <= 0) { clearInterval(timerInterval); showResultSummary(); }
+        let m = Math.floor(timeLeft / 60);
+        let s = timeLeft % 60;
+        timerDisp.innerText = `කාලය: ${m}:${s < 10 ? '0' : ''}${s}`;
+        if (timeLeft <= 0) { clearInterval(timerInterval); saveScore(score); }
     }, 1000);
 }
 
+function setupQuizButtons() {
+    const nextBtn = document.getElementById('next-btn');
+    const prevBtn = document.getElementById('prev-btn');
+    const finishBtn = document.getElementById('finish-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+
+    if (nextBtn) nextBtn.onclick = () => { 
+        if (currentQuestionIndex < questions.length - 1) { 
+            currentQuestionIndex++; showQuestion(); 
+        } 
+    };
+
+    if (prevBtn) prevBtn.onclick = () => { 
+        if (currentQuestionIndex > 0) { 
+            currentQuestionIndex--; showQuestion(); 
+        } 
+    };
+
+    if (finishBtn) {
+        finishBtn.onclick = () => {
+            isQuizActive = false; // හොර මැරකම් අල්ලන එක තාවකාලිකව නවත්වනවා
+            if (confirm("විභාගය අවසන් කරන්නද?")) {
+                clearInterval(timerInterval);
+                showResultSummary();
+            } else {
+                isQuizActive = true; // "Cancel" කළොත් ආයෙත් පණගන්වනවා
+            }
+        };
+    }
+
+    if (cancelBtn) {
+        cancelBtn.onclick = () => { 
+            isQuizActive = false; // හොර මැරකම් අල්ලන එක නවත්වනවා
+            if (confirm("පිටවෙන්නද?")) {
+                clearInterval(timerInterval);
+                window.location.href = "profile.html"; // දැන් මේක වැඩ කරන්නේ OK එබුවොත් විතරයි
+            } else {
+                isQuizActive = true; // "Cancel" කළොත් ආයෙත් පණගන්වනවා
+            }
+        };
+    }
+}
 function showResultSummary() {
-    isQuizActive = false;
+    isQuizActive = false; // විභාගය ඉවරයි කියලා ස්ථිර කරනවා
     clearInterval(timerInterval);
     const quizContainer = document.querySelector('.quiz-container');
+    
+    let correctCount = questionStatus.filter(s => s === true).length;
+    let wrongCount = questionStatus.filter(s => s === false).length;
+    let skippedCount = 50 - (correctCount + wrongCount);
+
     quizContainer.innerHTML = `
         <div style="text-align: center; padding: 20px;">
-            <h2>විභාගය අවසන්!</h2>
-            <p style="font-size: 24px;">ලකුණු: ${score} / 50</p>
-            <button onclick="saveScoreAndRedirect(${score})" style="background: #34a853;">ප්‍රගති පුවරුව බලන්න</button>
-            <button onclick="window.location.href='profile.html'" style="background: #6c757d; margin-left:10px;">ප්‍රධාන පිටුවට</button>
-        </div>`;
+            <h2 style="color: #1a73e8;">විභාග සාරාංශය</h2>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 15px; margin: 20px 0; border: 1px solid #ddd;">
+                <p style="font-size: 22px; color: #1a73e8;"><b>මුළු ලකුණු: ${score} / 50</b></p>
+                <hr style="border: 0.5px solid #eee;">
+                <p style="color: #28a745;">✅ නිවැරදි පිළිතුරු: <b>${correctCount}</b></p>
+                <p style="color: #dc3545;">❌ වැරදි පිළිතුරු: <b>${wrongCount}</b></p>
+                <p style="color: #666;">🔘 නොකළ ප්‍රශ්න: <b>${skippedCount}</b></p>
+            </div>
+            <p style="font-size: 14px; color: #888;">ප්‍රගති පුවරුවට (Leaderboard) ඇතුළත් වීමට පහත බටන් එක ඔබන්න.</p>
+             <div style="margin-top: 30px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+    
+            <button onclick="saveScoreAndRedirect(${score})" style="background: #34a853; margin-top: 10px;">ප්‍රගති පුවරුව බලන්න</button>
+            <button onclick="window.location.href='profile.html'" style="background-color: #6c757d; width: 150px;">ප්‍රධාන පිටුවට</button>
+        </div>
+    `;
 }
-
-// --- 💾 DATA SAVING ---
-
+// 6. Data Saving & Leaderboard
 async function saveScoreAndRedirect(finalScore) {
     const user = auth.currentUser;
-    if (!user) return;
-    const cat = new URLSearchParams(window.location.search).get('cat') || 'gk1';
-    
+    const urlParams = new URLSearchParams(window.location.search);
+    const cat = urlParams.get('cat') || 'gk1';
+
+    if (!user) {
+        alert("කරුණාකර Login වන්න!");
+        window.location.href = "index.html";
+        return;
+    }
+
     try {
+        // 1. User ගේ profile එකෙන් විස්තර ගන්නවා
         const userDoc = await db.collection("users").doc(user.uid).get();
-        const userData = userDoc.data();
+        
+        let province = "Unknown";
+        let name = user.email.split('@')[0];
+
+        // මෙන්න මෙතන තමයි කලින් වැරදුනේ - 'userDoc' කියන එකම පාවිච්චි කරන්න ඕනේ
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            province = userData.province || "Unknown";
+            name = userData.name || name;
+        }
+
+        // 2. ගතවුණු කාලය ගණනය කරනවා
+        let timeUsed = 3600 - timeLeft;
+
+        // 3. Leaderboard එකට දත්ත ඇතුළත් කරනවා
         await db.collection("leaderboard").add({
-            userId: user.uid,
-            email: user.email,
-            name: userData.name,
-            province: userData.province,
+            userId: user.uid,        // අලුතින් එක් කළා
+            email: user.email,      // අලුතින් එක් කළා (History එකට ඕනේ වෙනවා)
+            name: name,
+            province: province,
             category: cat,
             score: finalScore,
-            timeUsed: 3600 - timeLeft,
+            timeUsed: timeUsed,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
-        window.location.href = "leaderboard.html";
-    } catch (e) { alert("Error saving: " + e.message); }
-}
 
+        console.log("Score saved successfully!");
+        // 4. සේව් වුණාට පස්සේ ලීඩර්බෝඩ් එකට යනවා
+        window.location.href = "leaderboard.html";
+
+    } catch (error) {
+        // මෙතනින් අපිට error එක මොකක්ද කියලා හරියටම බලාගන්න පුළුවන්
+        console.error("Error saving score: ", error);
+        alert("දෝෂය: " + error.message); 
+    }
+}
 function loadLeaderboard() {
     const lbBody = document.getElementById('leaderboard-body');
     if (!lbBody) return;
-    db.collection("leaderboard").orderBy("score", "desc").orderBy("timeUsed", "asc").limit(50).onSnapshot(snap => {
-        lbBody.innerHTML = '';
-        let rank = 1;
-        snap.forEach(doc => {
-            const d = doc.data();
-            lbBody.innerHTML += `<tr><td>${rank++}</td><td>${d.name}<br><small>${d.province}</small></td><td>${d.score}/50</td><td>${Math.floor(d.timeUsed/60)}m</td></tr>`;
+
+    db.collection("leaderboard")
+        .orderBy("score", "desc")
+        .orderBy("timeUsed", "asc")
+        .onSnapshot((snap) => {
+            lbBody.innerHTML = '';
+            let rank = 1;
+
+            snap.forEach(doc => {
+                const d = doc.data();
+                const mins = Math.floor(d.timeUsed / 60);
+                const secs = d.timeUsed % 60;
+                
+                // Rank එක අනුව Medal එක තෝරනවා
+                let medal = "";
+                let rankClass = "";
+                if(rank === 1) { medal = "🥇"; rankClass = "rank-1"; }
+                else if(rank === 2) { medal = "🥈"; rankClass = "rank-2"; }
+                else if(rank === 3) { medal = "🥉"; rankClass = "rank-3"; }
+                else { medal = rank; }
+
+                lbBody.innerHTML += `
+                    <tr class="${rankClass}">
+                        <td>${medal}</td>
+                        <td style="text-align: left; min-width: 150px;">
+                            <span style="font-weight: bold; color: #333;">${d.name}</span><br>
+                            <small style="color: #666;">📧 ${d.email || 'No Email'}</small><br>
+                            <small style="color: #1a73e8;">📍 පළාත: ${d.province}</small>
+                        </td>
+                        <td><span class="score-badge">${d.score} / 50</span></td>
+                        <td>${mins}:${secs < 10 ? '0' : ''}${secs} min</td>
+                    </tr>
+                `;
+                rank++;
+            });
         });
-    });
 }
 
-// --- 🚀 INITIALIZATION ---
-
+// 7. Page Load Manager
 window.onload = () => {
     setupLogin();
     setupRegistration(); 
-    setupCheatingProtection();
-    setupRulesModal();
+    setupCheatingProtection(); // <--- අනිවාර්යයෙන් මේක මෙතන තියෙන්න ඕනේ
+    setupRulesModal(); // <--- මෙන්න මේක අලුතින් එකතු කළා
     setupProfileUpdate();
 
     if (document.getElementById('user-info-display')) loadProfileData(); 
     if (document.getElementById('history-body')) loadUserHistory();
-    if (document.getElementById('leaderboard-body')) loadLeaderboard();
-
+    
+    
     if (document.getElementById('question-text')) {
         auth.onAuthStateChanged(user => { 
             if(user) { getCategoryAndStart(); setupQuizButtons(); } 
-            else window.location.href="index.html"; 
+            else { window.location.href="index.html"; }
         });
     }
+    
+    if (document.getElementById('leaderboard-body')) loadLeaderboard();
 
-    const provSel = document.getElementById('reg-province');
-    const distSel = document.getElementById('reg-district');
+    // --- 🌍 Province to District Logic ---
     const districtData = {
         "Western": ["Colombo", "Gampaha", "Kalutara"],
         "Central": ["Kandy", "Matale", "Nuwara Eliya"],
@@ -3076,74 +3222,110 @@ window.onload = () => {
         "Northern": ["Jaffna", "Kilinochchi", "Mannar", "Vavuniya", "Mullaitivu"]
     };
 
+    const provSel = document.getElementById('reg-province');
+    const distSel = document.getElementById('reg-district');
+
     if(provSel && distSel) {
         provSel.onchange = function() {
+            // Dropdown එක මුලින්ම Clear කරනවා
             distSel.innerHTML = '<option value="">දිස්ත්‍රික්කය තෝරන්න</option>';
-            if(this.value && districtData[this.value]) {
-                districtData[this.value].forEach(d => {
+            
+            const selectedProvince = this.value;
+            if(selectedProvince && districtData[selectedProvince]) {
+                districtData[selectedProvince].forEach(d => {
                     let opt = document.createElement('option');
-                    opt.value = d; opt.innerText = d;
+                    opt.value = d;
+                    opt.innerText = d;
                     distSel.appendChild(opt);
                 });
             }
         };
     }
-};
+};        
+function loadUserHistory() {
+    const historyBody = document.getElementById('history-body');
+    const chartCanvas = document.getElementById('scoreChart');
+    if (!historyBody || !chartCanvas) return;
 
-function setupQuizButtons() {
-    const nextBtn = document.getElementById('next-btn');
-    const prevBtn = document.getElementById('prev-btn');
-    const finishBtn = document.getElementById('finish-btn');
-    const cancelBtn = document.getElementById('cancel-btn');
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            console.log("Loading history for: " + user.email);
+            
+            db.collection("leaderboard")
+                .where("email", "==", user.email)
+                .orderBy("timestamp", "desc") // Chart එකට දත්ත පිළිවෙළට එන්න ඕනේ
+                .onSnapshot((snap) => {
+                    let dates = [];
+                    let scores = [];
+                    let tableHTML = '';
 
-    // ඉදිරියට යාමේ බටන් එක
-    if (nextBtn) {
-        nextBtn.onclick = () => { 
-            if (currentQuestionIndex < questions.length - 1) { 
-                currentQuestionIndex++; 
-                showQuestion(); 
-            } 
-        };
-    }
+                    if (snap.empty) {
+                        historyBody.innerHTML = '<tr><td colspan="4">තවම විභාග දත්ත ලබාගෙන නැත.</td></tr>';
+                        return;
+                    }
 
-    // පසුපසට යාමේ බටන් එක
-    if (prevBtn) {
-        prevBtn.onclick = () => { 
-            if (currentQuestionIndex > 0) { 
-                currentQuestionIndex--; 
-                showQuestion(); 
-            } 
-        };
-    }
+                    snap.forEach(doc => {
+                        const d = doc.data();
+                        const date = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "Pending";
+                        const scoreVal = d.score || 0;
+                        const mins = Math.floor((d.timeUsed || 0) / 60);
+                        const secs = (d.timeUsed || 0) % 60;
 
-    // විභාගය අවසන් කිරීමේ බටන් එක
-    if (finishBtn) {
-        finishBtn.onclick = () => {
-            isQuizActive = false; // Confirm box එක වෙලාවේ cheating protection එක නවත්වනවා
-            if (confirm("විභාගය අවසන් කරන්නද?")) {
-                clearInterval(timerInterval);
-                showResultSummary();
-            } else {
-                isQuizActive = true; // 'Cancel' කළොත් නැවත protection එක දානවා
-            }
-        };
-    }
+                        // Graph එකට දත්ත
+                        dates.push(date);
+                        scores.push(scoreVal);
 
-    // විභාගය අවලංගු කිරීමේ බටන් එක
-    if (cancelBtn) {
-        cancelBtn.onclick = () => { 
-            isQuizActive = false; // මෙතනත් protection එක නවත්වනවා
-            if (confirm("පිටවෙන්නද?")) {
-                clearInterval(timerInterval);
-                window.location.href = "profile.html"; 
-            } else {
-                isQuizActive = true; // resume protection
-            }
-        };
-    }
+                        // Table එකට අලුත්ම ඒවා උඩට එන විදියට row එක හදමු
+                        const row = `
+                            <tr>
+                                <td style="padding:15px; border-bottom:1px solid #eee;">${date}</td>
+                                <td><span class="cat-tag">${d.category ? d.category.toUpperCase() : 'GK'}</span></td>
+                                <td><span class="score-badge" style="background:#1a73e8; color:white; padding:4px 10px; border-radius:12px;">${scoreVal} / 50</span></td>
+                                <td>${mins}:${secs < 10 ? '0' : ''}${secs} min</td>
+                            </tr>
+                        `;
+                        tableHTML = row + tableHTML; // අලුත්ම Record එක උඩට දානවා
+                    });
+
+                    historyBody.innerHTML = tableHTML;
+                    renderChart(dates, scores); // Chart එක අඳින්න call කරනවා
+                }, (error) => {
+                    console.error("Firestore Error: ", error);
+                });
+        }
+    });
 }
 
-// Logout
+function renderChart(labels, data) {
+    const ctx = document.getElementById('scoreChart').getContext('2d');
+    if (myChart) myChart.destroy(); // පරණ Chart එක මකනවා
+
+    myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'ලකුණු මට්ටම',
+                data: data,
+                borderColor: '#1a73e8',
+                backgroundColor: 'rgba(26, 115, 232, 0.1)',
+                borderWidth: 3,
+                tension: 0.3,
+                fill: true,
+                pointBackgroundColor: '#1a73e8',
+                pointRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, max: 50 }
+            }
+        }
+    });
+}
+// 8. Logout
 const logoutBtn = document.getElementById('logout-link');
 if (logoutBtn) {
     logoutBtn.onclick = (e) => {
@@ -3151,3 +3333,7 @@ if (logoutBtn) {
         auth.signOut().then(() => window.location.href = "index.html");
     };
 }
+
+
+
+
