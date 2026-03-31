@@ -2626,28 +2626,7 @@ gk50: [
 ]
 };
 
-// 1. Firebase Configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyAR6Lcx38Ld_fxn3D6xlZLc9j4VCJh7AJo",
-    authDomain: "myquizapp-5bf05.firebaseapp.com",
-    projectId: "myquizapp-5bf05",
-    storageBucket: "myquizapp-5bf05.firebasestorage.app",
-    messagingSenderId: "574891930589",
-    appId: "1:574891930589:web:f9d6bdb96ecad822957c34"
-};
 
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-// 2. ප්‍රශ්න බැංකුව (සියලුම GK පත්තර මෙතන ඇත)
-const allQuestions = {
-    gk1: [ /* ... ප්‍රශ්න මෙතන ඇත ... */ ],
-    gk2: [ /* ... */ ],
-    // ... gk50 දක්වා ඔබ ලබාදුන් සියලුම ප්‍රශ්න මෙතැනට ඇතුළත් වේ
-};
 
 // 3. Global Variables
 let questions = []; 
