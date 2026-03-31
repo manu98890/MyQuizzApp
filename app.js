@@ -2626,7 +2626,30 @@ gk50: [
 ]
 };
 
-// --- 3. Global Variables ---
+// 1. Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyAR6Lcx38Ld_fxn3D6xlZLc9j4VCJh7AJo",
+    authDomain: "myquizapp-5bf05.firebaseapp.com",
+    projectId: "myquizapp-5bf05",
+    storageBucket: "myquizapp-5bf05.firebasestorage.app",
+    messagingSenderId: "574891930589",
+    appId: "1:574891930589:web:f9d6bdb96ecad822957c34"
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// 2. ප්‍රශ්න බැංකුව (සියලුම GK පත්තර මෙතන ඇත)
+const allQuestions = {
+    gk1: [ /* ... ප්‍රශ්න මෙතන ඇත ... */ ],
+    gk2: [ /* ... */ ],
+    // ... gk50 දක්වා ඔබ ලබාදුන් සියලුම ප්‍රශ්න මෙතැනට ඇතුළත් වේ
+};
+
+// 3. Global Variables
 let questions = []; 
 let currentQuestionIndex = 0;
 let score = 0;
@@ -2636,9 +2659,20 @@ let userAnswers = new Array(50).fill(null);
 let questionStatus = new Array(50).fill(null);
 let autoNextTimeout; 
 let isQuizActive = false; 
-let myChart; // Graph එක මැනේජ් කරන්න
+let myChart;
 
-// --- 🔐 AUTHENTICATION LOGIC (UPDATED) ---
+// --- 🔐 AUTHENTICATION LOGIC (NEW UPDATED) ---
+
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+function validateNIC(nic) {
+    const oldNIC = /^[0-9]{9}[vVxX]$/;
+    const newNIC = /^[0-9]{12}$/;
+    return oldNIC.test(nic) || newNIC.test(nic);
+}
 
 function setupLogin() {
     const loginBtn = document.getElementById('login-btn');
@@ -2661,17 +2695,6 @@ function setupLogin() {
     }
 }
 
-function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-}
-
-function validateNIC(nic) {
-    const oldNIC = /^[0-9]{9}[vVxX]$/;
-    const newNIC = /^[0-9]{12}$/;
-    return oldNIC.test(nic) || newNIC.test(nic);
-}
-
 function setupRegistration() {
     const registerBtn = document.getElementById('final-register-btn');
     if (registerBtn) {
@@ -2685,7 +2708,6 @@ function setupRegistration() {
             const question = document.getElementById('reg-security-question').value;
             const answer = document.getElementById('reg-security-answer').value.trim();
 
-            // Validation
             if (!name || !nic || !email || !password || !province || !district || !question || !answer) {
                 alert("කරුණාකර සියලු විස්තර පුරවන්න!");
                 return;
@@ -2730,7 +2752,7 @@ function setupRegistration() {
     }
 }
 
-// --- 🔑 FORGOT PASSWORD LOGIC ---
+// --- 🔑 FORGOT PASSWORD LOGIC (NEW) ---
 
 function checkUser() {
     const email = document.getElementById('user-email').value.trim();
@@ -2761,7 +2783,6 @@ function checkUser() {
 
 function verifyAnswer() {
     const userAnswer = document.getElementById('user-answer').value.trim().toLowerCase();
-
     if (userAnswer === window.correctAnswer) {
         document.getElementById('step-2').style.display = 'none';
         document.getElementById('step-3').style.display = 'block';
@@ -2772,6 +2793,7 @@ function verifyAnswer() {
 }
 
 // --- 👤 PROFILE & HISTORY LOGIC ---
+
 function loadProfileData() {
     auth.onAuthStateChanged((user) => {
         const display = document.getElementById('user-info-display');
@@ -2780,10 +2802,10 @@ function loadProfileData() {
                 if (doc.exists) {
                     const data = doc.data();
                     display.innerHTML = `
-                        <p><b>නම:</b> ${data.name || ''}</p>
-                        <p><b>Email:</b> ${data.email || ''}</p>
-                        <p><b>හැඳුනුම්පත:</b> ${data.idNo || ''}</p>
-                        <p><b>පළාත:</b> ${data.province || ''}</p>
+                        <p><b>නම:</b> ${data.name || 'ඇතුළත් කර නැත'}</p>
+                        <p><b>Email:</b> ${data.email || 'ඇතුළත් කර නැත'}</p>
+                        <p><b>හැඳුනුම්පත:</b> ${data.idNo || 'ඇතුළත් කර නැත'}</p>
+                        <p><b>පළාත:</b> ${data.province || ''} | <b>දිස්ත්‍රික්කය:</b> ${data.district || ''}</p>
                         <p><b>ලිපිනය:</b> ${data.address || 'තවම ඇතුළත් කර නැත'}</p>
                         <p><b>දුරකථනය:</b> ${data.phone || 'තවම ඇතුළත් කර නැත'}</p>
                     `;
@@ -2805,34 +2827,41 @@ function setupProfileUpdate() {
             if (!user || !newAddress || !newPhone) return alert("විස්තර පුරවන්න!");
 
             db.collection("users").doc(user.uid).update({ address: newAddress, phone: newPhone })
-                .then(() => alert("යාවත්කාලීන විය! ✅"))
-                .catch(err => alert("Error: " + err.message));
+                .then(() => alert("ඔබේ විස්තර සාර්ථකව යාවත්කාලීන විය! ✅"))
+                .catch(err => alert("දෝෂයක් ඇතිවිය: " + err.message));
         };
     }
 }
 
 // --- 📈 EXAM HISTORY & GRAPH ---
+
 function loadUserHistory() {
     const historyBody = document.getElementById('history-body');
-    const chartCanvas = document.getElementById('scoreChart');
-    if (!historyBody || !chartCanvas) return;
+    if (!historyBody) return;
 
     auth.onAuthStateChanged(user => {
         if (user) {
             db.collection("leaderboard")
                 .where("email", "==", user.email)
-                .orderBy("timestamp", "asc")
+                .orderBy("timestamp", "desc")
                 .onSnapshot((snap) => {
                     let dates = [], scores = [], tableHTML = '';
                     if (snap.empty) {
-                        historyBody.innerHTML = '<tr><td colspan="4">තවම විභාග දත්ත නැත.</td></tr>';
+                        historyBody.innerHTML = '<tr><td colspan="4">තවම විභාග දත්ත ලබාගෙන නැත.</td></tr>';
                         return;
                     }
                     snap.forEach(doc => {
                         const d = doc.data();
                         const date = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "Pending";
-                        dates.push(date); scores.push(d.score || 0);
-                        tableHTML = `<tr><td>${date}</td><td>${d.category.toUpperCase()}</td><td><b>${d.score}/50</b></td><td>${Math.floor(d.timeUsed/60)}m ${d.timeUsed%60}s</td></tr>` + tableHTML;
+                        dates.push(date); 
+                        scores.push(d.score || 0);
+                        tableHTML += `
+                            <tr>
+                                <td>${date}</td>
+                                <td><span class="cat-tag">${d.category ? d.category.toUpperCase() : 'GK'}</span></td>
+                                <td><span class="score-badge">${d.score} / 50</span></td>
+                                <td>${Math.floor(d.timeUsed / 60)}:${d.timeUsed % 60 < 10 ? '0' : ''}${d.timeUsed % 60} min</td>
+                            </tr>`;
                     });
                     historyBody.innerHTML = tableHTML;
                     renderChart(dates, scores);
@@ -2842,15 +2871,17 @@ function loadUserHistory() {
 }
 
 function renderChart(labels, data) {
-    const ctx = document.getElementById('scoreChart').getContext('2d');
+    const canvas = document.getElementById('scoreChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
     if (myChart) myChart.destroy();
     myChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: labels,
+            labels: labels.reverse(),
             datasets: [{
                 label: 'ලකුණු මට්ටම',
-                data: data,
+                data: data.reverse(),
                 borderColor: '#1a73e8',
                 backgroundColor: 'rgba(26, 115, 232, 0.1)',
                 tension: 0.3, fill: true
@@ -2861,51 +2892,32 @@ function renderChart(labels, data) {
 }
 
 // --- 🛡️ CHEATING PROTECTION ---
+
 function setupCheatingProtection() {
     document.addEventListener("visibilitychange", () => {
         if (document.hidden && isQuizActive) terminateExam();
     });
     window.onblur = () => {
-        setTimeout(() => { if (isQuizActive) terminateExam(); }, 3000); 
+        setTimeout(() => { if (isQuizActive) terminateExam(); }, 6000); 
     };
 }
 
 function terminateExam() {
-    if(!isQuizActive) return;
     isQuizActive = false;
     clearInterval(timerInterval);
-    alert("අවධානයයි: විභාගය අතරතුර වෙනත් පිටුවකට ගිය නිසා මෙය අවලංගු වේ!");
+    alert("අවධානයයි: ඔබ විභාගය අතරතුර වෙනත් පිටුවකට ගිය නිසා මෙම විභාගය අවලංගු වේ!");
     window.location.href = "profile.html";
 }
 
-// --- ✍️ SAVE & QUIZ CORE ---
-async function autoSaveScore(finalScore) {
-    const user = auth.currentUser;
-    const cat = new URLSearchParams(window.location.search).get('cat') || 'gk1';
-    const docId = `${user.uid}_${cat}`; 
-
-    if (!user) return;
-    try {
-        const scoreDoc = await db.collection("leaderboard").doc(docId).get();
-        let timeUsed = 3600 - timeLeft;
-
-        if (!scoreDoc.exists || finalScore > scoreDoc.data().score) {
-            const userDoc = await db.collection("users").doc(user.uid).get();
-            const userData = userDoc.data();
-            await db.collection("leaderboard").doc(docId).set({
-                userId: user.uid, name: userData.name, email: user.email,
-                province: userData.province, category: cat, score: finalScore,
-                timeUsed: timeUsed, timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true });
-        }
-    } catch (e) { console.log("Save error", e); }
-}
+// --- ✍️ QUIZ CORE ENGINE ---
 
 function getCategoryAndStart() {
-    const cat = new URLSearchParams(window.location.search).get('cat') || 'gk1';
-    questions = allQuestions[cat];
+    const urlParams = new URLSearchParams(window.location.search);
+    const cat = urlParams.get('cat') || 'gk1';
+    questions = allQuestions[cat] || allQuestions['gk1'];
     questions.forEach(q => { q.answerText = q.options[q.correct]; });
-    document.getElementById('rules-modal').style.display = 'flex';
+    const modal = document.getElementById('rules-modal');
+    if (modal) modal.style.display = 'flex';
 }
 
 function setupRulesModal() {
@@ -2920,9 +2932,25 @@ function setupRulesModal() {
 
 function startQuiz() {
     isQuizActive = true;
-    startTimer();
+    currentQuestionIndex = 0;
+    score = 0;
     createNavDots();
     showQuestion();
+    startTimer();
+}
+
+function createNavDots() {
+    const nav = document.getElementById('question-nav');
+    if (!nav) return;
+    nav.innerHTML = '';
+    questions.forEach((_, index) => {
+        const dot = document.createElement('div');
+        dot.id = `dot-${index}`;
+        dot.classList.add('nav-dot');
+        dot.innerText = index + 1;
+        dot.onclick = () => { currentQuestionIndex = index; showQuestion(); };
+        nav.appendChild(dot);
+    });
 }
 
 function showQuestion() {
@@ -2933,7 +2961,12 @@ function showQuestion() {
 
     questions.forEach((_, i) => {
         const d = document.getElementById(`dot-${i}`);
-        if(d) d.className = 'nav-dot' + (i === currentQuestionIndex ? ' active' : '') + (questionStatus[i] === true ? ' correct-nav' : questionStatus[i] === false ? ' wrong-nav' : '');
+        if (d) {
+            d.classList.remove('active');
+            if (i === currentQuestionIndex) d.classList.add('active');
+            if (questionStatus[i] === true) d.classList.add('correct-nav');
+            if (questionStatus[i] === false) d.classList.add('wrong-nav');
+        }
     });
 
     qData.options.forEach(opt => {
@@ -2952,17 +2985,23 @@ function showQuestion() {
 function handleAnswer(selected, btn) {
     const qData = questions[currentQuestionIndex];
     userAnswers[currentQuestionIndex] = selected;
-    if (selected === qData.answerText) { btn.classList.add('correct'); score++; questionStatus[currentQuestionIndex] = true; }
-    else { btn.classList.add('wrong'); questionStatus[currentQuestionIndex] = false; }
-    
-    document.getElementById('score-display').innerText = "ලකුණු: " + score;
-
-    if (currentQuestionIndex === questions.length - 1) {
-        autoSaveScore(score);
-        setTimeout(showResultSummary, 1500);
+    if (selected === qData.answerText) {
+        btn.classList.add('correct');
+        score++;
+        questionStatus[currentQuestionIndex] = true;
     } else {
-        autoNextTimeout = setTimeout(() => { currentQuestionIndex++; showQuestion(); }, 1500);
+        btn.classList.add('wrong');
+        questionStatus[currentQuestionIndex] = false;
     }
+    document.getElementById('score-display').innerText = "ලකුණු: " + score;
+    setTimeout(() => {
+        if (currentQuestionIndex < questions.length - 1) {
+            currentQuestionIndex++;
+            showQuestion();
+        } else {
+            showResultSummary();
+        }
+    }, 1500);
 }
 
 function startTimer() {
@@ -2970,94 +3009,82 @@ function startTimer() {
         timeLeft--;
         let m = Math.floor(timeLeft / 60), s = timeLeft % 60;
         document.getElementById('timer').innerText = `කාලය: ${m}:${s < 10 ? '0' : ''}${s}`;
-        if (timeLeft <= 0) { isQuizActive = false; clearInterval(timerInterval); autoSaveScore(score); showResultSummary(); }
+        if (timeLeft <= 0) { clearInterval(timerInterval); showResultSummary(); }
     }, 1000);
 }
 
 function showResultSummary() {
     isQuizActive = false;
     clearInterval(timerInterval);
-    document.querySelector('.quiz-container').innerHTML = `
+    const quizContainer = document.querySelector('.quiz-container');
+    quizContainer.innerHTML = `
         <div style="text-align: center; padding: 20px;">
             <h2>විභාගය අවසන්!</h2>
-            <p style="font-size: 20px;">ලකුණු: <b>${score} / 50</b></p>
-            <button onclick="window.location.href='leaderboard.html'" style="background: #34a853;">ප්‍රගති පුවරුව</button>
+            <p style="font-size: 24px;">ලකුණු: ${score} / 50</p>
+            <button onclick="saveScoreAndRedirect(${score})" style="background: #34a853;">ප්‍රගති පුවරුව බලන්න</button>
             <button onclick="window.location.href='profile.html'" style="background: #6c757d; margin-left:10px;">ප්‍රධාන පිටුවට</button>
-        </div>
-    `;
+        </div>`;
 }
 
-// --- 🔘 BUTTONS ---
-function setupQuizButtons() {
-    const finish = document.getElementById('finish-btn');
-    const cancel = document.getElementById('cancel-btn');
+// --- 💾 DATA SAVING ---
 
-    if(document.getElementById('next-btn')) document.getElementById('next-btn').onclick = () => { if (currentQuestionIndex < questions.length - 1) { currentQuestionIndex++; showQuestion(); } };
-    if(document.getElementById('prev-btn')) document.getElementById('prev-btn').onclick = () => { if (currentQuestionIndex > 0) { currentQuestionIndex--; showQuestion(); } };
+async function saveScoreAndRedirect(finalScore) {
+    const user = auth.currentUser;
+    if (!user) return;
+    const cat = new URLSearchParams(window.location.search).get('cat') || 'gk1';
     
-    if(finish) finish.onclick = () => {
-        isQuizActive = false;
-        if (confirm("විභාගය අවසන් කරන්නද?")) { autoSaveScore(score); showResultSummary(); }
-        else isQuizActive = true;
-    };
-
-    if(cancel) cancel.onclick = () => {
-        isQuizActive = false;
-        if (confirm("පිටවෙන්නද? ඔබ මෙතෙක් ලබාගත් ලකුණු සේව් නොවේ.")) window.location.href = "profile.html";
-        else isQuizActive = true;
-    };
+    try {
+        const userDoc = await db.collection("users").doc(user.uid).get();
+        const userData = userDoc.data();
+        await db.collection("leaderboard").add({
+            userId: user.uid,
+            email: user.email,
+            name: userData.name,
+            province: userData.province,
+            category: cat,
+            score: finalScore,
+            timeUsed: 3600 - timeLeft,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        window.location.href = "leaderboard.html";
+    } catch (e) { alert("Error saving: " + e.message); }
 }
 
-// --- 🏆 LEADERBOARD DROPDOWN ---
-function setupPaperDropdown() {
-    const filter = document.getElementById('paper-filter');
-    if (!filter) return;
-    for (let i = 1; i <= 50; i++) {
-        let opt = document.createElement('option');
-        opt.value = "gk" + i;
-        opt.innerText = "ප්‍රශ්න පත්‍රය " + (i < 10 ? "0" + i : i);
-        filter.appendChild(opt);
-    }
-}
-
-function loadLeaderboard(category = 'gk1') {
+function loadLeaderboard() {
     const lbBody = document.getElementById('leaderboard-body');
     if (!lbBody) return;
-    lbBody.innerHTML = '<tr><td colspan="4">පූරණය වෙමින් පවතී...</td></tr>';
-    db.collection("leaderboard").where("category", "==", category)
-        .orderBy("score", "desc").orderBy("timeUsed", "asc")
-        .onSnapshot((snap) => {
-            lbBody.innerHTML = snap.empty ? '<tr><td colspan="4">තවම දත්ත නැත.</td></tr>' : '';
-            let rank = 1;
-            snap.forEach(doc => {
-                const d = doc.data();
-                lbBody.innerHTML += `<tr><td>${rank++}</td><td>${d.name}<br><small>${d.province}</small></td><td>${d.score}/50</td><td>${Math.floor(d.timeUsed/60)}m</td></tr>`;
-            });
+    db.collection("leaderboard").orderBy("score", "desc").orderBy("timeUsed", "asc").limit(50).onSnapshot(snap => {
+        lbBody.innerHTML = '';
+        let rank = 1;
+        snap.forEach(doc => {
+            const d = doc.data();
+            lbBody.innerHTML += `<tr><td>${rank++}</td><td>${d.name}<br><small>${d.province}</small></td><td>${d.score}/50</td><td>${Math.floor(d.timeUsed/60)}m</td></tr>`;
         });
-}
-
-function createNavDots() {
-    const nav = document.getElementById('question-nav');
-    if (!nav) return;
-    nav.innerHTML = '';
-    questions.forEach((_, i) => {
-        const dot = document.createElement('div');
-        dot.className = 'nav-dot'; dot.innerText = i + 1;
-        dot.onclick = () => { currentQuestionIndex = i; showQuestion(); };
-        nav.appendChild(dot);
     });
 }
 
-// --- 🚀 PAGE INITIALIZATION ---
+// --- 🚀 INITIALIZATION ---
+
 window.onload = () => {
     setupLogin();
-    setupRegistration();
+    setupRegistration(); 
     setupCheatingProtection();
-    setupPaperDropdown();
     setupRulesModal();
     setupProfileUpdate();
-    
-    // --- 🌍 Province to District Logic ---
+
+    if (document.getElementById('user-info-display')) loadProfileData(); 
+    if (document.getElementById('history-body')) loadUserHistory();
+    if (document.getElementById('leaderboard-body')) loadLeaderboard();
+
+    if (document.getElementById('question-text')) {
+        auth.onAuthStateChanged(user => { 
+            if(user) { getCategoryAndStart(); setupQuizButtons(); } 
+            else window.location.href="index.html"; 
+        });
+    }
+
+    const provSel = document.getElementById('reg-province');
+    const distSel = document.getElementById('reg-district');
     const districtData = {
         "Western": ["Colombo", "Gampaha", "Kalutara"],
         "Central": ["Kandy", "Matale", "Nuwara Eliya"],
@@ -3070,15 +3097,11 @@ window.onload = () => {
         "Northern": ["Jaffna", "Kilinochchi", "Mannar", "Vavuniya", "Mullaitivu"]
     };
 
-    const provSel = document.getElementById('reg-province');
-    const distSel = document.getElementById('reg-district');
-
     if(provSel && distSel) {
         provSel.onchange = function() {
             distSel.innerHTML = '<option value="">දිස්ත්‍රික්කය තෝරන්න</option>';
-            const selectedProvince = this.value;
-            if(selectedProvince && districtData[selectedProvince]) {
-                districtData[selectedProvince].forEach(d => {
+            if(this.value && districtData[this.value]) {
+                districtData[this.value].forEach(d => {
                     let opt = document.createElement('option');
                     opt.value = d; opt.innerText = d;
                     distSel.appendChild(opt);
@@ -3086,22 +3109,16 @@ window.onload = () => {
             }
         };
     }
-
-    if (document.getElementById('leaderboard-body')) loadLeaderboard('gk1');
-    if (document.getElementById('user-info-display')) loadProfileData();
-    if (document.getElementById('history-body')) loadUserHistory();
-    
-    if (document.getElementById('question-text')) {
-        auth.onAuthStateChanged(user => { 
-            if(user) { getCategoryAndStart(); setupQuizButtons(); } 
-            else window.location.href="index.html"; 
-        });
-    }
 };
 
-window.filterLeaderboard = (val) => loadLeaderboard(val);
+function setupQuizButtons() {
+    const nextBtn = document.getElementById('next-btn');
+    const prevBtn = document.getElementById('prev-btn');
+    if (nextBtn) nextBtn.onclick = () => { if (currentQuestionIndex < questions.length - 1) { currentQuestionIndex++; showQuestion(); } };
+    if (prevBtn) prevBtn.onclick = () => { if (currentQuestionIndex > 0) { currentQuestionIndex--; showQuestion(); } };
+}
 
-// 8. Logout
+// Logout
 const logoutBtn = document.getElementById('logout-link');
 if (logoutBtn) {
     logoutBtn.onclick = (e) => {
