@@ -3245,19 +3245,21 @@ window.onload = () => {
 function loadUserHistory() {
     const historyBody = document.getElementById('history-body');
     const chartCanvas = document.getElementById('scoreChart');
+    // UI එකේ මේ විස්තර පෙන්වන තැන්වල ID ටික (මේවා ඔයාගේ HTML එකට දාගන්න)
+    const avgDisplay = document.getElementById('avg-score');
+    const bestDisplay = document.getElementById('best-category');
+    const levelDisplay = document.getElementById('user-level');
+
     if (!historyBody || !chartCanvas) return;
 
     auth.onAuthStateChanged(user => {
         if (user) {
-            console.log("Loading history for: " + user.email);
-            
             db.collection("leaderboard")
                 .where("email", "==", user.email)
-                .orderBy("timestamp", "desc") // Chart එකට දත්ත පිළිවෙළට එන්න ඕනේ
+                .orderBy("timestamp", "desc")
                 .onSnapshot((snap) => {
-                    let dates = [];
-                    let scores = [];
-                    let tableHTML = '';
+                    let dates = [], scores = [], tableHTML = '';
+                    let totalScore = 0, totalPapers = 0, bestScore = -1, bestTime = Infinity, bestCat = "None";
 
                     if (snap.empty) {
                         historyBody.innerHTML = '<tr><td colspan="4">තවම විභාග දත්ත ලබාගෙන නැත.</td></tr>';
@@ -3266,29 +3268,56 @@ function loadUserHistory() {
 
                     snap.forEach(doc => {
                         const d = doc.data();
-                        const date = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "Pending";
                         const scoreVal = d.score || 0;
-                        const mins = Math.floor((d.timeUsed || 0) / 60);
-                        const secs = (d.timeUsed || 0) % 60;
+                        const timeUsed = d.timeUsed || 0;
+                        const date = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "Pending";
+                        const mins = Math.floor(timeUsed / 60);
+                        const secs = timeUsed % 60;
 
-                        // Graph එකට දත්ත
+                        // --- 🧮 Calculations ---
+                        totalScore += scoreVal;
+                        totalPapers++;
+
+                        // Best Category එක හොයන හැටි (ලකුණු වැඩිම එක, ලකුණු සමාන නම් වෙලාව අඩුම එක)
+                        if (scoreVal > bestScore || (scoreVal === bestScore && timeUsed < bestTime)) {
+                            bestScore = scoreVal;
+                            bestTime = timeUsed;
+                            bestCat = d.category ? d.category.toUpperCase() : "GK";
+                        }
+
                         dates.push(date);
                         scores.push(scoreVal);
 
-                        // Table එකට අලුත්ම ඒවා උඩට එන විදියට row එක හදමු
                         const row = `
                             <tr>
                                 <td style="padding:15px; border-bottom:1px solid #eee;">${date}</td>
                                 <td><span class="cat-tag">${d.category ? d.category.toUpperCase() : 'GK'}</span></td>
                                 <td><span class="score-badge" style="background:#1a73e8; color:white; padding:4px 10px; border-radius:12px;">${scoreVal} / 50</span></td>
                                 <td>${mins}:${secs < 10 ? '0' : ''}${secs} min</td>
-                            </tr>
-                        `;
-                        tableHTML = row + tableHTML; // අලුත්ම Record එක උඩට දානවා
+                            </tr>`;
+                        tableHTML = row + tableHTML; 
                     });
 
                     historyBody.innerHTML = tableHTML;
-                    renderChart(dates, scores); // Chart එක අඳින්න call කරනවා
+                    renderChart(dates, scores);
+
+                    // --- 🎯 UI එකට Summary එක Update කිරීම ---
+                    
+                    // 1. Average එක
+                    const average = (totalScore / totalPapers).toFixed(1);
+                    if(avgDisplay) avgDisplay.innerText = `${average} / 50`;
+
+                    // 2. Best Category එක
+                    if(bestDisplay) bestDisplay.innerText = `${bestCat} (Score: ${bestScore})`;
+
+                    // 3. User Level (Papers ගණන අනුව Scaling)
+                    let level = "Beginner (පිබිදෙන නුවණ)";
+                    if (totalPapers >= 20) level = "Expert (ප්‍රවීණ දක්ෂයා)";
+                    else if (totalPapers >= 10) level = "Pro (නිපුණ ශිෂ්‍යයා)";
+                    else if (totalPapers >= 5) level = "Intermediate (මධ්‍යම මට්ටම)";
+                    
+                    if(levelDisplay) levelDisplay.innerText = `${level} - [Papers: ${totalPapers}]`;
+
                 }, (error) => {
                     console.error("Firestore Error: ", error);
                 });
