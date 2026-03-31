@@ -3134,38 +3134,54 @@ async function autoSaveScore(finalScore) {
         }
     } catch (e) { console.log("Save error", e); }
 }
-function loadLeaderboard() {
+// පේපර් 50 සඳහා Dropdown එක පුරවන හැටි
+function setupPaperDropdown() {
+    const filter = document.getElementById('paper-filter');
+    if (!filter) return;
+
+    for (let i = 1; i <= 50; i++) {
+        let opt = document.createElement('option');
+        opt.value = `gk${i}`;
+        opt.innerText = `ප්‍රශ්න පත්‍රය ${i < 10 ? '0' + i : i}`;
+        filter.appendChild(opt);
+    }
+}
+
+// ලීඩර්බෝඩ් එක Filter කරලා Load කරන හැටි
+function filterLeaderboard(category) {
+    loadLeaderboard(category);
+}
+// කලින් තිබුණු loadLeaderboard එක මේ අලුත් එකෙන් වෙනස් කරන්න
+function loadLeaderboard(category = 'gk1') {
     const lbBody = document.getElementById('leaderboard-body');
     if (!lbBody) return;
 
+    lbBody.innerHTML = '<tr><td colspan="4">දත්ත පූරණය වෙමින් පවතී...</td></tr>';
+
     db.collection("leaderboard")
+        .where("category", "==", category) // 🔥 පේපර් එක අනුව Filter කරනවා
         .orderBy("score", "desc")
         .orderBy("timeUsed", "asc")
         .onSnapshot((snap) => {
             lbBody.innerHTML = '';
             let rank = 1;
+            
+            if (snap.empty) {
+                lbBody.innerHTML = '<tr><td colspan="4">මෙම පේපර් එක සඳහා තවම දත්ත නැත.</td></tr>';
+                return;
+            }
 
             snap.forEach(doc => {
                 const d = doc.data();
                 const mins = Math.floor(d.timeUsed / 60);
                 const secs = d.timeUsed % 60;
                 
-                // Rank එක අනුව Medal එක තෝරනවා
-                let medal = "";
-                let rankClass = "";
-                if(rank === 1) { medal = "🥇"; rankClass = "rank-1"; }
-                else if(rank === 2) { medal = "🥈"; rankClass = "rank-2"; }
-                else if(rank === 3) { medal = "🥉"; rankClass = "rank-3"; }
-                else { medal = rank; }
+                let medal = rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : rank;
 
                 lbBody.innerHTML += `
-                    <tr class="${rankClass}">
+                    <tr>
                         <td>${medal}</td>
-                        <td style="text-align: left; min-width: 150px;">
-                            <span style="font-weight: bold; color: #333;">${d.name}</span><br>
-                            <small style="color: #666;">📧 ${d.email || 'No Email'}</small><br>
-                            <small style="color: #1a73e8;">📍 පළාත: ${d.province}</small>
-                        </td>
+                        <td style="text-align: left;"><b>${d.name}</b><br><small>${d.province}</small></td>
                         <td><span class="score-badge">${d.score} / 50</span></td>
                         <td>${mins}:${secs < 10 ? '0' : ''}${secs} min</td>
                     </tr>
@@ -3174,7 +3190,6 @@ function loadLeaderboard() {
             });
         });
 }
-
 // 7. Page Load Manager
 window.onload = () => {
     setupLogin();
@@ -3182,6 +3197,7 @@ window.onload = () => {
     setupCheatingProtection(); // <--- අනිවාර්යයෙන් මේක මෙතන තියෙන්න ඕනේ
     setupRulesModal(); // <--- මෙන්න මේක අලුතින් එකතු කළා
     setupProfileUpdate();
+    setupPaperDropdown();
 
     if (document.getElementById('user-info-display')) loadProfileData(); 
     if (document.getElementById('history-body')) loadUserHistory();
