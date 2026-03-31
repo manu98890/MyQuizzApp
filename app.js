@@ -3097,55 +3097,42 @@ function showResultSummary() {
     `;
 }
 // 6. Data Saving & Leaderboard
-async function saveScoreAndRedirect(finalScore) {
+async function autoSaveScore(finalScore) {
     const user = auth.currentUser;
     const urlParams = new URLSearchParams(window.location.search);
     const cat = urlParams.get('cat') || 'gk1';
+    const docId = `${user.uid}_${cat}`; 
 
-    if (!user) {
-        alert("කරුණාකර Login වන්න!");
-        window.location.href = "index.html";
-        return;
-    }
+    if (!user) return;
 
     try {
-        // 1. User ගේ profile එකෙන් විස්තර ගන්නවා
-        const userDoc = await db.collection("users").doc(user.uid).get();
-        
-        let province = "Unknown";
-        let name = user.email.split('@')[0];
-
-        // මෙන්න මෙතන තමයි කලින් වැරදුනේ - 'userDoc' කියන එකම පාවිච්චි කරන්න ඕනේ
-        if (userDoc.exists) {
-            const userData = userDoc.data();
-            province = userData.province || "Unknown";
-            name = userData.name || name;
-        }
-
-        // 2. ගතවුණු කාලය ගණනය කරනවා
+        const scoreDoc = await db.collection("leaderboard").doc(docId).get();
         let timeUsed = 3600 - timeLeft;
 
-        // 3. Leaderboard එකට දත්ත ඇතුළත් කරනවා
-        await db.collection("leaderboard").add({
-            userId: user.uid,        // අලුතින් එක් කළා
-            email: user.email,      // අලුතින් එක් කළා (History එකට ඕනේ වෙනවා)
-            name: name,
-            province: province,
-            category: cat,
-            score: finalScore,
-            timeUsed: timeUsed,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        console.log("Score saved successfully!");
-        // 4. සේව් වුණාට පස්සේ ලීඩර්බෝඩ් එකට යනවා
-        window.location.href = "leaderboard.html";
-
-    } catch (error) {
-        // මෙතනින් අපිට error එක මොකක්ද කියලා හරියටම බලාගන්න පුළුවන්
-        console.error("Error saving score: ", error);
-        alert("දෝෂය: " + error.message); 
-    }
+        if (scoreDoc.exists) {
+            const oldScore = scoreDoc.data().score;
+            // අලුත් ලකුණ පරණ ලකුණට වඩා වැඩිනම් විතරක් Update කරනවා
+            if (finalScore > oldScore) {
+                await db.collection("leaderboard").doc(docId).set({
+                    score: finalScore,
+                    timeUsed: timeUsed,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+            }
+        } else {
+            // පළමු වතාව නම් කෙළින්ම සේව් කරනවා
+            await db.collection("leaderboard").doc(docId).set({
+                userId: user.uid,
+                name: (await db.collection("users").doc(user.uid).get()).data().name,
+                email: user.email,
+                province: (await db.collection("users").doc(user.uid).get()).data().province,
+                category: cat,
+                score: finalScore,
+                timeUsed: timeUsed,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+    } catch (e) { console.log("Save error", e); }
 }
 function loadLeaderboard() {
     const lbBody = document.getElementById('leaderboard-body');
