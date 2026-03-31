@@ -3141,7 +3141,7 @@ function setupPaperDropdown() {
 
     for (let i = 1; i <= 50; i++) {
         let opt = document.createElement('option');
-        opt.value = `gk${i}`;
+        opt.value = "gk" + i;
         opt.innerText = `ප්‍රශ්න පත්‍රය ${i < 10 ? '0' + i : i}`;
         filter.appendChild(opt);
     }
