@@ -2980,7 +2980,7 @@ function handleAnswer(selected, btn) {
         } else {
             showResultSummary();
         }
-    }, 1500);
+    }, 120000);
 }
 
 function startTimer() {
@@ -3093,8 +3093,35 @@ window.onload = () => {
 function setupQuizButtons() {
     const nextBtn = document.getElementById('next-btn');
     const prevBtn = document.getElementById('prev-btn');
+     const finishBtn = document.getElementById('finish-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+
     if (nextBtn) nextBtn.onclick = () => { if (currentQuestionIndex < questions.length - 1) { currentQuestionIndex++; showQuestion(); } };
     if (prevBtn) prevBtn.onclick = () => { if (currentQuestionIndex > 0) { currentQuestionIndex--; showQuestion(); } };
+}
+ if (finishBtn) {
+        finishBtn.onclick = () => {
+            isQuizActive = false; // හොර මැරකම් අල්ලන එක තාවකාලිකව නවත්වනවා
+            if (confirm("විභාගය අවසන් කරන්නද?")) {
+                clearInterval(timerInterval);
+                showResultSummary();
+            } else {
+                isQuizActive = true; // "Cancel" කළොත් ආයෙත් පණගන්වනවා
+            }
+        };
+    }
+
+    if (cancelBtn) {
+        cancelBtn.onclick = () => { 
+            isQuizActive = false; // හොර මැරකම් අල්ලන එක නවත්වනවා
+            if (confirm("පිටවෙන්නද?")) {
+                clearInterval(timerInterval);
+                window.location.href = "profile.html"; // දැන් මේක වැඩ කරන්නේ OK එබුවොත් විතරයි
+            } else {
+                isQuizActive = true; // "Cancel" කළොත් ආයෙත් පණගන්වනවා
+            }
+        };
+    }
 }
 
 // Logout
