@@ -3242,17 +3242,11 @@ window.onload = () => {
         };
     }
 };        
-// --- 📈 අලුත් දේවල් ඇඩ් කරපු loadUserHistory (මෙතනයි වෙනස තියෙන්නේ) ---
 function loadUserHistory() {
     const historyBody = document.getElementById('history-body');
-    const chartCanvas = document.getElementById('scoreChart');
-    
-    // මේවා උඹේ HTML එකට දාන්න ඕන අලුත් IDs
     const avgDisplay = document.getElementById('avg-score');
     const bestDisplay = document.getElementById('best-category');
     const levelDisplay = document.getElementById('user-level');
-
-    if (!historyBody || !chartCanvas) return;
 
     auth.onAuthStateChanged(user => {
         if (user) {
@@ -3260,67 +3254,62 @@ function loadUserHistory() {
                 .where("email", "==", user.email)
                 .orderBy("timestamp", "desc")
                 .onSnapshot((snap) => {
-                    let dates = [];
-                    let scores = [];
                     let tableHTML = '';
-
-                    // අලුතින් ගණන් හදන්න ගන්න variables
                     let totalScore = 0;
                     let totalPapers = 0;
                     let bestScoreValue = -1;
-                    let bestCategoryName = "None";
+                    let bestCatName = "None";
+                    let dates = [], scores = [];
 
                     if (snap.empty) {
-                        historyBody.innerHTML = '<tr><td colspan="4">තවම විභාග දත්ත ලබාගෙන නැත.</td></tr>';
+                        if(historyBody) historyBody.innerHTML = '<tr><td colspan="4">තවම දත්ත නැත.</td></tr>';
                         return;
                     }
 
                     snap.forEach(doc => {
                         const d = doc.data();
-                        const scoreVal = d.score || 0;
-                        const catVal = d.category ? d.category.toUpperCase() : 'GK';
+                        const sVal = d.score || 0;
+                        const tUsed = d.timeUsed || 0;
                         
-                        // --- 🧮 Summary ගණන් හදමු ---
-                        totalScore += scoreVal;
+                        // 🧮 Summary ගණන් හදමු
+                        totalScore += sVal;
                         totalPapers++;
-                        if (scoreVal > bestScoreValue) {
-                            bestScoreValue = scoreVal;
-                            bestCategoryName = catVal;
+
+                        if (sVal > bestScoreValue) {
+                            bestScoreValue = sVal;
+                            bestCatName = d.category ? d.category.toUpperCase() : "GK";
                         }
 
-                        const date = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "Pending";
-                        const mins = Math.floor((d.timeUsed || 0) / 60);
-                        const secs = (d.timeUsed || 0) % 60;
+                        const dateText = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "Pending";
+                        dates.push(dateText);
+                        scores.push(sVal);
 
-                        dates.push(date);
-                        scores.push(scoreVal);
-
-                        const row = `
+                        tableHTML += `
                             <tr>
-                                <td style="padding:15px; border-bottom:1px solid #eee;">${date}</td>
-                                <td><span class="cat-tag">${catVal}</span></td>
-                                <td><span class="score-badge" style="background:#1a73e8; color:white; padding:4px 10px; border-radius:12px;">${scoreVal} / 50</span></td>
-                                <td>${mins}:${secs < 10 ? '0' : ''}${secs} min</td>
+                                <td style="padding:12px;">${dateText}</td>
+                                <td><span class="cat-tag">${d.category.toUpperCase()}</span></td>
+                                <td><span class="score-badge">${sVal}/50</span></td>
+                                <td>${Math.floor(tUsed/60)}:${tUsed%60 < 10 ? '0' : ''}${tUsed%60} min</td>
                             </tr>`;
-                        tableHTML = row + tableHTML; 
                     });
 
-                    historyBody.innerHTML = tableHTML;
-                    renderChart(dates, scores);
+                    // UI එකට දත්ත දාමු
+                    if(historyBody) historyBody.innerHTML = tableHTML;
+                    if(avgDisplay) avgDisplay.innerText = (totalScore / totalPapers).toFixed(1);
+                    if(bestDisplay) bestDisplay.innerText = bestCatName;
 
-                    // --- 🎯 පේජ් එකට Summary එක දාමු ---
-                    if(avgDisplay) avgDisplay.innerText = (totalScore / totalPapers).toFixed(1) + " / 50";
-                    if(bestDisplay) bestDisplay.innerText = bestCategoryName;
-                    
-                    // Level logic (පේපර්ස් 20 කතාව)
+                    // 🏆 Level System (පේපර්ස් 20 කතාව)
                     let level = "Beginner (ආධුනික)";
                     if (totalPapers >= 20) level = "Expert (ප්‍රවීණයා) 🏆";
                     else if (totalPapers >= 10) level = "Pro (දක්ෂයා) 🔥";
-                    else if (totalPapers >= 5) level = "Intermediate (මධ්‍යම) ⚡";
-                    if(levelDisplay) levelDisplay.innerText = `${level} (Papers: ${totalPapers})`;
+                    else if (totalPapers >= 5) level = "Intermediate ⚡";
+                    if(levelDisplay) levelDisplay.innerText = level;
+
+                    if(typeof renderChart === "function") renderChart(dates, scores);
 
                 }, (error) => {
                     console.error("Firestore Error: ", error);
+                    // 🚨 සටහන: මෙතනදී Error එකක් ආවොත් F12 ඔබලා Console එකේ තියෙන Index ලින්ක් එක ක්ලික් කරන්න.
                 });
         }
     });
