@@ -3204,27 +3204,53 @@ window.onload = () => {
 
 function loadUserHistory() {
     const historyBody = document.getElementById('history-body');
-    const totalPointsDisp = document.getElementById('total-points'); // HTML එකේ id="total-points" තිබිය යුතුයි
+    const totalPointsDisp = document.getElementById('total-points');
 
     auth.onAuthStateChanged(user => {
         if (user) {
-            // Profile එකෙන් මුළු ලකුණු 2500න් ගමු
+            // 1. මුළු ලකුණු පෙන්වීම
             db.collection("users").doc(user.uid).onSnapshot(doc => {
                 const data = doc.data();
-                if(totalPointsDisp) totalPointsDisp.innerText = (data.totalPoints || 0) + " / 2500";
+                if(totalPointsDisp && data) totalPointsDisp.innerText = (data.totalPoints || 0) + " / 2500";
             });
 
-            // විභාග ඉතිහාසය ලෝඩ් කිරීම
+            // 2. විභාග ඉතිහාසය සහ ප්‍රස්ථාරය සඳහා දත්ත ලබා ගැනීම
             db.collection("leaderboard")
-                .where("email", "==", user.email)
-                .orderBy("timestamp", "desc")
+                .where("userId", "==", user.uid)
+                .orderBy("timestamp", "asc") // Chart එකට පිළිවෙළට එන්න asc දාන්න
                 .onSnapshot(snap => {
-                    let tableHTML = '';
-                    snap.forEach(d => {
-                        const val = d.data();
-                        tableHTML += `<tr><td>${val.category}</td><td>${val.score}/50</td></tr>`;
+                    let tableRows = [];
+                    let chartLabels = [];
+                    let chartScores = [];
+
+                    snap.forEach(doc => {
+                        const val = doc.data();
+                        
+                        // දිනය සහ වේලාව සකස් කරගැනීම
+                        const dateObj = val.timestamp ? val.timestamp.toDate() : new Date();
+                        const dateStr = dateObj.toLocaleDateString(); // උදා: 4/1/2026
+                        const timeTaken = val.timeUsed ? Math.floor(val.timeUsed / 60) + " min" : "N/A";
+
+                        // වගුව සඳහා (අලුත්ම දත්ත උඩට එන විදිහට පසුව reverse කරමු)
+                        tableRows.push(`<tr>
+                            <td>${dateStr}</td>
+                            <td>${val.category}</td>
+                            <td>${val.score}/50</td>
+                            <td>${timeTaken}</td>
+                        </tr>`);
+
+                        // ප්‍රස්ථාරය සඳහා
+                        chartLabels.push(val.category);
+                        chartScores.push(val.score);
                     });
-                    if(historyBody) historyBody.innerHTML = tableHTML;
+
+                    // වගුව යාවත්කාලීන කිරීම (අලුත්ම එක උඩට එන්න reverse කරනවා)
+                    if(historyBody) historyBody.innerHTML = tableRows.reverse().join('');
+
+                    // ප්‍රස්ථාරය ඇඳීම (දත්ත තියෙනවා නම් පමණක්)
+                    if(chartLabels.length > 0) {
+                        renderChart(chartLabels, chartScores);
+                    }
                 });
         }
     });
