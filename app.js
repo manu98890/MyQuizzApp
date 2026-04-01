@@ -3306,6 +3306,44 @@ function setupProvinceDistrictLogic() {
         };
     }
 }
+function renderChart(labels, data) {
+    const canvas = document.getElementById('scoreChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    if (window.myChart) {
+        window.myChart.destroy(); // පරණ එක මකලා අලුත් එක අඳිනවා
+    }
+
+    window.myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'ලකුණු ප්‍රගතිය',
+                data: data,
+                borderColor: '#1a73e8',
+                backgroundColor: 'rgba(26, 115, 232, 0.1)',
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 5,
+                pointBackgroundColor: '#1a73e8'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 50, // ලකුණු උපරිම 50 නිසා
+                    ticks: { stepSize: 10 }
+                }
+            }
+        }
+    });
+}
 // 8. Logout
 const logoutBtn = document.getElementById('logout-link');
 if (logoutBtn) {
