@@ -130,58 +130,62 @@ button { background: var(--primary-blue); color: white; border: none; padding: 1
 .leaderboard-table th:nth-child(1), .leaderboard-table td:nth-child(1) { width: 80px; text-align: center; } /* Rank */
 .leaderboard-table th:nth-child(2), .leaderboard-table td:nth-child(2) { text-align: left; padding-left: 25px; } /* Name/Province */
 .leaderboard-table th:nth-child(3), .leaderboard-table td:nth-child(3) { width: 200px; text-align: center; } /* Score (2500න්) */
-.leaderboard-table th:nth-child(4), .leaderboard-table td:nth-child(4) { width: 150px; text-align: center; } /* Time */
+.leaderboard-table th:nth-child(4), .leaderboard-table td:nth-child(4) { width: 200px; text-align: center; } /* Time */
 
-/* ලකුණු පෙන්නන Badge එක (Screenshot එකේ විදියටම) */
-.score-badge {
-    background: #e8f0fe !important; /* ලා නිල් පාට */
-    color: #1a73e8 !important;    /* තද නිල් පාට */
-    padding: 8px 16px !important;
-    border-radius: 50px !important; /* Pill shape */
-    font-weight: 700 !important;
-    font-size: 15px !important;
-    display: inline-block;
-    border: 1px solid rgba(26, 115, 232, 0.2);
-    min-width: 90px;
+/* --- 🏆 Leaderboard Mobile Fix (Single Line) --- */
+
+/* Table එක ඇතුළේ කිසිම දෙයක් පේළි දෙකකට කැඩෙන්න දෙන්නේ නැහැ */
+.table-responsive td, .table-responsive th {
+    white-space: nowrap !important; 
+    padding: 10px 5px !important; /* දෙපැත්තට ඉඩ අඩු කළා */
+}
+
+/* 1. Rank column එක ඉතා කුඩා කිරීම */
+.leaderboard-table th:nth-child(1), 
+.leaderboard-table td:nth-child(1) { 
+    width: 40px !important; 
     text-align: center;
 }
 
-/* නම සහ පළාත Screenshot එකේ විදියට ලස්සන කරමු */
+/* 2. නම සහ පළාත පෙන්වන column එක */
 .user-info-container {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    max-width: 110px; /* Mobile එකේදී නම ගොඩක් පළල් වෙන්න දෙන්නේ නැහැ */
 }
 
 .user-name {
+    font-size: 14px !important;
     font-weight: 700;
-    font-size: 16px;
-    color: #2c3e50;
+    overflow: hidden;
+    text-overflow: ellipsis; /* නම ගොඩක් දිග නම් අගට තිත් වැටේ */
 }
 
 .user-province {
-    font-size: 12px;
-    color: #1a73e8;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    font-size: 10px !important;
 }
 
-/* Table Header එක (තද නිල් පාට) */
-.table-responsive th {
-    background: #1a73e8 !important;
-    color: white !important;
-    padding: 20px 10px !important;
+/* 3. ලකුණු පෙට්ටිය (Score Badge) කුඩා කිරීම */
+.score-badge {
+    background: #e8f0fe !important;
+    color: #1a73e8 !important;
+    padding: 4px 8px !important; /* පෑඩින් අඩු කළා */
+    border-radius: 50px !important;
     font-weight: 700;
-    letter-spacing: 0.5px;
-    border: none;
+    font-size: 12px !important; /* අකුරු කුඩා කළා */
+    min-width: 40px;
+    text-align: center;
+    display: inline-block;
 }
 
-/* පේළි (Rows) අතර ඉඩ */
-.table-responsive td {
-    padding: 18px 10px !important;
-    border-bottom: 1px solid #edf2f7;
+/* 4. කාලය පෙන්වන තීරුව */
+.time-text {
+    font-size: 12px !important;
+    color: #5f6368;
+    font-weight: 600;
 }
+
+
 
 /* 📊 History Page එකේ Category Tag එක */
 .cat-tag {
@@ -198,16 +202,14 @@ button { background: var(--primary-blue); color: white; border: none; padding: 1
 tr:hover td {
     background-color: #f8fbff;
 }
-
-/* Mobile එකේදී ලකුණු පෙට්ටිය හිර නොවෙන්න */
-@media (max-width: 768px) {
-    .score-badge {
-        padding: 6px 10px !important;
-        font-size: 13px !important;
-        min-width: 100px;
-    }
+/* Mobile Screen එකේදී තවත් ලස්සනට පේන්න */
+@media (max-width: 480px) {
+    th { font-size: 11px !important; }
+    td { font-size: 12px !important; }
     
-    .leaderboard-table th:nth-child(3), .leaderboard-table td:nth-child(3) { 
-        width: 200px; 
+    /* rank, score, time කියන columns වල පළල ස්ථාවරව තබා ගැනීම */
+    .leaderboard-table th:nth-child(3), .leaderboard-table td:nth-child(3),
+    .leaderboard-table th:nth-child(4), .leaderboard-table td:nth-child(4) {
+        width: 70px !important;
     }
 }
