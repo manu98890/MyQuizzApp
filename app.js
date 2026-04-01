@@ -3139,8 +3139,7 @@ async function saveScoreAndRedirect(finalScore) {
         alert("දත්ත සේව් කිරීමට නොහැකි විය: " + e.message);
     }
 }
-// --- 7. Page Load Manager (මෙය එක වතාවක් පමණක් තිබිය යුතුය) ---
-// --- 7. Page Load Manager (මෙම කොටස පමණක් Replace කරන්න) ---
+// --- 7. Page Load Manager ---
 window.onload = () => {
     console.log("App Initialized...");
 
@@ -3151,12 +3150,13 @@ window.onload = () => {
     const regBtn = document.getElementById('final-register-btn');
     if (regBtn) {
         setupRegistration();
-        // දිස්ත්‍රික්ක වැටෙන ලොජික් එක මෙතනට දාමු
         setupProvinceDistrictLogic(); 
     }
 
-    // 2. Profile සහ History පෙන්වීම
+    // 2. Profile සහ History දත්ත පෙන්වීම
     if (document.getElementById('user-info-display')) loadProfileData();
+    
+    // වැදගත්: History පේජ් එකේදී විතරක් මේක වැඩ කරයි
     if (document.getElementById('history-body')) loadUserHistory();
 
     // 3. Quiz පේජ් එකේ වැඩ ටික
@@ -3175,41 +3175,9 @@ window.onload = () => {
     // 4. Leaderboard පේජ් එකේ වැඩ ටික
     if (document.getElementById('leaderboard-body')) loadLeaderboard();
 
-    // 5. Rules Modal එකේ බටන් එක (Syntax error එක හැදුවේ මෙතනයි)
+    // 5. Rules Modal එක
     const startExamBtn = document.getElementById('start-exam-btn');
     if (startExamBtn) setupRulesModal();
-
-    // 6. Province to District Logic (Registration සඳහා)
-    function setupProvinceDistrictLogic() {
-        const districtData = {
-            "Western": ["Colombo", "Gampaha", "Kalutara"],
-            "Central": ["Kandy", "Matale", "Nuwara Eliya"],
-            "Southern": ["Galle", "Matara", "Hambantota"],
-            "North Western": ["Kurunegala", "Puttalam"],
-            "Sabaragamuwa": ["Ratnapura", "Kegalle"],
-            "Uva": ["Badulla", "Moneragala"],
-            "North Central": ["Anuradhapura", "Polonnaruwa"],
-            "Eastern": ["Trincomalee", "Batticaloa", "Ampara"],
-            "Northern": ["Jaffna", "Kilinochchi", "Mannar", "Vavuniya", "Mullaitivu"]
-        };
-
-        const provSel = document.getElementById('reg-province');
-        const distSel = document.getElementById('reg-district');
-        if(provSel && distSel) {
-            provSel.onchange = function() {
-                distSel.innerHTML = '<option value="">දිස්ත්‍රික්කය තෝරන්න</option>';
-                const selectedProvince = this.value;
-                if(selectedProvince && districtData[selectedProvince]) {
-                    districtData[selectedProvince].forEach(d => {
-                        let opt = document.createElement('option');
-                        opt.value = d;
-                        opt.innerText = d;
-                        distSel.appendChild(opt);
-                    });
-                }
-            };
-        }
-    }
 };
 function renderChart(labels, data) {
     const ctx = document.getElementById('scoreChart').getContext('2d');
@@ -3239,6 +3207,119 @@ function renderChart(labels, data) {
             }
         }
     });
+}
+// --- 🛠️ අඩුවෙලා තිබුණු Functions ටික මෙන්න (මේවා window.onload එකෙන් පිටත තියෙන්න ඕනේ) ---
+
+// කාලය format කරන හැටි
+function formatTotalTime(seconds) {
+    if (!seconds) return "0s";
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return h > 0 ? `${h}h ${m}m ${s}s` : `${m}m ${s}s`;
+}
+
+// ලකුණු පුවරුව (Leaderboard) ලෝඩ් කිරීම
+function loadLeaderboard() {
+    const lbBody = document.getElementById('leaderboard-body');
+    if (!lbBody) return;
+
+    db.collection("users")
+        .orderBy("totalPoints", "desc")
+        .orderBy("totalTime", "asc")
+        .limit(50) 
+        .onSnapshot(snap => {
+            lbBody.innerHTML = '';
+            let rank = 1;
+            snap.forEach(doc => {
+                const d = doc.data();
+                if (d.totalPoints > 0) {
+                    let medal = (rank === 1) ? "🥇" : (rank === 2) ? "🥈" : (rank === 3) ? "🥉" : rank;
+                    lbBody.innerHTML += `
+                        <tr>
+                            <td><span class="rank-number">${medal}</span></td>
+                            <td style="text-align: left;">
+                                <div style="font-weight: bold;">${d.name}</div>
+                                <small>📍 ${d.province || ''}</small>
+                            </td>
+                            <td><span class="score-badge">${d.totalPoints} / 2500</span></td>
+                            <td>${formatTotalTime(d.totalTime)}</td>
+                            <td style="font-weight: bold; color: #ef6c00;">Level ${Math.floor(d.totalPoints / 100) + 1}</td>
+                        </tr>`;
+                    rank++;
+                }
+            });
+        });
+}
+
+// පරිශීලකයාගේ ඉතිහාසය (History) ලෝඩ් කිරීම
+function loadUserHistory() {
+    const historyBody = document.getElementById('history-body');
+    const totalPointsDisp = document.getElementById('total-points');
+    const avgPercentDisp = document.getElementById('avg-score-percent');
+    const totalExamsDisp = document.getElementById('total-exams');
+
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            // Profile Summary
+            db.collection("users").doc(user.uid).onSnapshot(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    if(totalPointsDisp) totalPointsDisp.innerText = data.totalPoints || 0;
+                    if(totalExamsDisp) totalExamsDisp.innerText = data.examsCount || 0;
+                    if(avgPercentDisp && data.examsCount > 0) {
+                        avgPercentDisp.innerText = ((data.totalPoints / (data.examsCount * 50)) * 100).toFixed(1) + "%";
+                    }
+                }
+            });
+
+            // History Table
+            db.collection("leaderboard")
+                .where("userId", "==", user.uid)
+                .orderBy("timestamp", "desc")
+                .onSnapshot(snap => {
+                    let tableHTML = '';
+                    snap.forEach(dDoc => {
+                        const d = dDoc.data();
+                        const date = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "Pending";
+                        tableHTML += `<tr><td>${date}</td><td>${d.category.toUpperCase()}</td><td>${d.score}/50</td><td>${d.timeUsed}s</td></tr>`;
+                    });
+                    if(historyBody) historyBody.innerHTML = tableHTML;
+                });
+        }
+    });
+}
+
+// දිස්ත්‍රික්ක පෙන්වන logic එක
+function setupProvinceDistrictLogic() {
+    const districtData = {
+        "Western": ["Colombo", "Gampaha", "Kalutara"],
+        "Central": ["Kandy", "Matale", "Nuwara Eliya"],
+        "Southern": ["Galle", "Matara", "Hambantota"],
+        "North Western": ["Kurunegala", "Puttalam"],
+        "Sabaragamuwa": ["Ratnapura", "Kegalle"],
+        "Uva": ["Badulla", "Moneragala"],
+        "North Central": ["Anuradhapura", "Polonnaruwa"],
+        "Eastern": ["Trincomalee", "Batticaloa", "Ampara"],
+        "Northern": ["Jaffna", "Kilinochchi", "Mannar", "Vavuniya", "Mullaitivu"]
+    };
+
+    const provSel = document.getElementById('reg-province');
+    const distSel = document.getElementById('reg-district');
+    if(provSel && distSel) {
+        provSel.onchange = function() {
+            distSel.innerHTML = '<option value="">දිස්ත්‍රික්කය තෝරන්න</option>';
+            const selectedProvince = this.value;
+            if(selectedProvince && districtData[selectedProvince]) {
+                districtData[selectedProvince].forEach(d => {
+                    let opt = document.createElement('option');
+                    opt.value = d;
+                    opt.innerText = d;
+                    distSel.appendChild(opt);
+                });
+            }
+        };
+    }
 }
 // 8. Logout
 const logoutBtn = document.getElementById('logout-link');
