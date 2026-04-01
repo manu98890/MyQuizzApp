@@ -8,30 +8,31 @@
 </head>
 <body>
     <div class="quiz-container" style="max-width: 800px; width: 95%;">
-        <h2>🏆LEADERBOARD</h2>
-        <div style="margin: 20px 0; text-align: center;">
-        </select>
-</div>
-        <div class="table-responsive">
-            <table id="leaderboard-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>විස්තරය</th>
-                        <th>ලකුණු</th>
-                        <th>කාලය</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboard-body">
-                    </tbody>
-            </table>
-        </div>
-
-        <div style="margin-top: 30px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-            <button onclick="window.location.href='profile.html'" style="background-color: #6c757d; width: 150px;">ප්‍රධාන පිටුවට</button>
-           
-        </div>
+    <h2>🏆 LEADERBOARD</h2>
+    
+    <div style="margin: 20px 0; text-align: center;">
+        <p style="font-weight: bold; color: #666;">සියලුම ප්‍රශ්න පත්‍රවල දක්ෂතම සිසුන්:</p>
     </div>
+
+    <div class="table-responsive">
+        <table id="leaderboard-table">
+            <thead>
+                <tr>
+                    <th>RANK</th>
+                    <th>විස්තරය</th>
+                    <th>ලකුණු (2500න්)</th>
+                    <th>මට්ටම (Level)</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 30px; display: flex; gap: 10px; justify-content: center;">
+        <button onclick="window.location.href='profile.html'" style="background-color: #6c757d; width: 150px;">ප්‍රධාන පිටුවට</button>
+    </div>
+</div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
