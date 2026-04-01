@@ -208,6 +208,6 @@ tr:hover td {
     }
     
     .leaderboard-table th:nth-child(3), .leaderboard-table td:nth-child(3) { 
-        width: 100px; 
+        width: 200px; 
     }
 }
