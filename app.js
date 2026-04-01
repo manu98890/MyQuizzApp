@@ -3141,6 +3141,7 @@ async function saveScoreAndRedirect(finalScore) {
     }
 }
 
+
 // 7. Page Load Manager
 window.onload = () => {
     setupLogin();
