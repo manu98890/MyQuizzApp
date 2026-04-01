@@ -3141,38 +3141,36 @@ async function saveScoreAndRedirect(finalScore) {
 }
 // --- 7. Page Load Manager ---
 window.onload = () => {
-    // Login පේජ් එකේ නම් විතරක් මේක වැඩ කරයි
     const loginBtn = document.getElementById('login-btn');
     if (loginBtn) setupLogin();
 
-    // Registration පේජ් එකේ නම් විතරක් මේක වැඩ කරයි
     const regBtn = document.getElementById('final-register-btn');
     if (regBtn) setupRegistration();
 
-    // Profile පේජ් එකේ විස්තර පෙන්වන්න
     if (document.getElementById('user-info-display')) loadProfileData();
     if (document.getElementById('history-body')) loadUserHistory();
 
-    // Quiz පේජ් එකේ වැඩ ටික
+      // Rules Modal
+    const startExamBtn = document.getElementById('start-exam-btn');
+    if (startExamBtn) setupRulesModal();
+
     if (document.getElementById('question-text')) {
         auth.onAuthStateChanged(user => { 
             if(user) { 
                 getCategoryAndStart(); 
                 setupQuizButtons(); 
                 setupCheatingProtection();
-            } 
-            else { window.location.href="index.html"; }
+            } else { window.location.href="index.html"; }
         });
     }
 
-    // Leaderboard පේජ් එක
+    // Leaderboard එක load කරන තැන
     if (document.getElementById('leaderboard-body')) loadLeaderboard();
 
-    // Rules Modal
     const startExamBtn = document.getElementById('start-exam-btn');
     if (startExamBtn) setupRulesModal();
 
-    // --- 🌍 Province to District Logic (මේක window.onload ඇතුළටම දාන්න) ---
+    // --- 🌍 Province to District Logic ---
     const districtData = {
         "Western": ["Colombo", "Gampaha", "Kalutara"],
         "Central": ["Kandy", "Matale", "Nuwara Eliya"],
@@ -3187,7 +3185,6 @@ window.onload = () => {
 
     const provSel = document.getElementById('reg-province');
     const distSel = document.getElementById('reg-district');
-
     if(provSel && distSel) {
         provSel.onchange = function() {
             distSel.innerHTML = '<option value="">දිස්ත්‍රික්කය තෝරන්න</option>';
@@ -3202,92 +3199,55 @@ window.onload = () => {
             }
         };
     }
-}; // මෙතනින් විතරයි window.onload ඉවර වෙන්නේ
+};
 
-function loadUserHistory() {
-    const historyBody = document.getElementById('history-body');
-    // Summary IDs
-    const totalPointsDisp = document.getElementById('total-points');
-    const avgPercentDisp = document.getElementById('avg-score-percent');
-    const totalExamsDisp = document.getElementById('total-exams');
-
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            // 1. Profile එකෙන් Summary එක ගමු
-            db.collection("users").doc(user.uid).onSnapshot(doc => {
-                const data = doc.data();
-                const points = data.totalPoints || 0;
-                const exams = data.examsCount || 0;
-                
-                if(totalPointsDisp) totalPointsDisp.innerText = points; // 2500න් ලකුණු
-                if(totalExamsDisp) totalExamsDisp.innerText = exams;
-                
-                // Average ලකුණු ප්‍රතිශතයක් විදිහට (ලකුණු / කරපු පේපර් ගණන * 50)
-                if(avgPercentDisp && exams > 0) {
-                    avgPercentDisp.innerText = ((points / (exams * 50)) * 100).toFixed(1) + "%";
-                }
-            });
-
-            // 2. පහළින් තියෙන History Table එක ලෝඩ් කරමු
-            db.collection("leaderboard")
-                .where("email", "==", user.email)
-                .orderBy("timestamp", "desc")
-                .onSnapshot(snap => {
-                    let tableHTML = '';
-                    snap.forEach(dDoc => {
-                        const d = dDoc.data();
-                        const date = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "Pending";
-                        tableHTML += `<tr><td>${date}</td><td>${d.category.toUpperCase()}</td><td>${d.score}/50</td><td>${d.timeUsed}s</td></tr>`;
-                    });
-                    if(historyBody) historyBody.innerHTML = tableHTML;
-                });
-        }
-    });
-}
-// තත්පර ගණන 00:00:00 විදිහට හදන Helper function එක
+// --- Leaderboard Helper Functions ---
 function formatTotalTime(seconds) {
-    if (!seconds) return "00:00";
+    if (!seconds) return "0s";
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
-    return h > 0 
-        ? `${h}h ${m}m ${s}s` 
-        : `${m}m ${s}s`;
+    return h > 0 ? `${h}h ${m}m ${s}s` : `${m}m ${s}s`;
 }
 
 function loadLeaderboard() {
     const lbBody = document.getElementById('leaderboard-body');
     if (!lbBody) return;
 
+    // වැදගත්: මෙතන totalPoints (DESC) සහ totalTime (ASC) තියෙන නිසා console එකේ ලින්ක් එකෙන් INDEX හදන්න ඕනේ.
     db.collection("users")
-        .orderBy("totalPoints", "desc") // ලකුණු වැඩි අය උඩට
-        .orderBy("totalTime", "asc")   // ලකුණු සමාන නම් වෙලාව අඩු අය උඩට
+        .orderBy("totalPoints", "desc")
+        .orderBy("totalTime", "asc")
         .limit(50) 
         .onSnapshot(snap => {
             lbBody.innerHTML = '';
             let rank = 1;
-
             snap.forEach(doc => {
                 const d = doc.data();
                 if (d.totalPoints > 0) {
                     let medal = (rank === 1) ? "🥇" : (rank === 2) ? "🥈" : (rank === 3) ? "🥉" : rank;
-
                     lbBody.innerHTML += `
                         <tr>
                             <td><span class="rank-number">${medal}</span></td>
                             <td style="text-align: left;">
                                 <div style="font-weight: bold;">${d.name}</div>
-                                <small>📍 ${d.province || 'Unknown'}</small>
+                                <small>📍 ${d.province || ''}</small>
                             </td>
                             <td><span class="score-badge">${d.totalPoints} / 2500</span></td>
-                            <td style="color: #666; font-size: 13px;">${formatTotalTime(d.totalTime)}</td>
+                            <td>${formatTotalTime(d.totalTime)}</td>
                             <td style="font-weight: bold; color: #ef6c00;">Level ${Math.floor(d.totalPoints / 100) + 1}</td>
                         </tr>`;
                     rank++;
                 }
             });
+        }, error => {
+            console.error("Leaderboard Error:", error);
+            if(error.message.includes("requires an index")) {
+                lbBody.innerHTML = '<tr><td colspan="5" style="color:red;">Firebase Index එකක් අවශ්‍යයි. කරුණාකර Console එක බලන්න.</td></tr>';
+            }
         });
 }
+
 
 
 function renderChart(labels, data) {
