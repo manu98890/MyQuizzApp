@@ -129,8 +129,8 @@ button { background: var(--primary-blue); color: white; border: none; padding: 1
     background: white;
     border-radius: 20px !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    padding: 0 !important;
-    margin-top: 20px;
+    padding: 5 !important;
+    margin-top: 25px;
     overflow: hidden;
     border: 1px solid #edf2f7;
 }
