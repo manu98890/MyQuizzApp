@@ -202,9 +202,9 @@ tr:hover td {
 /* Mobile එකේදී ලකුණු පෙට්ටිය හිර නොවෙන්න */
 @media (max-width: 768px) {
     .score-badge {
-        padding: 6px 10px !important;
+        padding: 16px 10px !important;
         font-size: 13px !important;
-        min-width: 200px;
+        min-width: 100px;
     }
     
     .leaderboard-table th:nth-child(3), .leaderboard-table td:nth-child(3) { 
