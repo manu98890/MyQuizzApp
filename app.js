@@ -3275,10 +3275,7 @@ function loadLeaderboard() {
         });
 }
 
-// පිටුව ලෝඩ් වෙද්දීම මේක call කරන්න
-window.onload = () => {
-    loadLeaderboard();
-};
+
 
 function renderChart(labels, data) {
     const ctx = document.getElementById('scoreChart').getContext('2d');
