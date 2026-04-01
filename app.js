@@ -3226,27 +3226,21 @@ function loadLeaderboard() {
 function loadUserHistory() {
     const historyBody = document.getElementById('history-body');
     const totalPointsDisp = document.getElementById('total-points');
-    const avgPercentDisp = document.getElementById('avg-score-percent');
-    const totalExamsDisp = document.getElementById('total-exams');
 
     auth.onAuthStateChanged(user => {
         if (user) {
-            // 1. Profile Summary (උඩ කොටසේ ලකුණු පෙන්වීමට)
+            // 1. Summary ලකුණු පෙන්වීම
             db.collection("users").doc(user.uid).onSnapshot(doc => {
                 if (doc.exists) {
                     const data = doc.data();
-                    if(totalPointsDisp) totalPointsDisp.innerText = data.totalPoints || 0;
-                    if(totalExamsDisp) totalExamsDisp.innerText = data.examsCount || 0;
-                    if(avgPercentDisp && data.examsCount > 0) {
-                        avgPercentDisp.innerText = ((data.totalPoints / (data.examsCount * 50)) * 100).toFixed(1) + "%";
-                    }
+                    if(totalPointsDisp) totalPointsDisp.innerText = (data.totalPoints || 0) + " / 2500";
                 }
             });
 
-            // 2. History Table සහ Chart එකට දත්ත ලබා ගැනීම
+            // 2. දත්ත ලබාගෙන Table එකට සහ Chart එකට යැවීම
             db.collection("leaderboard")
                 .where("userId", "==", user.uid)
-                .orderBy("timestamp", "asc") // මේකට තමයි අර Index එක ඕනේ වෙන්නේ
+                .orderBy("timestamp", "asc") // පරණ දත්ත මුලට එන්න
                 .onSnapshot(snap => {
                     let tableRows = [];
                     let chartLabels = [];
@@ -3259,16 +3253,17 @@ function loadUserHistory() {
                         // Table එකට පේළියක් හදනවා
                         tableRows.push(`<tr><td>${date}</td><td>${d.category.toUpperCase()}</td><td>${d.score}/50</td><td>${d.timeUsed}s</td></tr>`);
                         
-                        // Chart එකට අවශ්‍ය ඩේටා Array එකට දානවා
+                        // Chart එකට අවශ්‍ය දිනය සහ ලකුණු එකතු කරනවා
                         chartLabels.push(date); 
-                        chartScores.push(d.score);
+                        chartScores.push(d.score || 0);
                     });
 
                     // Table එක පෙන්වීම (අලුත්ම ඒවා උඩට එන්න reverse කරමු)
                     if(historyBody) historyBody.innerHTML = tableRows.reverse().join('');
 
-                    // Chart එක පෙන්වීම (දත්ත තිබේ නම් පමණක්)
+                    // Chart එක ඇඳීම (දත්ත තිබේ නම් පමණක්)
                     if(chartLabels.length > 0) {
+                        console.log("Drawing chart with labels:", chartLabels);
                         renderChart(chartLabels, chartScores);
                     }
                 });
