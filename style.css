@@ -198,9 +198,9 @@ td b, td strong {
 .score-badge {
     background: #e8f0fe !important;
     color: #1a73e8 !important;
-    padding: 10px 10px;
+    padding: 05px 05px;
     border-radius: 50px;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 14px;
     display: inline-block;
     border: 1px solid rgba(26, 115, 232, 0.1);
