@@ -3223,7 +3223,6 @@ function loadLeaderboard() {
             });
         });
 }
-
 function loadUserHistory() {
     const historyBody = document.getElementById('history-body');
     const totalPointsDisp = document.getElementById('total-points');
@@ -3232,7 +3231,7 @@ function loadUserHistory() {
 
     auth.onAuthStateChanged(user => {
         if (user) {
-            // Profile Summary (උඩ කොටසේ ලකුණු පෙන්වීමට)
+            // 1. Profile Summary (උඩ කොටසේ ලකුණු පෙන්වීමට)
             db.collection("users").doc(user.uid).onSnapshot(doc => {
                 if (doc.exists) {
                     const data = doc.data();
@@ -3244,10 +3243,10 @@ function loadUserHistory() {
                 }
             });
 
-            // History Table සහ Chart එකට දත්ත ලබා ගැනීම
+            // 2. History Table සහ Chart එකට දත්ත ලබා ගැනීම
             db.collection("leaderboard")
                 .where("userId", "==", user.uid)
-                .orderBy("timestamp", "asc") // Chart එකට පිළිවෙළට එන්න asc දාමු
+                .orderBy("timestamp", "asc") // මේකට තමයි අර Index එක ඕනේ වෙන්නේ
                 .onSnapshot(snap => {
                     let tableRows = [];
                     let chartLabels = [];
@@ -3257,23 +3256,21 @@ function loadUserHistory() {
                         const d = dDoc.data();
                         const date = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "Pending";
                         
-                        // Table එකට පේළි එකතු කිරීම
+                        // Table එකට පේළියක් හදනවා
                         tableRows.push(`<tr><td>${date}</td><td>${d.category.toUpperCase()}</td><td>${d.score}/50</td><td>${d.timeUsed}s</td></tr>`);
                         
-                        // Chart එකට දත්ත එකතු කිරීම
-                        chartLabels.push(date); // දිනය label එක විදිහට
-                        chartScores.push(d.score); // ලකුණු අගය
+                        // Chart එකට අවශ්‍ය ඩේටා Array එකට දානවා
+                        chartLabels.push(date); 
+                        chartScores.push(d.score);
                     });
 
                     // Table එක පෙන්වීම (අලුත්ම ඒවා උඩට එන්න reverse කරමු)
                     if(historyBody) historyBody.innerHTML = tableRows.reverse().join('');
 
-                    // Chart එක පෙන්වීම (අවම වශයෙන් එක data point එකක්වත් තියෙන්න ඕනේ)
+                    // Chart එක පෙන්වීම (දත්ත තිබේ නම් පමණක්)
                     if(chartLabels.length > 0) {
                         renderChart(chartLabels, chartScores);
                     }
-                }, error => {
-                    console.error("Error loading history:", error);
                 });
         }
     });
