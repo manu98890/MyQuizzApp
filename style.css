@@ -196,7 +196,7 @@ button { background: var(--primary-blue); color: white; border: none; padding: 1
 /* Row Hover Effect */
 tr:hover td {
     background-color: #f8fbff;
-
+}
 /* Mobile එකේදී ලකුණු පෙට්ටිය හිර නොවෙන්න */
 @media (max-width: 768px) {
     .score-badge {
