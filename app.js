@@ -3204,53 +3204,40 @@ window.onload = () => {
 
 function loadUserHistory() {
     const historyBody = document.getElementById('history-body');
+    // Summary IDs
     const totalPointsDisp = document.getElementById('total-points');
+    const avgPercentDisp = document.getElementById('avg-score-percent');
+    const totalExamsDisp = document.getElementById('total-exams');
 
     auth.onAuthStateChanged(user => {
         if (user) {
-            // 1. මුළු ලකුණු පෙන්වීම
+            // 1. Profile එකෙන් Summary එක ගමු
             db.collection("users").doc(user.uid).onSnapshot(doc => {
                 const data = doc.data();
-                if(totalPointsDisp && data) totalPointsDisp.innerText = (data.totalPoints || 0) + " / 2500";
+                const points = data.totalPoints || 0;
+                const exams = data.examsCount || 0;
+                
+                if(totalPointsDisp) totalPointsDisp.innerText = points; // 2500න් ලකුණු
+                if(totalExamsDisp) totalExamsDisp.innerText = exams;
+                
+                // Average ලකුණු ප්‍රතිශතයක් විදිහට (ලකුණු / කරපු පේපර් ගණන * 50)
+                if(avgPercentDisp && exams > 0) {
+                    avgPercentDisp.innerText = ((points / (exams * 50)) * 100).toFixed(1) + "%";
+                }
             });
 
-            // 2. විභාග ඉතිහාසය සහ ප්‍රස්ථාරය සඳහා දත්ත ලබා ගැනීම
+            // 2. පහළින් තියෙන History Table එක ලෝඩ් කරමු
             db.collection("leaderboard")
-                .where("userId", "==", user.uid)
-                .orderBy("timestamp", "asc") // Chart එකට පිළිවෙළට එන්න asc දාන්න
+                .where("email", "==", user.email)
+                .orderBy("timestamp", "desc")
                 .onSnapshot(snap => {
-                    let tableRows = [];
-                    let chartLabels = [];
-                    let chartScores = [];
-
-                    snap.forEach(doc => {
-                        const val = doc.data();
-                        
-                        // දිනය සහ වේලාව සකස් කරගැනීම
-                        const dateObj = val.timestamp ? val.timestamp.toDate() : new Date();
-                        const dateStr = dateObj.toLocaleDateString(); // උදා: 4/1/2026
-                        const timeTaken = val.timeUsed ? Math.floor(val.timeUsed / 60) + " min" : "N/A";
-
-                        // වගුව සඳහා (අලුත්ම දත්ත උඩට එන විදිහට පසුව reverse කරමු)
-                        tableRows.push(`<tr>
-                            <td>${dateStr}</td>
-                            <td>${val.category}</td>
-                            <td>${val.score}/50</td>
-                            <td>${timeTaken}</td>
-                        </tr>`);
-
-                        // ප්‍රස්ථාරය සඳහා
-                        chartLabels.push(val.category);
-                        chartScores.push(val.score);
+                    let tableHTML = '';
+                    snap.forEach(dDoc => {
+                        const d = dDoc.data();
+                        const date = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "Pending";
+                        tableHTML += `<tr><td>${date}</td><td>${d.category.toUpperCase()}</td><td>${d.score}/50</td><td>${d.timeUsed}s</td></tr>`;
                     });
-
-                    // වගුව යාවත්කාලීන කිරීම (අලුත්ම එක උඩට එන්න reverse කරනවා)
-                    if(historyBody) historyBody.innerHTML = tableRows.reverse().join('');
-
-                    // ප්‍රස්ථාරය ඇඳීම (දත්ත තියෙනවා නම් පමණක්)
-                    if(chartLabels.length > 0) {
-                        renderChart(chartLabels, chartScores);
-                    }
+                    if(historyBody) historyBody.innerHTML = tableHTML;
                 });
         }
     });
