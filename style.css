@@ -145,9 +145,9 @@ table {
 th {
     background: #1a73e8 !important;
     color: white !important;
-    padding: 25px 20px !important;
+    padding: 25px 25px !important;
     font-size: 15px !important;
-    font-weight: 800 !important;
+    font-weight: 600 !important;
     text-align: center;
     border: none;
     text-transform: uppercase;
