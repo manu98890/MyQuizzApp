@@ -3218,7 +3218,7 @@ function loadLeaderboard() {
                             </td>
                             <td><span class="score-badge">${d.totalPoints} / 2500</span></td>
                             <td>${formatTotalTime(d.totalTime)}</td>
-                            <td style="font-weight: bold; color: #ef6c00;">Level ${Math.floor(d.totalPoints / 100) + 1}</td>
+                            
                         </tr>`;
                     rank++;
                 }
