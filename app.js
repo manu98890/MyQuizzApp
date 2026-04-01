@@ -3203,23 +3203,20 @@ function loadLeaderboard() {
         .orderBy("totalTime", "asc")
         .limit(50) 
         .onSnapshot(snap => {
-            lbBody.innerHTML = '';
-            let rank = 1;
-            snap.forEach(doc => {
-                const d = doc.data();
-                if (d.totalPoints > 0) {
-                    let medal = (rank === 1) ? "🥇" : (rank === 2) ? "🥈" : (rank === 3) ? "🥉" : rank;
-                    lbBody.innerHTML += `
-                        <tr>
-                            <td><span class="rank-number">${medal}</span></td>
-                            <td style="text-align: left;">
-                                <div style="font-weight: bold;">${d.name}</div>
-                                <small>📍 ${d.province || ''}</small>
-                            </td>
-                            <td><span class="score-badge">${d.totalPoints} / 2500</span></td>
-                            <td>${formatTotalTime(d.totalTime)}</td>
-                            
-                        </tr>`;
+          // loadLeaderboard function එකේ table එක ඇතුළට දාන HTML කොටස:
+lbBody.innerHTML += `
+    <tr>
+        <td>${rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank}</td>
+        <td>
+            <div class="user-info-container">
+                <span class="user-name">${d.name}</span>
+                <span class="user-province">📍 ${d.province || 'Southern'}</span>
+            </div>
+        </td>
+        <td><span class="score-badge">${d.totalPoints || 0} / 2500</span></td>
+        <td>${formatTotalTime(d.totalTime)}</td>
+        <td style="font-weight: bold; color: #ef6c00;">Level ${Math.floor(d.totalPoints / 100) + 1}</td>
+    </tr>`;
                     rank++;
                 }
             });
