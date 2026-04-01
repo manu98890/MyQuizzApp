@@ -3100,43 +3100,45 @@ async function saveScoreAndRedirect(finalScore) {
     const user = auth.currentUser;
     if (!user) return;
     const cat = new URLSearchParams(window.location.search).get('cat') || 'gk1';
+    const timeUsedThisTime = 3600 - timeLeft; // මේ පාර ගතවූ තත්පර ගණන
 
     try {
-        // 1. සාමාන්‍ය විභාග වාර්තාව සේව් කිරීම
+        // 1. හැම Attempt එකක්ම ඉතිහාසයට සේව් කරනවා
         await db.collection("leaderboard").add({
             userId: user.uid,
             email: user.email,
             category: cat,
             score: finalScore,
-            timeUsed: 3600 - timeLeft,
+            timeUsed: timeUsedThisTime,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        // 2. මුළු ලකුණු 2500න් ගණනය කිරීමට User Profile එක Update කිරීම
+        // 2. Leaderboard එකට ලකුණු එකතු කරන්නේ පළමු වතාවේ නම් විතරයි
         const userRef = db.collection("users").doc(user.uid);
         const userDoc = await userRef.get();
         let userData = userDoc.data() || {};
         let bestScores = userData.bestScores || {};
 
-        // පේපර් එකේ පරණ ලකුණට වඩා මේක වැඩිනම් විතරක් Update කරමු
-        if (!bestScores[cat] || finalScore > bestScores[cat]) {
+        // පේපර් එක මීට කලින් කරලා නැත්නම් විතරක් ලකුණු සහ කාලය මුළු එකතුවට දානවා
+        if (bestScores[cat] === undefined) { 
             bestScores[cat] = finalScore;
             
-            // ඔක්කොම පේපර්ස් වල එකතුව 2500න් ගණනය කරනවා
-            const totalPoints = Object.values(bestScores).reduce((a, b) => a + b, 0);
-            
+            const newTotalPoints = (userData.totalPoints || 0) + finalScore;
+            const newTotalTime = (userData.totalTime || 0) + timeUsedThisTime;
+
             await userRef.update({
                 bestScores: bestScores,
-                totalPoints: totalPoints, // 2500න් ලකුණු
+                totalPoints: newTotalPoints,
+                totalTime: newTotalTime, // මුළු කාලය තත්පර වලින්
                 examsCount: (userData.examsCount || 0) + 1
             });
         }
+        
         window.location.href = "leaderboard.html";
     } catch (e) {
-        alert("ලකුණු සේව් කිරීමට නොහැකි විය: " + e.message);
+        alert("දත්ත සේව් කිරීමට නොහැකි විය: " + e.message);
     }
 }
-
 // --- 7. Page Load Manager ---
 window.onload = () => {
     // Login පේජ් එකේ නම් විතරක් මේක වැඩ කරයි
@@ -3242,13 +3244,24 @@ function loadUserHistory() {
         }
     });
 }
+// තත්පර ගණන 00:00:00 විදිහට හදන Helper function එක
+function formatTotalTime(seconds) {
+    if (!seconds) return "00:00";
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return h > 0 
+        ? `${h}h ${m}m ${s}s` 
+        : `${m}m ${s}s`;
+}
+
 function loadLeaderboard() {
     const lbBody = document.getElementById('leaderboard-body');
     if (!lbBody) return;
 
-    // Leaderboard එකට ගන්නේ කරපු ඔක්කොම papers වල එකතුව (totalPoints) වැඩිම අයව
     db.collection("users")
-        .orderBy("totalPoints", "desc")
+        .orderBy("totalPoints", "desc") // ලකුණු වැඩි අය උඩට
+        .orderBy("totalTime", "asc")   // ලකුණු සමාන නම් වෙලාව අඩු අය උඩට
         .limit(50) 
         .onSnapshot(snap => {
             lbBody.innerHTML = '';
@@ -3256,35 +3269,25 @@ function loadLeaderboard() {
 
             snap.forEach(doc => {
                 const d = doc.data();
-                
-                // ලකුණු 0 ට වඩා වැඩි අය විතරක් පෙන්වමු
                 if (d.totalPoints > 0) {
-                    let medal = "";
-                    if(rank === 1) medal = "🥇";
-                    else if(rank === 2) medal = "🥈";
-                    else if(rank === 3) medal = "🥉";
-                    else medal = rank;
+                    let medal = (rank === 1) ? "🥇" : (rank === 2) ? "🥈" : (rank === 3) ? "🥉" : rank;
 
                     lbBody.innerHTML += `
                         <tr>
                             <td><span class="rank-number">${medal}</span></td>
                             <td style="text-align: left;">
-                                <div style="font-weight: bold; color: #333;">${d.name}</div>
-                                <small style="color: #1a73e8;">📍 ${d.province || 'Unknown'}</small>
+                                <div style="font-weight: bold;">${d.name}</div>
+                                <small>📍 ${d.province || 'Unknown'}</small>
                             </td>
-                            <td><span class="score-badge" style="background:#1a73e8; color:white; padding:4px 10px; border-radius:12px;">${d.totalPoints} / 2500</span></td>
-                            <td style="font-weight: bold; color: #ef6c00;">Level: ${Math.floor(d.totalPoints / 100) + 1}</td>
+                            <td><span class="score-badge">${d.totalPoints} / 2500</span></td>
+                            <td style="color: #666; font-size: 13px;">${formatTotalTime(d.totalTime)}</td>
+                            <td style="font-weight: bold; color: #ef6c00;">Level ${Math.floor(d.totalPoints / 100) + 1}</td>
                         </tr>`;
                     rank++;
                 }
             });
-            
-            if(lbBody.innerHTML === '') {
-                lbBody.innerHTML = '<tr><td colspan="4">තවම කිසිදු ශිෂ්‍යයෙක් විභාග අවසන් කර නැත.</td></tr>';
-            }
         });
 }
-
 
 
 function renderChart(labels, data) {
