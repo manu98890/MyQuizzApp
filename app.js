@@ -3137,22 +3137,21 @@ async function saveScoreAndRedirect(finalScore) {
     }
 }
 
-
-// 7. Page Load Manager
+// --- 7. Page Load Manager ---
 window.onload = () => {
-    // 1. Login පේජ් එකේ නම් විතරක් මේක වැඩ කරයි
+    // Login පේජ් එකේ නම් විතරක් මේක වැඩ කරයි
     const loginBtn = document.getElementById('login-btn');
     if (loginBtn) setupLogin();
 
-    // 2. Registration පේජ් එකේ නම් විතරක් මේක වැඩ කරයි
+    // Registration පේජ් එකේ නම් විතරක් මේක වැඩ කරයි
     const regBtn = document.getElementById('final-register-btn');
     if (regBtn) setupRegistration();
 
-    // 3. Profile පේජ් එකේ විස්තර පෙන්වන්න
+    // Profile පේජ් එකේ විස්තර පෙන්වන්න
     if (document.getElementById('user-info-display')) loadProfileData();
     if (document.getElementById('history-body')) loadUserHistory();
 
-    // 4. Quiz පේජ් එකේ වැඩ ටික
+    // Quiz පේජ් එකේ වැඩ ටික
     if (document.getElementById('question-text')) {
         auth.onAuthStateChanged(user => { 
             if(user) { 
@@ -3164,15 +3163,14 @@ window.onload = () => {
         });
     }
 
-    // 5. Leaderboard පේජ් එක
+    // Leaderboard පේජ් එක
     if (document.getElementById('leaderboard-body')) loadLeaderboard();
 
-    // 6. Rules Modal (Quiz එක පටන් ගන්න තැන)
+    // Rules Modal
     const startExamBtn = document.getElementById('start-exam-btn');
     if (startExamBtn) setupRulesModal();
-};
 
-    // --- 🌍 Province to District Logic ---
+    // --- 🌍 Province to District Logic (මේක window.onload ඇතුළටම දාන්න) ---
     const districtData = {
         "Western": ["Colombo", "Gampaha", "Kalutara"],
         "Central": ["Kandy", "Matale", "Nuwara Eliya"],
@@ -3190,9 +3188,7 @@ window.onload = () => {
 
     if(provSel && distSel) {
         provSel.onchange = function() {
-            // Dropdown එක මුලින්ම Clear කරනවා
             distSel.innerHTML = '<option value="">දිස්ත්‍රික්කය තෝරන්න</option>';
-            
             const selectedProvince = this.value;
             if(selectedProvince && districtData[selectedProvince]) {
                 districtData[selectedProvince].forEach(d => {
@@ -3204,7 +3200,8 @@ window.onload = () => {
             }
         };
     }
-};        
+}; // මෙතනින් විතරයි window.onload ඉවර වෙන්නේ
+
 function loadUserHistory() {
     const historyBody = document.getElementById('history-body');
     const totalPointsDisp = document.getElementById('total-points'); // HTML එකේ id="total-points" තිබිය යුතුයි
