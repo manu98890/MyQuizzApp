@@ -3236,6 +3236,53 @@ function loadUserHistory() {
         }
     });
 }
+function loadLeaderboard() {
+    const lbBody = document.getElementById('leaderboard-body');
+    if (!lbBody) return;
+
+    // Leaderboard එකට ගන්නේ කරපු ඔක්කොම papers වල එකතුව (totalPoints) වැඩිම අයව
+    db.collection("users")
+        .orderBy("totalPoints", "desc")
+        .limit(50) 
+        .onSnapshot(snap => {
+            lbBody.innerHTML = '';
+            let rank = 1;
+
+            snap.forEach(doc => {
+                const d = doc.data();
+                
+                // ලකුණු 0 ට වඩා වැඩි අය විතරක් පෙන්වමු
+                if (d.totalPoints > 0) {
+                    let medal = "";
+                    if(rank === 1) medal = "🥇";
+                    else if(rank === 2) medal = "🥈";
+                    else if(rank === 3) medal = "🥉";
+                    else medal = rank;
+
+                    lbBody.innerHTML += `
+                        <tr>
+                            <td><span class="rank-number">${medal}</span></td>
+                            <td style="text-align: left;">
+                                <div style="font-weight: bold; color: #333;">${d.name}</div>
+                                <small style="color: #1a73e8;">📍 ${d.province || 'Unknown'}</small>
+                            </td>
+                            <td><span class="score-badge" style="background:#1a73e8; color:white; padding:4px 10px; border-radius:12px;">${d.totalPoints} / 2500</span></td>
+                            <td style="font-weight: bold; color: #ef6c00;">Level: ${Math.floor(d.totalPoints / 100) + 1}</td>
+                        </tr>`;
+                    rank++;
+                }
+            });
+            
+            if(lbBody.innerHTML === '') {
+                lbBody.innerHTML = '<tr><td colspan="4">තවම කිසිදු ශිෂ්‍යයෙක් විභාග අවසන් කර නැත.</td></tr>';
+            }
+        });
+}
+
+// පිටුව ලෝඩ් වෙද්දීම මේක call කරන්න
+window.onload = () => {
+    loadLeaderboard();
+};
 
 function renderChart(labels, data) {
     const ctx = document.getElementById('scoreChart').getContext('2d');
