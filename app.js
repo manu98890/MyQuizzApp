@@ -3179,35 +3179,7 @@ window.onload = () => {
     const startExamBtn = document.getElementById('start-exam-btn');
     if (startExamBtn) setupRulesModal();
 };
-function renderChart(labels, data) {
-    const ctx = document.getElementById('scoreChart').getContext('2d');
-    if (myChart) myChart.destroy(); // පරණ Chart එක මකනවා
 
-    myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'ලකුණු මට්ටම',
-                data: data,
-                borderColor: '#1a73e8',
-                backgroundColor: 'rgba(26, 115, 232, 0.1)',
-                borderWidth: 3,
-                tension: 0.3,
-                fill: true,
-                pointBackgroundColor: '#1a73e8',
-                pointRadius: 6
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: { beginAtZero: true, max: 50 }
-            }
-        }
-    });
-}
 // --- 🛠️ අඩුවෙලා තිබුණු Functions ටික මෙන්න (මේවා window.onload එකෙන් පිටත තියෙන්න ඕනේ) ---
 
 // කාලය format කරන හැටි
@@ -3252,7 +3224,6 @@ function loadLeaderboard() {
         });
 }
 
-// පරිශීලකයාගේ ඉතිහාසය (History) ලෝඩ් කිරීම
 function loadUserHistory() {
     const historyBody = document.getElementById('history-body');
     const totalPointsDisp = document.getElementById('total-points');
@@ -3261,7 +3232,7 @@ function loadUserHistory() {
 
     auth.onAuthStateChanged(user => {
         if (user) {
-            // Profile Summary
+            // Profile Summary (උඩ කොටසේ ලකුණු පෙන්වීමට)
             db.collection("users").doc(user.uid).onSnapshot(doc => {
                 if (doc.exists) {
                     const data = doc.data();
@@ -3273,23 +3244,40 @@ function loadUserHistory() {
                 }
             });
 
-            // History Table
+            // History Table සහ Chart එකට දත්ත ලබා ගැනීම
             db.collection("leaderboard")
                 .where("userId", "==", user.uid)
-                .orderBy("timestamp", "desc")
+                .orderBy("timestamp", "asc") // Chart එකට පිළිවෙළට එන්න asc දාමු
                 .onSnapshot(snap => {
-                    let tableHTML = '';
+                    let tableRows = [];
+                    let chartLabels = [];
+                    let chartScores = [];
+
                     snap.forEach(dDoc => {
                         const d = dDoc.data();
                         const date = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "Pending";
-                        tableHTML += `<tr><td>${date}</td><td>${d.category.toUpperCase()}</td><td>${d.score}/50</td><td>${d.timeUsed}s</td></tr>`;
+                        
+                        // Table එකට පේළි එකතු කිරීම
+                        tableRows.push(`<tr><td>${date}</td><td>${d.category.toUpperCase()}</td><td>${d.score}/50</td><td>${d.timeUsed}s</td></tr>`);
+                        
+                        // Chart එකට දත්ත එකතු කිරීම
+                        chartLabels.push(date); // දිනය label එක විදිහට
+                        chartScores.push(d.score); // ලකුණු අගය
                     });
-                    if(historyBody) historyBody.innerHTML = tableHTML;
+
+                    // Table එක පෙන්වීම (අලුත්ම ඒවා උඩට එන්න reverse කරමු)
+                    if(historyBody) historyBody.innerHTML = tableRows.reverse().join('');
+
+                    // Chart එක පෙන්වීම (අවම වශයෙන් එක data point එකක්වත් තියෙන්න ඕනේ)
+                    if(chartLabels.length > 0) {
+                        renderChart(chartLabels, chartScores);
+                    }
+                }, error => {
+                    console.error("Error loading history:", error);
                 });
         }
     });
 }
-
 // දිස්ත්‍රික්ක පෙන්වන logic එක
 function setupProvinceDistrictLogic() {
     const districtData = {
