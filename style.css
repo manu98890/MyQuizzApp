@@ -198,6 +198,7 @@ td b, td strong {
     border-radius: 50px;
     font-weight: 700;
     font-size: 14px;
+    text-align:center;
     display: inline-block;
     border: 1px solid rgba(26, 115, 232, 0.1);
 }
