@@ -204,7 +204,7 @@ tr:hover td {
     .score-badge {
         padding: 6px 10px !important;
         font-size: 13px !important;
-        min-width: 100px;
+        min-width: 200px;
     }
     
     .leaderboard-table th:nth-child(3), .leaderboard-table td:nth-child(3) { 
