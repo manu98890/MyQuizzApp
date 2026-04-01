@@ -3139,38 +3139,41 @@ async function saveScoreAndRedirect(finalScore) {
         alert("දත්ත සේව් කිරීමට නොහැකි විය: " + e.message);
     }
 }
-// --- 7. Page Load Manager ---
+// --- 7. Page Load Manager (මෙය එක වතාවක් පමණක් තිබිය යුතුය) ---
 window.onload = () => {
+    console.log("App Initialized...");
+
+    // 1. Login සහ Registration පරීක්ෂාව
     const loginBtn = document.getElementById('login-btn');
     if (loginBtn) setupLogin();
 
     const regBtn = document.getElementById('final-register-btn');
     if (regBtn) setupRegistration();
 
+    // 2. Profile සහ History දත්ත ලෝඩ් කිරීම
     if (document.getElementById('user-info-display')) loadProfileData();
     if (document.getElementById('history-body')) loadUserHistory();
 
-      // Rules Modal
-    const startExamBtn = document.getElementById('start-exam-btn');
-    if (startExamBtn) setupRulesModal();
-
+    // 3. Quiz පේජ් එකේ වැඩ ටික
     if (document.getElementById('question-text')) {
         auth.onAuthStateChanged(user => { 
             if(user) { 
                 getCategoryAndStart(); 
                 setupQuizButtons(); 
                 setupCheatingProtection();
-            } else { window.location.href="index.html"; }
+            } else { 
+                window.location.href="index.html"; 
+            }
         });
     }
 
-    // Leaderboard එක load කරන තැන
+    // 4. Leaderboard එක load කරන තැන
     if (document.getElementById('leaderboard-body')) loadLeaderboard();
 
-    const startExamBtn = document.getElementById('start-exam-btn');
-    if (startExamBtn) setupRulesModal();
+    // 5. Rules Modal එක
+    if (document.getElementById('start-exam-btn')) setupRulesModal();
 
-    // --- 🌍 Province to District Logic ---
+    // 6. Province to District Logic (Registration සඳහා)
     const districtData = {
         "Western": ["Colombo", "Gampaha", "Kalutara"],
         "Central": ["Kandy", "Matale", "Nuwara Eliya"],
@@ -3201,7 +3204,8 @@ window.onload = () => {
     }
 };
 
-// --- Leaderboard Helper Functions ---
+// --- Leaderboard සහ අමතර Function ටික පහළින් තියාගන්න ---
+
 function formatTotalTime(seconds) {
     if (!seconds) return "0s";
     const h = Math.floor(seconds / 3600);
@@ -3214,7 +3218,6 @@ function loadLeaderboard() {
     const lbBody = document.getElementById('leaderboard-body');
     if (!lbBody) return;
 
-    // වැදගත්: මෙතන totalPoints (DESC) සහ totalTime (ASC) තියෙන නිසා console එකේ ලින්ක් එකෙන් INDEX හදන්න ඕනේ.
     db.collection("users")
         .orderBy("totalPoints", "desc")
         .orderBy("totalTime", "asc")
@@ -3240,16 +3243,8 @@ function loadLeaderboard() {
                     rank++;
                 }
             });
-        }, error => {
-            console.error("Leaderboard Error:", error);
-            if(error.message.includes("requires an index")) {
-                lbBody.innerHTML = '<tr><td colspan="5" style="color:red;">Firebase Index එකක් අවශ්‍යයි. කරුණාකර Console එක බලන්න.</td></tr>';
-            }
         });
 }
-
-
-
 function renderChart(labels, data) {
     const ctx = document.getElementById('scoreChart').getContext('2d');
     if (myChart) myChart.destroy(); // පරණ Chart එක මකනවා
