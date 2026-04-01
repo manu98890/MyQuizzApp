@@ -124,94 +124,63 @@ button { background: var(--primary-blue); color: white; border: none; padding: 1
 
 /* --- 🏆 13. PREMIUM LEADERBOARD & HISTORY UI (FINAL FIX) --- */
 
-/* Leaderboard එක තියෙන මුළු Container එක */
-.table-responsive {
-    background: white;
-    border-radius: 20px !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    padding: 5 !important;
-    margin-top: 25px;
-    overflow: hidden;
-    border: 1px solid #edf2f7;
-}
+/* 🏆 Leaderboard Table එක Screenshot එකටම ගැලපෙන සේ */
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-}
+/* Table එකේ columns වල පළලවල් හරියට බෙදමු */
+.leaderboard-table th:nth-child(1), .leaderboard-table td:nth-child(1) { width: 80px; text-align: center; } /* Rank */
+.leaderboard-table th:nth-child(2), .leaderboard-table td:nth-child(2) { text-align: left; padding-left: 25px; } /* Name/Province */
+.leaderboard-table th:nth-child(3), .leaderboard-table td:nth-child(3) { width: 150px; text-align: center; } /* Score (2500න්) */
+.leaderboard-table th:nth-child(4), .leaderboard-table td:nth-child(4) { width: 120px; text-align: center; } /* Time */
 
-/* 🔵 Leaderboard Header (නිල් පාට කොටස) */
-th {
-    background: #1a73e8 !important;
-    color: white !important;
-    padding: 18px 15px !important;
-    font-size: 15px !important;
+/* ලකුණු පෙන්නන Badge එක (Screenshot එකේ විදියටම) */
+.score-badge {
+    background: #e8f0fe !important; /* ලා නිල් පාට */
+    color: #1a73e8 !important;    /* තද නිල් පාට */
+    padding: 8px 16px !important;
+    border-radius: 50px !important; /* Pill shape */
     font-weight: 700 !important;
-    text-align: center;
-    border: none;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* ⚪ පේළි (Rows) වල පොදු පෙනුම */
-td {
-    padding: 14px 8px !important;
-    border-bottom: 1px solid #f1f4f8;
-    vertical-align: middle;
-    color: #444;
-}
-
-/* Rank Medal/Number column */
-td:first-child {
-    font-weight: 800;
-    color: #1a73e8;
-    font-size: 18px;
-    width: 60px;
+    font-size: 15px !important;
+    display: inline-block;
+    border: 1px solid rgba(26, 115, 232, 0.2);
+    min-width: 90px;
     text-align: center;
 }
 
-/* 👤 User Details Column (නම, ඊමේල්, පළාත) */
-td:nth-child(2) {
-    text-align: left !important;
-    padding-left: 20px !important;
+/* නම සහ පළාත Screenshot එකේ විදියට ලස්සන කරමු */
+.user-info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
-td b, td strong {
-    color: #2c3e50;
+.user-name {
+    font-weight: 700;
     font-size: 16px;
-    display: block;
-    margin-bottom: 2px;
+    color: #2c3e50;
 }
 
-/* Email සහ Province වලට පොඩි styles */
-.user-info-sub {
+.user-province {
     font-size: 12px;
-    color: #7f8c8d;
+    color: #1a73e8;
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-top: 2px;
+    gap: 4px;
 }
 
-/* 🏆 Score Badge (ලකුණු පෙට්ටිය) */
-.score-badge {
-    background: #e8f0fe !important;
-    color: #1a73e8 !important;
-    padding: 06px 14px;
-    border-radius: 50px;
+/* Table Header එක (තද නිල් පාට) */
+.table-responsive th {
+    background: #1a73e8 !important;
+    color: white !important;
+    padding: 20px 10px !important;
     font-weight: 700;
-    font-size: 14px;
-    display: inline-block;
-    border: 1px solid rgba(26, 115, 232, 0.1);
+    letter-spacing: 0.5px;
+    border: none;
 }
 
-/* ⏱️ Time Column */
-td:last-child {
-    font-weight: 600;
-    color: #5f6368;
-    font-size: 14px;
-    text-align: center;
+/* පේළි (Rows) අතර ඉඩ */
+.table-responsive td {
+    padding: 18px 10px !important;
+    border-bottom: 1px solid #edf2f7;
 }
 
 /* 📊 History Page එකේ Category Tag එක */
@@ -230,45 +199,15 @@ tr:hover td {
     background-color: #f8fbff;
 }
 
-/* --- 📱 Mobile Optimization (Squeeze වෙන්නේ නැති වෙන්න) --- */
+/* Mobile එකේදී ලකුණු පෙට්ටිය හිර නොවෙන්න */
 @media (max-width: 768px) {
-    .main-content { padding: 15px !important; }
-
-    th {
-        padding: 12px 5px !important;
-        font-size: 12px !important;
-    }
-
-    td {
-        padding: 15px 5px !important;
-        font-size: 11px !important;
-    }
-
-    /* නම පේළි දෙකකට යෑම වැළැක්වීමට */
-    td b, td strong {
-        font-size: 13px !important;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100px;
-    }
-
-    .user-info-sub {
-        font-size: 10px !important;
-        flex-direction: column; /* Mobile එකේදී එක යට එක පෙන්වමු */
-        align-items: flex-start;
-        gap: 0;
-    }
-
-    /* ලකුණු සහ කාලය පිළිවෙලට තැබීම */
     .score-badge {
-        padding: 4px 8px !important;
-        font-size: 11px !important;
-        white-space: nowrap;
+        padding: 6px 10px !important;
+        font-size: 13px !important;
+        min-width: 75px;
     }
-
-    td:last-child {
-        font-size: 11px !important;
-        min-width: 50px;
+    
+    .leaderboard-table th:nth-child(3), .leaderboard-table td:nth-child(3) { 
+        width: 100px; 
     }
 }
