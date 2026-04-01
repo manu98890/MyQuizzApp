@@ -129,8 +129,8 @@ button { background: var(--primary-blue); color: white; border: none; padding: 1
 /* Table එකේ columns වල පළලවල් හරියට බෙදමු */
 .leaderboard-table th:nth-child(1), .leaderboard-table td:nth-child(1) { width: 80px; text-align: center; } /* Rank */
 .leaderboard-table th:nth-child(2), .leaderboard-table td:nth-child(2) { text-align: left; padding-left: 25px; } /* Name/Province */
-.leaderboard-table th:nth-child(3), .leaderboard-table td:nth-child(3) { width: 150px; text-align: center; } /* Score (2500න්) */
-.leaderboard-table th:nth-child(4), .leaderboard-table td:nth-child(4) { width: 120px; text-align: center; } /* Time */
+.leaderboard-table th:nth-child(3), .leaderboard-table td:nth-child(3) { width: 200px; text-align: center; } /* Score (2500න්) */
+.leaderboard-table th:nth-child(4), .leaderboard-table td:nth-child(4) { width: 150px; text-align: center; } /* Time */
 
 /* ලකුණු පෙන්නන Badge එක (Screenshot එකේ විදියටම) */
 .score-badge {
@@ -202,7 +202,7 @@ tr:hover td {
 /* Mobile එකේදී ලකුණු පෙට්ටිය හිර නොවෙන්න */
 @media (max-width: 768px) {
     .score-badge {
-        padding: 16px 10px !important;
+        padding: 6px 10px !important;
         font-size: 13px !important;
         min-width: 100px;
     }
