@@ -3096,96 +3096,49 @@ function showResultSummary() {
         </div>
     `;
 }
-// 6. Data Saving & Leaderboard
 async function saveScoreAndRedirect(finalScore) {
     const user = auth.currentUser;
-    const urlParams = new URLSearchParams(window.location.search);
-    const cat = urlParams.get('cat') || 'gk1';
-
-    if (!user) {
-        alert("කරුණාකර Login වන්න!");
-        window.location.href = "index.html";
-        return;
-    }
+    if (!user) return;
+    const cat = new URLSearchParams(window.location.search).get('cat') || 'gk1';
 
     try {
-        // 1. User ගේ profile එකෙන් විස්තර ගන්නවා
-        const userDoc = await db.collection("users").doc(user.uid).get();
-        
-        let province = "Unknown";
-        let name = user.email.split('@')[0];
-
-        // මෙන්න මෙතන තමයි කලින් වැරදුනේ - 'userDoc' කියන එකම පාවිච්චි කරන්න ඕනේ
-        if (userDoc.exists) {
-            const userData = userDoc.data();
-            province = userData.province || "Unknown";
-            name = userData.name || name;
-        }
-
-        // 2. ගතවුණු කාලය ගණනය කරනවා
-        let timeUsed = 3600 - timeLeft;
-
-        // 3. Leaderboard එකට දත්ත ඇතුළත් කරනවා
+        // 1. Leaderboard එකට සාමාන්‍ය විදිහට Record එක දාමු
         await db.collection("leaderboard").add({
-            userId: user.uid,        // අලුතින් එක් කළා
-            email: user.email,      // අලුතින් එක් කළා (History එකට ඕනේ වෙනවා)
-            name: name,
-            province: province,
+            userId: user.uid,
+            email: user.email,
+            name: (await db.collection("users").doc(user.uid).get()).data().name,
             category: cat,
             score: finalScore,
-            timeUsed: timeUsed,
+            timeUsed: 3600 - timeLeft,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        console.log("Score saved successfully!");
-        // 4. සේව් වුණාට පස්සේ ලීඩර්බෝඩ් එකට යනවා
-        window.location.href = "leaderboard.html";
-
-    } catch (error) {
-        // මෙතනින් අපිට error එක මොකක්ද කියලා හරියටම බලාගන්න පුළුවන්
-        console.error("Error saving score: ", error);
-        alert("දෝෂය: " + error.message); 
-    }
-}
-function loadLeaderboard() {
-    const lbBody = document.getElementById('leaderboard-body');
-    if (!lbBody) return;
-
-    db.collection("leaderboard")
-        .orderBy("score", "desc")
-        .orderBy("timeUsed", "asc")
-        .onSnapshot((snap) => {
-            lbBody.innerHTML = '';
-            let rank = 1;
-
-            snap.forEach(doc => {
-                const d = doc.data();
-                const mins = Math.floor(d.timeUsed / 60);
-                const secs = d.timeUsed % 60;
-                
-                // Rank එක අනුව Medal එක තෝරනවා
-                let medal = "";
-                let rankClass = "";
-                if(rank === 1) { medal = "🥇"; rankClass = "rank-1"; }
-                else if(rank === 2) { medal = "🥈"; rankClass = "rank-2"; }
-                else if(rank === 3) { medal = "🥉"; rankClass = "rank-3"; }
-                else { medal = rank; }
-
-                lbBody.innerHTML += `
-                    <tr class="${rankClass}">
-                        <td>${medal}</td>
-                        <td style="text-align: left; min-width: 150px;">
-                            <span style="font-weight: bold; color: #333;">${d.name}</span><br>
-                            <small style="color: #666;">📧 ${d.email || 'No Email'}</small><br>
-                            <small style="color: #1a73e8;">📍 පළාත: ${d.province}</small>
-                        </td>
-                        <td><span class="score-badge">${d.score} / 50</span></td>
-                        <td>${mins}:${secs < 10 ? '0' : ''}${secs} min</td>
-                    </tr>
-                `;
-                rank++;
+        // 2. User ගේ මුළු ලකුණු (Total Points) 2500 ට එකතු කරමු
+        const userRef = db.collection("users").doc(user.uid);
+        const userDoc = await userRef.get();
+        let userData = userDoc.data();
+        
+        let currentBestScores = userData.bestScores || {};
+        
+        // මේ පේපර් එකට කලින් ගත්ත හොඳම ලකුණට වඩා මේක වැඩිනම් විතරක් එකතු කරමු
+        if (!currentBestScores[cat] || finalScore > currentBestScores[cat]) {
+            currentBestScores[cat] = finalScore;
+            
+            // ඔක්කොම පේපර්ස් වල හොඳම ලකුණු එකතු කරලා 2500න් කීයක්ද බලමු
+            const newTotalPoints = Object.values(currentBestScores).reduce((a, b) => a + b, 0);
+            
+            await userRef.update({
+                bestScores: currentBestScores,
+                totalPoints: newTotalPoints, // 2500න් කීයද කියලා මේකේ තියෙනවා
+                examsCount: (userData.examsCount || 0) + 1
             });
-        });
+        }
+
+        window.location.href = "leaderboard.html";
+    } catch (e) {
+        console.error("Error saving score: ", e);
+        alert("ලකුණු සේව් කිරීමට නොහැකි විය!");
+    }
 }
 
 // 7. Page Load Manager
@@ -3244,53 +3197,40 @@ window.onload = () => {
 };        
 function loadUserHistory() {
     const historyBody = document.getElementById('history-body');
-    const chartCanvas = document.getElementById('scoreChart');
-    if (!historyBody || !chartCanvas) return;
+    // Summary IDs
+    const totalPointsDisp = document.getElementById('total-points');
+    const avgPercentDisp = document.getElementById('avg-score-percent');
+    const totalExamsDisp = document.getElementById('total-exams');
 
     auth.onAuthStateChanged(user => {
         if (user) {
-            console.log("Loading history for: " + user.email);
-            
+            // 1. Profile එකෙන් Summary එක ගමු
+            db.collection("users").doc(user.uid).onSnapshot(doc => {
+                const data = doc.data();
+                const points = data.totalPoints || 0;
+                const exams = data.examsCount || 0;
+                
+                if(totalPointsDisp) totalPointsDisp.innerText = points; // 2500න් ලකුණු
+                if(totalExamsDisp) totalExamsDisp.innerText = exams;
+                
+                // Average ලකුණු ප්‍රතිශතයක් විදිහට (ලකුණු / කරපු පේපර් ගණන * 50)
+                if(avgPercentDisp && exams > 0) {
+                    avgPercentDisp.innerText = ((points / (exams * 50)) * 100).toFixed(1) + "%";
+                }
+            });
+
+            // 2. පහළින් තියෙන History Table එක ලෝඩ් කරමු
             db.collection("leaderboard")
                 .where("email", "==", user.email)
-                .orderBy("timestamp", "desc") // Chart එකට දත්ත පිළිවෙළට එන්න ඕනේ
-                .onSnapshot((snap) => {
-                    let dates = [];
-                    let scores = [];
+                .orderBy("timestamp", "desc")
+                .onSnapshot(snap => {
                     let tableHTML = '';
-
-                    if (snap.empty) {
-                        historyBody.innerHTML = '<tr><td colspan="4">තවම විභාග දත්ත ලබාගෙන නැත.</td></tr>';
-                        return;
-                    }
-
-                    snap.forEach(doc => {
-                        const d = doc.data();
+                    snap.forEach(dDoc => {
+                        const d = dDoc.data();
                         const date = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "Pending";
-                        const scoreVal = d.score || 0;
-                        const mins = Math.floor((d.timeUsed || 0) / 60);
-                        const secs = (d.timeUsed || 0) % 60;
-
-                        // Graph එකට දත්ත
-                        dates.push(date);
-                        scores.push(scoreVal);
-
-                        // Table එකට අලුත්ම ඒවා උඩට එන විදියට row එක හදමු
-                        const row = `
-                            <tr>
-                                <td style="padding:15px; border-bottom:1px solid #eee;">${date}</td>
-                                <td><span class="cat-tag">${d.category ? d.category.toUpperCase() : 'GK'}</span></td>
-                                <td><span class="score-badge" style="background:#1a73e8; color:white; padding:4px 10px; border-radius:12px;">${scoreVal} / 50</span></td>
-                                <td>${mins}:${secs < 10 ? '0' : ''}${secs} min</td>
-                            </tr>
-                        `;
-                        tableHTML = row + tableHTML; // අලුත්ම Record එක උඩට දානවා
+                        tableHTML += `<tr><td>${date}</td><td>${d.category.toUpperCase()}</td><td>${d.score}/50</td><td>${d.timeUsed}s</td></tr>`;
                     });
-
-                    historyBody.innerHTML = tableHTML;
-                    renderChart(dates, scores); // Chart එක අඳින්න call කරනවා
-                }, (error) => {
-                    console.error("Firestore Error: ", error);
+                    if(historyBody) historyBody.innerHTML = tableHTML;
                 });
         }
     });
