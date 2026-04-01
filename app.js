@@ -3180,6 +3180,8 @@ window.onload = () => {
     if (startExamBtn) setupRulesModal();
 };
 
+
+
 // --- 🛠️ අඩුවෙලා තිබුණු Functions ටික මෙන්න (මේවා window.onload එකෙන් පිටත තියෙන්න ඕනේ) ---
 
 // කාලය format කරන හැටි
@@ -3301,13 +3303,14 @@ function setupProvinceDistrictLogic() {
         };
     }
 }
+// මේක window.onload එකෙන් පිටත, අන්තිමටම තියෙන්න ඕනේ
 function renderChart(labels, data) {
     const canvas = document.getElementById('scoreChart');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     
     if (window.myChart) {
-        window.myChart.destroy(); // පරණ එක මකලා අලුත් එක අඳිනවා
+        window.myChart.destroy(); 
     }
 
     window.myChart = new Chart(ctx, {
@@ -3332,8 +3335,7 @@ function renderChart(labels, data) {
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 50, // ලකුණු උපරිම 50 නිසා
-                    ticks: { stepSize: 10 }
+                    max: 50
                 }
             }
         }
