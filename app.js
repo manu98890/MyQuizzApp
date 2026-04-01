@@ -3102,42 +3102,38 @@ async function saveScoreAndRedirect(finalScore) {
     const cat = new URLSearchParams(window.location.search).get('cat') || 'gk1';
 
     try {
-        // 1. Leaderboard එකට සාමාන්‍ය විදිහට Record එක දාමු
+        // 1. සාමාන්‍ය විභාග වාර්තාව සේව් කිරීම
         await db.collection("leaderboard").add({
             userId: user.uid,
             email: user.email,
-            name: (await db.collection("users").doc(user.uid).get()).data().name,
             category: cat,
             score: finalScore,
             timeUsed: 3600 - timeLeft,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        // 2. User ගේ මුළු ලකුණු (Total Points) 2500 ට එකතු කරමු
+        // 2. මුළු ලකුණු 2500න් ගණනය කිරීමට User Profile එක Update කිරීම
         const userRef = db.collection("users").doc(user.uid);
         const userDoc = await userRef.get();
-        let userData = userDoc.data();
-        
-        let currentBestScores = userData.bestScores || {};
-        
-        // මේ පේපර් එකට කලින් ගත්ත හොඳම ලකුණට වඩා මේක වැඩිනම් විතරක් එකතු කරමු
-        if (!currentBestScores[cat] || finalScore > currentBestScores[cat]) {
-            currentBestScores[cat] = finalScore;
+        let userData = userDoc.data() || {};
+        let bestScores = userData.bestScores || {};
+
+        // පේපර් එකේ පරණ ලකුණට වඩා මේක වැඩිනම් විතරක් Update කරමු
+        if (!bestScores[cat] || finalScore > bestScores[cat]) {
+            bestScores[cat] = finalScore;
             
-            // ඔක්කොම පේපර්ස් වල හොඳම ලකුණු එකතු කරලා 2500න් කීයක්ද බලමු
-            const newTotalPoints = Object.values(currentBestScores).reduce((a, b) => a + b, 0);
+            // ඔක්කොම පේපර්ස් වල එකතුව 2500න් ගණනය කරනවා
+            const totalPoints = Object.values(bestScores).reduce((a, b) => a + b, 0);
             
             await userRef.update({
-                bestScores: currentBestScores,
-                totalPoints: newTotalPoints, // 2500න් කීයද කියලා මේකේ තියෙනවා
+                bestScores: bestScores,
+                totalPoints: totalPoints, // 2500න් ලකුණු
                 examsCount: (userData.examsCount || 0) + 1
             });
         }
-
         window.location.href = "leaderboard.html";
     } catch (e) {
-        console.error("Error saving score: ", e);
-        alert("ලකුණු සේව් කිරීමට නොහැකි විය!");
+        alert("ලකුණු සේව් කිරීමට නොහැකි විය: " + e.message);
     }
 }
 
@@ -3198,38 +3194,25 @@ window.onload = () => {
 };        
 function loadUserHistory() {
     const historyBody = document.getElementById('history-body');
-    // Summary IDs
-    const totalPointsDisp = document.getElementById('total-points');
-    const avgPercentDisp = document.getElementById('avg-score-percent');
-    const totalExamsDisp = document.getElementById('total-exams');
+    const totalPointsDisp = document.getElementById('total-points'); // HTML එකේ id="total-points" තිබිය යුතුයි
 
     auth.onAuthStateChanged(user => {
         if (user) {
-            // 1. Profile එකෙන් Summary එක ගමු
+            // Profile එකෙන් මුළු ලකුණු 2500න් ගමු
             db.collection("users").doc(user.uid).onSnapshot(doc => {
                 const data = doc.data();
-                const points = data.totalPoints || 0;
-                const exams = data.examsCount || 0;
-                
-                if(totalPointsDisp) totalPointsDisp.innerText = points; // 2500න් ලකුණු
-                if(totalExamsDisp) totalExamsDisp.innerText = exams;
-                
-                // Average ලකුණු ප්‍රතිශතයක් විදිහට (ලකුණු / කරපු පේපර් ගණන * 50)
-                if(avgPercentDisp && exams > 0) {
-                    avgPercentDisp.innerText = ((points / (exams * 50)) * 100).toFixed(1) + "%";
-                }
+                if(totalPointsDisp) totalPointsDisp.innerText = (data.totalPoints || 0) + " / 2500";
             });
 
-            // 2. පහළින් තියෙන History Table එක ලෝඩ් කරමු
+            // විභාග ඉතිහාසය ලෝඩ් කිරීම
             db.collection("leaderboard")
                 .where("email", "==", user.email)
                 .orderBy("timestamp", "desc")
                 .onSnapshot(snap => {
                     let tableHTML = '';
-                    snap.forEach(dDoc => {
-                        const d = dDoc.data();
-                        const date = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "Pending";
-                        tableHTML += `<tr><td>${date}</td><td>${d.category.toUpperCase()}</td><td>${d.score}/50</td><td>${d.timeUsed}s</td></tr>`;
+                    snap.forEach(d => {
+                        const val = d.data();
+                        tableHTML += `<tr><td>${val.category}</td><td>${val.score}/50</td></tr>`;
                     });
                     if(historyBody) historyBody.innerHTML = tableHTML;
                 });
