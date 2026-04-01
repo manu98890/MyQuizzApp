@@ -145,13 +145,13 @@ table {
 th {
     background: #1a73e8 !important;
     color: white !important;
-    padding: 20px 15px !important;
+    padding: 25px 20px !important;
     font-size: 15px !important;
     font-weight: 800 !important;
     text-align: center;
     border: none;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1.0px;
 }
 
 /* ⚪ පේළි (Rows) වල පොදු පෙනුම */
