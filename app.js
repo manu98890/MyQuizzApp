@@ -3140,24 +3140,37 @@ async function saveScoreAndRedirect(finalScore) {
 
 // 7. Page Load Manager
 window.onload = () => {
-    setupLogin();
-    setupRegistration(); 
-    setupCheatingProtection(); // <--- අනිවාර්යයෙන් මේක මෙතන තියෙන්න ඕනේ
-    setupRulesModal(); // <--- මෙන්න මේක අලුතින් එකතු කළා
-    setupProfileUpdate();
+    // 1. Login පේජ් එකේ නම් විතරක් මේක වැඩ කරයි
+    const loginBtn = document.getElementById('login-btn');
+    if (loginBtn) setupLogin();
 
-    if (document.getElementById('user-info-display')) loadProfileData(); 
+    // 2. Registration පේජ් එකේ නම් විතරක් මේක වැඩ කරයි
+    const regBtn = document.getElementById('final-register-btn');
+    if (regBtn) setupRegistration();
+
+    // 3. Profile පේජ් එකේ විස්තර පෙන්වන්න
+    if (document.getElementById('user-info-display')) loadProfileData();
     if (document.getElementById('history-body')) loadUserHistory();
-    
-    
+
+    // 4. Quiz පේජ් එකේ වැඩ ටික
     if (document.getElementById('question-text')) {
         auth.onAuthStateChanged(user => { 
-            if(user) { getCategoryAndStart(); setupQuizButtons(); } 
+            if(user) { 
+                getCategoryAndStart(); 
+                setupQuizButtons(); 
+                setupCheatingProtection();
+            } 
             else { window.location.href="index.html"; }
         });
     }
-    
+
+    // 5. Leaderboard පේජ් එක
     if (document.getElementById('leaderboard-body')) loadLeaderboard();
+
+    // 6. Rules Modal (Quiz එක පටන් ගන්න තැන)
+    const startExamBtn = document.getElementById('start-exam-btn');
+    if (startExamBtn) setupRulesModal();
+};
 
     // --- 🌍 Province to District Logic ---
     const districtData = {
