@@ -3252,9 +3252,16 @@ function loadUserHistory() {
                     snap.forEach(dDoc => {
                         const d = dDoc.data();
                         const date = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "Pending";
+                        // --- ⏱️ කාලය විනාඩි වලට හරවන කොටස මෙන්න ---
+                        const totalSeconds = d.timeUsed || 0;
+                        const mins = Math.floor(totalSeconds / 60); // විනාඩි ගණන
+                        const secs = totalSeconds % 60;             // ඉතිරි තත්පර ගණන
+                        // කාලය පෙන්වන විදිහ (උදා: 2m 05s)
+                        const formattedTime = `${mins}m ${secs < 10 ? '0' : ''}${secs}s`;
+
+                        // Table එකට පේළියක් හදනවා (අන්තිම තීරුවට formattedTime දාන්න)
+                        tableRows.push(`<tr><td>${date}</td><td>${d.category.toUpperCase()}</td><td>${d.score}/50</td><td>${formattedTime}</td></tr>`);
                         
-                        // Table එකට පේළියක් හදනවා
-                        tableRows.push(`<tr><td>${date}</td><td>${d.category.toUpperCase()}</td><td>${d.score}/50</td><td>${d.timeUsed}s</td></tr>`);
                         
                         // Chart එකට අවශ්‍ය දිනය සහ ලකුණු එකතු කරනවා
                         chartLabels.push(date); 
