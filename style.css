@@ -182,7 +182,7 @@ td b, td strong {
 
 /* Email සහ Province වලට පොඩි styles */
 .user-info-sub {
-    font-size: 12px;
+    font-size: 10px;
     color: #7f8c8d;
     display: flex;
     align-items: center;
@@ -256,7 +256,7 @@ tr:hover td {
 
     /* නම පේළි දෙකකට යෑම වැළැක්වීමට */
     td b, td strong {
-        font-size: 13px !important;
+        font-size: 10px !important;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
