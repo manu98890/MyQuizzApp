@@ -196,8 +196,8 @@ td b, td strong {
     color: #1a73e8 !important;
     padding: 06px 14px;
     border-radius: 50px;
-    font-weight: 700;
-    font-size: 14px;
+    font-weight: 600;
+    font-size: 10px;
     text-align:center;
     display: inline-block;
     border: 1px solid rgba(26, 115, 232, 0.1);
@@ -273,7 +273,7 @@ tr:hover td {
     /* ලකුණු සහ කාලය පිළිවෙලට තැබීම */
     .score-badge {
         padding: 4px 8px !important;
-        font-size: 11px !important;
+        font-size: 08px !important;
         white-space: nowrap;
     }
 
